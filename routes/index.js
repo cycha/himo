@@ -5,7 +5,7 @@ const getResults = require("../scrapper_puppeteer");
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   const results = await getResults();
-  console(results)
+  console.log(results)
   res.render('index', { title: 'Express', results });
 });
 
