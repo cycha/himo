@@ -12,9 +12,25 @@ services:
     ports:
       - 80:3000
     command: npm run dev
+#    networks:
+#      - app-network
+
   mongo:
     image: mongo
     expose:
       - 27017
+    ports:
+      - 27017:27017
     volumes:
       - ./data/db:/data/db
+    restart: always
+#    networks:
+#      - app-network
+
+#networks:
+#  app-network:
+#    driver: bridge
+
+#      environment:
+#        MONGO_INITDB_ROOT_USERNAME: root
+#        MONGO_INITDB_ROOT_PASSWORD: example
