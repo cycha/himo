@@ -32,6 +32,7 @@ export class Login extends React.Component {
         const { email, password } = this.state;
         return (
             <div className="Login">
+                <h1>Login</h1>
                 <FormGroup controlId="email" bsSize="large">
                     <FormLabel>Email</FormLabel>
                     <FormControl

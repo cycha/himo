@@ -1,19 +1,37 @@
+# Dev conf file no production
 version: "3"
 services:
-  app:
+  client:
     image: node:alpine
     volumes:
-      - ./:/app
-    working_dir: /app
+      - ./client/:/client
+      - /client/node_modules
+    environment:
+      NODE_ENV: development
+    working_dir: /client
+    ports:
+      - 80:3000
+    command: yarn start #yarn install
+    links:
+      - api
+    networks:
+      - app-network
+  api:
+    image: node:alpine
+    volumes:
+      - ./api:/api
+      - /api/node_modules
+    working_dir: /api
     depends_on:
       - mongo
     environment:
       NODE_ENV: development
     ports:
-      - 80:3000
-    command: npm run dev
-#    networks:
-#      - app-network
+      - 3
+      - 9000:9000
+    command: npm run dev #npm install
+    networks:
+      - app-network
 
   mongo:
     image: mongo
@@ -24,12 +42,12 @@ services:
     volumes:
       - ./data/db:/data/db
     restart: always
-#    networks:
-#      - app-network
+    networks:
+      - app-network
 
-#networks:
-#  app-network:
-#    driver: bridge
+networks:
+  app-network:
+    driver: bridge
 
 #      environment:
 #        MONGO_INITDB_ROOT_USERNAME: root
