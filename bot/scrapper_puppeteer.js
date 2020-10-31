@@ -1,46 +1,50 @@
-const puppeteer = require('puppeteer');
-// const siteUrl = "https://www.leboncoin.fr/recherche/?category=9&locations=Strasbourg__48.572862300652176_7.7376447971243545_10000";
-const siteUrl = "https://remoteok.io/";
+const puppeteer = require('puppeteer-extra')
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+
+
+const url = "https://www.leboncoin.fr/recherche/?category=9&locations=Strasbourg__48.572862300652176_7.7376447971243545_10000";
+// const siteUrl = "https://remoteok.io/";
 let siteName = "";
 const titles = new Set();
 const tags = new Set();
 // const locations = new Set();
 // const positions = new Set();
 
+function debug(...args) {
+    console.log('🚀', args)
+}
 
 const getResults = async () => {
-    /* Initiate the Puppeteer browser */
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    puppeteer.use(StealthPlugin())
 
-    /* Go to the IMDB Movie page and wait for it to load */
-    await page.goto(siteUrl, {waitUntil: 'networkidle0'});
+    const browser = await puppeteer.launch({ headless: true })
 
-    /* Run javascript inside of the page */
-    let data = await page.evaluate(() => {
-        let title = document.querySelector("#jobsboard > thead:nth-child(1) > tr > th > h1").innerText;
-        // let rating = document.querySelector('span[itemprop="ratingValue"]').innerText;
-        // let ratingCount = document.querySelector('span[itemprop="ratingCount"]').innerText;
-        /* Returning an object filled with the scraped data */
-        return {
-            title,
-            // rating,x
-            // ratingCount
-        }
-    });
-    /* Outputting what we scraped */
-    console.log(data);
-    await browser.close();
+    const page = await browser.newPage()
+    // await page.setViewport({width: 1280, height: 1280});
 
-    titles.add(data.title)
-    tags.add("Wesh Alors")
-//Convert to an array so that we can sort the results.
-    return {
-        titles: [...titles].sort(),
-        tags: [...tags].sort(),
-        // locations: [...locations].sort(),
-        // categories: [...categories].sort(),
-        // siteName,
-    };
+    debug('Open chrome with url', url)
+    await page.goto(url, {waitUntil: 'networkidle2'})
+
+    const data = await page.evaluate(() => {
+        // Le bon coin
+        const offers = document.querySelectorAll('[itemtype="http://schema.org/Offer"]')
+
+        return Array.from(offers)
+            .slice(0, 2)
+            .map(dom => {
+                return {
+                    title: dom.querySelector('span [itemprop="name"]').innerText,
+                    image: dom.querySelector('span [itemprop="image"]').getAttribute('src'),
+                    price: dom.querySelector('span [itemprop="price"]').innerText
+                }
+            })
+
+    })
+    await page.screenshot({path: 'testresult.png', fullPage: true})
+    await browser.close()
+
+    console.log('🔥', data)
+    return data;
 };
 module.exports = getResults;
