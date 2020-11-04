@@ -1,32 +1,23 @@
 const fetch = require("node-fetch");
-const fs = require('fs');
-const Ad = require('./schema/schemaAd')
 const db = require('./db')
-
+const Ad = require('./schema/schemaAd')
+const utils = require('./utils')
 const regex = /"ads"[:](\[.*\],"ads_alu")/g;
 
-db.connection.once("open", function () {
-    getAdsFromInternet()
-    // getAdsFromDisk()
-        .then(jsonArray => convertJsonArrayToObject(jsonArray))
-        .then(jsonObject => saveAdsToDb(jsonObject))
-        .then(() => db.connection.close());
-})
+db.connect()
+    // .then(() => getAdsFromInternet())
+    .then(() => utils.getFromFile("./mock/leboncoin.html"))
+    .then(results => parseAdsFromHtml(results))
+    .then(jsonObject => db.saveAdsToDb(jsonObject))
+    .then(() => db.close())
 
 //################
+// saveHtmlFromInternetToFile("./mock/leboncoin.html");
+//################
 
-async function getAdsFromDisk() {
-    return new Promise(resolve => {
-        fs.readFile("requestContent.html", (err, data) => {
-            let array = data.toString().match(regex)
-            let jsonArrayStr = array[array.length - 1]
-                .replace('"ads":', '')
-                .replace(",\"ads_alu\"", "");
-            const jsonArray = JSON.parse(jsonArrayStr);
-            // console.log(jsonArray);
-            resolve(jsonArray)
-        })
-    });
+async function saveHtmlFromInternetToFile(fileName) {
+    getAdsFromInternet()
+        .then(results => utils.saveToFile(fileName, results))
 }
 
 async function getAdsFromInternet() {
@@ -51,14 +42,8 @@ async function getAdsFromInternet() {
     })
         .then(res => res.text())
         .then(body => {
-            // console.log(body)
-            let array = body.toString().match(regex);
-            let jsonArrayStr = array[array.length - 1]
-                .replace('"ads":', '')
-                .replace(",\"ads_alu\"", "");
-            console.log("Request received ,lenght=" + jsonArrayStr.length);
-
-            return JSON.parse(jsonArrayStr);
+            console.log("Request received ,lenght=" + body.length);
+            return body;
         })
         .catch(reason => {
             console.log(reason);
@@ -66,7 +51,13 @@ async function getAdsFromInternet() {
         });
 }
 
-async function convertJsonArrayToObject(jsonArray) {
+async function parseAdsFromHtml(results) {
+    let array = results.toString().match(regex);
+    let jsonArrayStr = array[array.length - 1]
+        .replace('"ads":', '')
+        .replace(",\"ads_alu\"", "");
+    let jsonArray = JSON.parse(jsonArrayStr);
+
     let ads = [];
     jsonArray.forEach(element => {
             console.log(element.first_publication_date + " " + element.subject + " - " + element.price + " €")
@@ -84,25 +75,4 @@ async function convertJsonArrayToObject(jsonArray) {
     );
     console.log("------------\n" + jsonArray.length + " ads found.")
     return ads;
-}
-
-function saveAdsToDisk(fileName, data) {
-    fs.writeFile("requestContent.html", data, err => {
-        console.log(err === null ? fileName + " saved" : err)
-    })
-}
-
-async function saveAdsToDb(ads) {
-    return new Promise(resolve => {
-        console.log("Saving data...");
-        Ad.insertMany(ads)
-            .then(mongooseDocuments => {
-                console.log("Saved to db");
-                resolve();
-            })
-            .catch(err => {
-                console.log(err);
-                resolve();
-            });
-    });
 }
