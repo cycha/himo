@@ -1,3 +1,3 @@
 module.exports = {
-    "secret" : "mediumMernAppCreation"
+    // "secret" : "mediumMernAppCreation" //TODO Use .env file
 }

@@ -2,8 +2,8 @@
 //Example url: "https://www.leboncoin.fr/recherche/?category=9&locations=Strasbourg__48.572862300652176_7.7376447971243545_10000"
 
 const fetch = require("node-fetch");
-const db = require('../db')
-const Ad = require('../schema/schemaAd')
+const db = require('commons/db')
+const Ad = require('commons/schema/schemaAd')
 const utils = require('../utils')
 const regex = /"ads"[:](\[.*\],"ads_alu")/g;
 const url = "https://www.leboncoin.fr/recherche/?category=9"
@@ -69,7 +69,8 @@ async function parseAdsFromHtml(results) {
 
     let ads = [];
     const latestAdInDb = await db.getMostRecentAdInDb("leboncoin");
-    // console.log("Latest title: " + latestAdInDb.title);
+    const latestDate = latestAdInDb ? latestAdInDb.release_date : new Date();
+    // Make some logic for latest date
     for (const element of jsonArray) {
         let ad = Ad({
             "title": element.subject,
@@ -79,7 +80,7 @@ async function parseAdsFromHtml(results) {
             "release_date": element.index_date,
             "price": element.price ? element.price[0] : null
         });
-        if (!latestAdInDb || (ad.release_date > latestAdInDb.release_date && ad.title !== latestAdInDb.title)) {
+        if (ad.release_date > latestDate && ad.title !== latestAdInDb ? latestAdInDb.title : null) {
             if (ad.price) {
                 console.log(element.first_publication_date + " " + element.subject + " - " + element.price + " €")
                 ads.push(ad);

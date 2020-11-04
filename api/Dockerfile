@@ -2,6 +2,13 @@
 
 FROM node:alpine
 
+# Copy common folder
+RUN mkdir -p /commons
+WORKDIR /commons
+COPY package*.json ./
+RUN npm install --silent
+COPY . .
+
 # Create App Directory
 RUN mkdir -p /api
 WORKDIR /api

@@ -1,18 +1,10 @@
 //Définition des modules
 const express = require("express");
-const mongoose = require("mongoose");
+const db = require("commons/db");
 const bodyParser = require('body-parser');
 
 //Connexion à la base de donnée
-mongoose
-    .connect("mongodb://mongo/db", {useNewUrlParser: true, useUnifiedTopology: true})
-    .then(() => {
-      console.log("Connected to mongoDB");
-    })
-    .catch((e) => {
-      console.log("Error while DB connecting");
-      console.log(e);
-    });
+db.connect()
 
 //On définit notre objet express nommé app
 const app = express();
@@ -23,6 +15,7 @@ const urlencodedParser = bodyParser.urlencoded({
 });
 app.use(urlencodedParser);
 app.use(bodyParser.json());
+//TODO Use Helmet for protection
 
 //Définition des CORS
 app.use(function (req, res, next) {
@@ -36,8 +29,9 @@ app.use(function (req, res, next) {
 //Définition du routeur
 const router = express.Router();
 app.use("/user", router);
+require(__dirname + "/controllers/adController")(router);
 require(__dirname + "/controllers/userController")(router);
 
 //Définition et mise en place du port d'écoute
-const port = 9000;
+const port = 9000; //TODO ENV
 app.listen(port, () => console.log(`Listening on port ${port}`));

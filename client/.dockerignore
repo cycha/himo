@@ -1,3 +1,6 @@
-node_modules/
+node_modules
+build
+.dockerignore
+Dockerfile
+Dockerfile.prod
 package-lock.json
-yarn.lock

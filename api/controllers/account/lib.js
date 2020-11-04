@@ -1,4 +1,4 @@
-const User = require("../../schema/schemaUser.js");
+const User = require("commons/schema/schemaUser.js");
 const passwordHash = require("password-hash");
 
 async function signup(req, res) {

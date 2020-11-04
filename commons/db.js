@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
 const Ad = require('./schema/schemaAd')
+const dotenv = require('dotenv');
+dotenv.config();
 
 //Connexion à la base de donnée
 async function connect() {
-//TODO Change localhost to mongodb with ENV variable if in docker
     console.log("Connecting to mongoDB...");
     return new Promise((resolve, reject) => {
         mongoose
-            .connect("mongodb://localhost/db", {
+            .connect(process.env.MONGODB_URL, {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
                 useCreateIndex: true

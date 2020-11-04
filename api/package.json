@@ -9,9 +9,9 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "jwt-simple": "^0.5.1",
+    "password-hash": "^1.2.2",
     "mongoose": "^5.10.11",
-    "password-hash": "^1.2.2"
+    "commons": "file:../commons"
   },
   "devDependencies": {
     "nodemon": "^2.0.1"
