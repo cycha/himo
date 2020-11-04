@@ -14,7 +14,9 @@ const adSchema = mongoose.Schema(
             type: String
         },
         url: {
-            type: String
+            type: String,
+            required: true,
+            unique: true
         },
         price: {
             type: Number,
@@ -26,7 +28,6 @@ const adSchema = mongoose.Schema(
         },
         release_date: {
             type: Date,
-            unique: true,
             required: true
         }
     },

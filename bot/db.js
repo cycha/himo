@@ -54,7 +54,7 @@ async function getMostRecentAdInDb(source) {
         .sort('-release_date')
         .exec()
         .then(r => {
-            console.log("Latest Ad in db for " + source + ": " + r.release_date);
+            console.log("Latest Ad in db for " + source + ": " + (r ? r.release_date : "No ads in DB"));
             return r;
         });
 }

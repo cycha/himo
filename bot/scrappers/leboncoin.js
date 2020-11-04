@@ -1,35 +1,37 @@
 //TODO Add pagination
+//Example url: "https://www.leboncoin.fr/recherche/?category=9&locations=Strasbourg__48.572862300652176_7.7376447971243545_10000"
 
 const fetch = require("node-fetch");
 const db = require('../db')
 const Ad = require('../schema/schemaAd')
 const utils = require('../utils')
 const regex = /"ads"[:](\[.*\],"ads_alu")/g;
+const url = "https://www.leboncoin.fr/recherche/?category=9"
 
-startScrapping()
+startScrapping(url)
     .then(r => console.log("Scrapping completed"));
 //################
-// saveHtmlFromInternetToFile("./mock/leboncoin.html");
+// saveHtmlFromInternetToFile(url,"./mock/leboncoin.html");
 //################
 
-async function startScrapping() {
+async function startScrapping(url) {
     console.log("Start scrapping Le Bon Coin...");
     return db.connect()
-        // .then(() => getAdsFromInternet())
-        .then(() => utils.getFromFile("./mock/leboncoin.html"))
+        .then(() => getAdsFromInternet(url))
+        // .then(() => utils.getFromFile("./mock/leboncoin.html"))
         .then(results => parseAdsFromHtml(results))
         .then(jsonObject => db.saveAdsToDb(jsonObject))
         .then(() => db.close());
 }
 
-async function saveHtmlFromInternetToFile(fileName) {
-    getAdsFromInternet()
+async function saveHtmlFromInternetToFile(url, fileName) {
+    getAdsFromInternet(url)
         .then(results => utils.saveToFile(fileName, results))
 }
 
-async function getAdsFromInternet() {
+async function getAdsFromInternet(url) {
     console.log("Request started")
-    return fetch("https://www.leboncoin.fr/recherche/?category=9&locations=Strasbourg__48.572862300652176_7.7376447971243545_10000", {
+    return fetch(url, {
         "headers": {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "accept-language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -67,18 +69,21 @@ async function parseAdsFromHtml(results) {
 
     let ads = [];
     const latestAdInDb = await db.getMostRecentAdInDb("leboncoin");
+    // console.log("Latest title: " + latestAdInDb.title);
     for (const element of jsonArray) {
-        if (element.index_date > latestAdInDb.release_date) {
-            console.log(element.first_publication_date + " " + element.subject + " - " + element.price + " €")
-            let ad = Ad({
-                "title": element.subject,
-                "description": element.body,
-                "url": element.url,
-                "source": "leboncoin",
-                "release_date": element.index_date,
-                "price": element.price[0]
-            });
-            ads.push(ad);
+        let ad = Ad({
+            "title": element.subject,
+            "description": element.body,
+            "url": element.url,
+            "source": "leboncoin",
+            "release_date": element.index_date,
+            "price": element.price ? element.price[0] : null
+        });
+        if (!latestAdInDb || (ad.release_date > latestAdInDb.release_date && ad.title !== latestAdInDb.title)) {
+            if (ad.price) {
+                console.log(element.first_publication_date + " " + element.subject + " - " + element.price + " €")
+                ads.push(ad);
+            }
         } else {
             break;
         }
