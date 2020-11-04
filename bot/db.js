@@ -5,7 +5,6 @@ const Ad = require('./schema/schemaAd')
 async function connect() {
 //TODO Change localhost to mongodb with ENV variable if in docker
     console.log("Connecting to mongoDB...");
-
     return new Promise((resolve, reject) => {
         mongoose
             .connect("mongodb://localhost/db", {
@@ -32,20 +31,36 @@ async function close() {
 
 async function saveAdsToDb(ads) {
     return new Promise(resolve => {
-        console.log("Saving data...");
-        Ad.insertMany(ads)
-            .then(mongooseDocuments => {
-                console.log("Saved to db");
-                resolve();
-            })
-            .catch(err => {
-                console.log(err);
-                resolve();
-            });
+        if (ads.length) {
+            console.log("Saving data...");
+            Ad.insertMany(ads)
+                .then(mongooseDocuments => {
+                    console.log("Saved to db");
+                    resolve();
+                })
+                .catch(err => {
+                    console.log(err);
+                    resolve();
+                });
+        } else {
+            console.log("No data to save");
+            resolve()
+        }
     });
+}
+
+async function getMostRecentAdInDb(source) {
+    return Ad.findOne({"source": source})
+        .sort('-release_date')
+        .exec()
+        .then(r => {
+            console.log("Latest Ad in db for " + source + ": " + r.release_date);
+            return r;
+        });
 }
 
 exports.saveAdsToDb = saveAdsToDb;
 exports.close = close;
 exports.connect = connect;
+exports.getMostRecentAdInDb = getMostRecentAdInDb;
 // module.exports = mongoose;

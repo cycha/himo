@@ -1,19 +1,26 @@
+//TODO Add pagination
+
 const fetch = require("node-fetch");
-const db = require('./db')
-const Ad = require('./schema/schemaAd')
-const utils = require('./utils')
+const db = require('../db')
+const Ad = require('../schema/schemaAd')
+const utils = require('../utils')
 const regex = /"ads"[:](\[.*\],"ads_alu")/g;
 
-db.connect()
-    // .then(() => getAdsFromInternet())
-    .then(() => utils.getFromFile("./mock/leboncoin.html"))
-    .then(results => parseAdsFromHtml(results))
-    .then(jsonObject => db.saveAdsToDb(jsonObject))
-    .then(() => db.close())
-
+startScrapping()
+    .then(r => console.log("Scrapping completed"));
 //################
 // saveHtmlFromInternetToFile("./mock/leboncoin.html");
 //################
+
+async function startScrapping() {
+    console.log("Start scrapping Le Bon Coin...");
+    return db.connect()
+        // .then(() => getAdsFromInternet())
+        .then(() => utils.getFromFile("./mock/leboncoin.html"))
+        .then(results => parseAdsFromHtml(results))
+        .then(jsonObject => db.saveAdsToDb(jsonObject))
+        .then(() => db.close());
+}
 
 async function saveHtmlFromInternetToFile(fileName) {
     getAdsFromInternet()
@@ -42,7 +49,7 @@ async function getAdsFromInternet() {
     })
         .then(res => res.text())
         .then(body => {
-            console.log("Request received ,lenght=" + body.length);
+            console.log("Request received, size= " + body.length);
             return body;
         })
         .catch(reason => {
@@ -59,7 +66,9 @@ async function parseAdsFromHtml(results) {
     let jsonArray = JSON.parse(jsonArrayStr);
 
     let ads = [];
-    jsonArray.forEach(element => {
+    const latestAdInDb = await db.getMostRecentAdInDb("leboncoin");
+    for (const element of jsonArray) {
+        if (element.index_date > latestAdInDb.release_date) {
             console.log(element.first_publication_date + " " + element.subject + " - " + element.price + " €")
             let ad = Ad({
                 "title": element.subject,
@@ -69,10 +78,11 @@ async function parseAdsFromHtml(results) {
                 "release_date": element.index_date,
                 "price": element.price[0]
             });
-
             ads.push(ad);
+        } else {
+            break;
         }
-    );
-    console.log("------------\n" + jsonArray.length + " ads found.")
+    }
+    console.log("------------\n" + jsonArray.length + " ads found. " + ads.length + " added.")
     return ads;
 }
