@@ -6,15 +6,12 @@ services:
     container_name: himo-react-client
     build:
       context: ./client
-      dockerfile: Dockerfile
     volumes:
       - ./client/:/client
       - /client/node_modules
     ports:
       - 80:3000
     command: yarn start
-    environment:
-      - CHOKIDAR_USEPOLLING=true
     links:
       - api
     networks:
@@ -24,7 +21,6 @@ services:
     container_name: himo-node-api
     build:
       context: ./api
-      dockerfile: Dockerfile
     volumes:
       - ./api:/api
       - ./commons:/commons
@@ -36,6 +32,8 @@ services:
       MONGODB_URL: mongodb://mongo/db
     ports:
       - 9000:9000
+#      - 9229:9229 # Used for debugger not used yet
+
     command: npm run dev
     networks:
       - app-network

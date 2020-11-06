@@ -2,6 +2,8 @@
 const express = require("express");
 const db = require("commons/db");
 const bodyParser = require('body-parser');
+const user = require("./controllers/userController")
+const ad = require("./controllers/adController")
 
 //Connexion à la base de donnée
 db.connect()
@@ -27,10 +29,15 @@ app.use(function (req, res, next) {
 });
 
 //Définition du routeur
-const router = express.Router();
-app.use("/user", router);
-require(__dirname + "/controllers/adController")(router);
-require(__dirname + "/controllers/userController")(router);
+//TODO
+
+app.get('/search', (req, res) => ad.search(req, res));
+
+app.post('/user/signup', (req, res) => user.signup(req, res));
+app.post('/user/login', (req, res)=> user.login(req, res));
+
+// app.use("/user", router);
+// require(__dirname + "/controllers/userController")(router);
 
 //Définition et mise en place du port d'écoute
 const port = 9000; //TODO ENV

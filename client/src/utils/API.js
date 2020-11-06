@@ -1,11 +1,18 @@
 import axios from "axios";
+
 const headers = {
     "Content-Type": "application/json"
 };
 const burl = "http://localhost:9000";
 
+// eslint-disable-next-line
 export default {
-    login: function(email, password) {
+    search: function (title, location) {
+        return axios.get(
+            `${burl}/search?title=${title}&location=${location}`
+        );
+    },
+    login: function (email, password) {
         return axios.post(
             `${burl}/user/login`,
             {
@@ -17,14 +24,14 @@ export default {
             }
         );
     },
-    signup: function(send) {
-        return axios.post(`${burl}/user/signup`, send, { headers: headers });
+    signup: function (send) {
+        return axios.post(`${burl}/user/signup`, send, {headers: headers});
     },
 
-    isAuth: function() {
+    isAuth: function () {
         return localStorage.getItem("token") !== null;
     },
-    logout: function() {
+    logout: function () {
         localStorage.clear();
     }
 };
