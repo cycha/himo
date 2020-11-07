@@ -1,29 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Form, Row, Col, Input, Button} from 'antd';
 
 export let SearchForm = (props) => {
-    const [expand, setExpand] = useState(false);
     const [form] = Form.useForm();
-
-    const getFields = () => {
-        const count = expand ? 10 : 6;
-        const children = [];
-
-        for (let i = 0; i < count; i++) {
-            children.push(
-                <Col span={8} key={i}>
-                    <Form.Item
-                        name={`field-${i}`}
-                        label={`Field ${i}`}
-                    >
-                        <Input placeholder="placeholder"/>
-                    </Form.Item>
-                </Col>,
-            );
-        }
-
-        return children;
-    };
 
     const onFinish = (values) => {
         props.onSearchClick(values.title, values.location);

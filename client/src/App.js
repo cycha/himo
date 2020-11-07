@@ -12,8 +12,10 @@ class App extends Component {
     render() {
         return (
             <div className="App">
+                <div className="App-header">
+                    <h1 style={{color: "white"}}>HIMO</h1>
+                </div>
                 <div className="App-content">
-                    <h1>HIMO</h1>
                     <Switch>
                         <Route exact path="/" component={Search}/>
                         <Route exact path="/login" component={Login}/>

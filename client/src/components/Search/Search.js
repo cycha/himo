@@ -15,7 +15,7 @@ export class Search extends React.Component {
             .then(ads => <AdList ads={ads}/>)
             .then(element => {
                 // this.setState({isSearchControlDisplayed: false});
-                ReactDOM.render(element, document.getElementById("result"));
+                ReactDOM.render(element, document.getElementById("results"));
             })
     };
 
@@ -26,7 +26,7 @@ export class Search extends React.Component {
                 {this.state.isSearchControlDisplayed &&
                 <SearchForm onSearchClick={this.search}/>
                 }
-                <div id="result"/>
+                <div id="results"/>
             </div>
         );
     }
@@ -38,7 +38,15 @@ class AdList extends React.Component {
         return (
             <dl>
                 {this.props.ads.map((ad, index) =>
-                    <dt key={index}>{ad.title}</dt>
+                    <a href={ad.url} rel="nofollow" target="_blank">
+                        <dt key={index} className="AdItem">
+                            <div>
+                                <div>{ad.title}</div>
+                                <div>{new Date(ad.release_date).toDateString()}</div>
+                            </div>
+                            <p className="price">{ad.price} €</p>
+                        </dt>
+                    </a>
                 )}
             </dl>
         )
