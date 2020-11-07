@@ -1,71 +1,61 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import {Button, FormControl, FormGroup, FormLabel} from "react-bootstrap";
+import {Button} from "antd";
 import API from "../../utils/API";
+import {SearchForm} from "./SearchForm";
 
 export class Search extends React.Component {
     state = {
-        title: "",
-        location: ""
-    };
-    login = () => {
-        window.location = "/login";
+        isSearchControlDisplayed: true
     };
 
-    search = () => {
-        const {title, location} = this.state;
+    search = (title, location) => {
         return API.search(title, location)
             .then(response => response.data)
-            .then(ads =>
-                <div>
-                    {ads.map(ad =>
-                        <p>{ad.title}</p>
-                    )}
-                </div>
-            )
+            .then(ads => <AdList ads={ads}/>)
             .then(element => {
-                ReactDOM.render(element, document.getElementById("result"))
+                // this.setState({isSearchControlDisplayed: false});
+                ReactDOM.render(element, document.getElementById("result"));
             })
-    };
-    handleChange = (event) => {
-        this.setState({
-            [event.target.id]: event.target.value
-        });
     };
 
     render() {
-        const {title, location} = this.state;
         return (
             <div className="Search">
-                <h1>HIMO</h1>
-                <Button onClick={this.login} block bsSize="large" type="submit">
-                    Login
-                </Button>
-                <div>
-                    <h1>Search</h1>
-                    <FormGroup controlId="title" bsSize="large">
-                        <FormLabel>Subject</FormLabel>
-                        <FormControl
-                            autoFocus
-                            type="text"
-                            value={title}
-                            onChange={this.handleChange}
-                        />
-                    </FormGroup>
-                    <FormGroup controlId="location" bsSize="large">
-                        <FormLabel>Location</FormLabel>
-                        <FormControl
-                            value={location}
-                            onChange={this.handleChange}
-                            type="text"
-                        />
-                    </FormGroup>
-                    <Button onClick={this.search} block bsSize="large" type="submit">
-                        Search
-                    </Button>
-                </div>
+                {/*<LoginButton/>*/}
+                {this.state.isSearchControlDisplayed &&
+                <SearchForm onSearchClick={this.search}/>
+                }
                 <div id="result"/>
             </div>
         );
     }
+}
+
+class AdList extends React.Component {
+
+    render() {
+        return (
+            <dl>
+                {this.props.ads.map((ad, index) =>
+                    <dt key={index}>{ad.title}</dt>
+                )}
+            </dl>
+        )
+    }
+}
+
+class LoginButton extends React.Component {
+    login = () => {
+        window.location = "/login";
+    };
+
+    render() {
+        return (
+            <Button onClick={this.login} type="submit">
+                Login
+            </Button>
+        )
+    }
+
 }

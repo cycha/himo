@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, FormGroup, FormControl, FormLabel } from "react-bootstrap";
+import { Button, FormGroup, FormControl, FormLabel } from "antd";
 import API from "../../utils/API";
 
 export class Login extends React.Component {
@@ -33,23 +33,23 @@ export class Login extends React.Component {
         return (
             <div className="Login">
                 <h1>Login</h1>
-                <FormGroup controlId="email" bsSize="large">
-                    <FormLabel>Email</FormLabel>
-                    <FormControl
-                        autoFocus
-                        type="email"
-                        value={email}
-                        onChange={this.handleChange}
-                    />
-                </FormGroup>
-                <FormGroup controlId="password" bsSize="large">
-                    <FormLabel>Password</FormLabel>
-                    <FormControl
-                        value={password}
-                        onChange={this.handleChange}
-                        type="password"
-                    />
-                </FormGroup>
+                {/*<FormGroup controlId="email" bsSize="large">*/}
+                {/*    <FormLabel>Email</FormLabel>*/}
+                {/*    <FormControl*/}
+                {/*        autoFocus*/}
+                {/*        type="email"*/}
+                {/*        value={email}*/}
+                {/*        onChange={this.handleChange}*/}
+                {/*    />*/}
+                {/*</FormGroup>*/}
+                {/*<FormGroup controlId="password" bsSize="large">*/}
+                {/*    <FormLabel>Password</FormLabel>*/}
+                {/*    <FormControl*/}
+                {/*        value={password}*/}
+                {/*        onChange={this.handleChange}*/}
+                {/*        type="password"*/}
+                {/*    />*/}
+                {/*</FormGroup>*/}
                 <Button onClick={this.send} block bsSize="large" type="submit">
                     Connexion
                 </Button>
