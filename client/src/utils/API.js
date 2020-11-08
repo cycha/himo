@@ -7,10 +7,8 @@ const burl = "http://localhost:9000";
 
 // eslint-disable-next-line
 export default {
-    search: function (title, location) {
-        return axios.get(
-            `${burl}/search?title=${title}&location=${location}`
-        );
+    search: function (params) {
+        return axios.get(`${burl}/search`, {params: params});
     },
     login: function (email, password) {
         return axios.post(

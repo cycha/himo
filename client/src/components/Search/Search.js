@@ -9,8 +9,8 @@ export class Search extends React.Component {
         isSearchControlDisplayed: true
     };
 
-    search = (title, location) => {
-        return API.search(title, location)
+    search = (params) => {
+        return API.search(params)
             .then(response => response.data)
             .then(ads => <AdList ads={ads}/>)
             .then(element => {

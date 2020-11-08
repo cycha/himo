@@ -17,8 +17,8 @@ startScrapping(url)
 async function startScrapping(url) {
     console.log("Start scrapping Le Bon Coin...");
     return db.connect()
-        // .then(() => getAdsFromInternet(url))
-        .then(() => utils.getFromFile("./mock/leboncoin.html"))
+        .then(() => getAdsFromInternet(url))
+        // .then(() => utils.getFromFile("./mock/leboncoin.html"))
         .then(results => parseAdsFromHtml(results))
         .then(jsonObject => db.saveAdsToDb(jsonObject))
         .then(() => db.close());

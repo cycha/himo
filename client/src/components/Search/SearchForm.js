@@ -5,7 +5,7 @@ export let SearchForm = (props) => {
     const [form] = Form.useForm();
 
     const onFinish = (values) => {
-        props.onSearchClick(values.title, values.location);
+        props.onSearchClick(values);
     };
 
     return (
