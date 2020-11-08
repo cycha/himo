@@ -10,21 +10,32 @@ const adSchema = mongoose.Schema(
             type: String,
             required: true
         },
-        image_url: {
-            type: String
-        },
+        thumb_url: String,
         url: {
             type: String,
             required: true,
             unique: true
         },
+        surface: Number,
         price: {
             type: Number,
             required: true
         },
-        source: {
+        provider: {
             type: String,
             required: true
+        },
+        location: {
+            region_name: String,
+            department_id: String,
+            department_name: String,
+            city: String,
+            zipcode:  {
+                type: String,
+                required: true
+            },
+            lat: String,
+            lng: String,
         },
         release_date: {
             type: Date,

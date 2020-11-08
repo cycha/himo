@@ -51,7 +51,7 @@ async function saveAdsToDb(ads) {
 }
 
 async function getMostRecentAdInDb(source) {
-    return Ad.findOne({"source": source})
+    return Ad.findOne({"provider": source})
         .sort('-release_date')
         .exec()
         .then(r => {
