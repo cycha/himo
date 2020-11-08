@@ -39,12 +39,17 @@ class AdList extends React.Component {
             <dl>
                 {this.props.ads.map((ad, index) =>
                     <a href={ad.url} rel="nofollow" target="_blank">
-                        <dt key={index} className="AdItem">
-                            <div>
-                                <div>{ad.title}</div>
-                                <div>{new Date(ad.release_date).toDateString()}</div>
+                        <dt key={index} className="AdItemContainer">
+                            <img src={ad.thumb_url} className="AdItemImage"/>
+                            <div className="AdItemTextContainer">
+                                <h4>{ad.title}</h4>
+                                <div>{ad.location.city} {ad.location.zipcode}</div>
+                                <div>{new Date(ad.release_date).toLocaleDateString()}</div>
+                                {ad.surface &&
+                                <p>{ad.surface} m²</p>
+                                }
                             </div>
-                            <p className="price">{ad.price} €</p>
+                            <h3 className="price">{ad.price} €</h3>
                         </dt>
                     </a>
                 )}

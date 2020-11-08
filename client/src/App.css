@@ -28,7 +28,8 @@
 
 .App-content {
     margin: auto;
-    width: 80%;
+    padding: 2rem;
+    max-width: 100rem;
 }
 
 a {
@@ -53,21 +54,29 @@ a {
     border: 1px solid #d9d9d9;
     border-radius: 10px;
     margin-bottom: 2rem !important;
-    margin-top: 2rem !important;
 }
 
-.AdItem {
+.AdItemContainer {
     width: 100%;
     display: flex;
     position: relative;
     margin-bottom: .8rem;
-    padding: 2rem;
     background: #ffffff;
     border: 1px solid #d9d9d9;
     border-radius: 2px;
     box-shadow: 1px 1px 8px 1px #e6ebef;
     transition: all .2s ease-in;
+}
+
+.AdItemTextContainer {
+    padding: 1rem;
     color: black;
+}
+
+.AdItemImage {
+    width: 20rem;
+    height: 15rem;
+    object-fit: cover;
 }
 
 .price {
