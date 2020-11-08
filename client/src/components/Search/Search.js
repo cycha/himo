@@ -49,7 +49,10 @@ class AdList extends React.Component {
                                 <p>{ad.surface} m²</p>
                                 }
                             </div>
-                            <h3 className="price">{ad.price} €</h3>
+                            <h3 className="price">{new Intl.NumberFormat(
+                                'fr-FR',
+                                {style: 'currency', currency: 'EUR', maximumSignificantDigits: 1})
+                                .format(ad.price)}</h3>
                         </dt>
                     </a>
                 )}

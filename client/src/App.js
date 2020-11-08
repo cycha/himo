@@ -7,13 +7,14 @@ import {Login} from "./components/Login/Login.js";
 import {Signup} from "./components/Signup/Signup.js";
 import {PrivateRoute} from "./components/PrivateRoute.js";
 import {Search} from "./components/Search/Search";
+import {HomeOutlined} from "@ant-design/icons";
 
 class App extends Component {
     render() {
         return (
             <div className="App">
                 <div className="App-header">
-                    <h1 style={{color: "white"}}>HIMO</h1>
+                    <HomeOutlined /> <span style={{"padding-left": "1rem"}}>HIMO</span>
                 </div>
                 <div className="App-content">
                     <Switch>
