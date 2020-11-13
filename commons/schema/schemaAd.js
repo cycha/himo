@@ -10,13 +10,18 @@ const adSchema = mongoose.Schema(
             type: String,
             required: true
         },
-        thumb_url: String,
+        thumb_urls: [String],
         url: {
             type: String,
             required: true,
             unique: true
         },
+        //Appartement, Maison...
+        real_estate_type: String,
+        rooms: Number,
         surface: Number,
+        // Neuf ou vieux
+        immo_sell_type: String,
         price: {
             type: Number,
             required: true

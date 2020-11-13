@@ -40,7 +40,7 @@ class AdList extends React.Component {
                 {this.props.ads.map((ad, index) =>
                     <a href={ad.url} rel="nofollow" target="_blank">
                         <dt key={index} className="AdItemContainer">
-                            <img src={ad.thumb_url} className="AdItemImage"/>
+                            <img src={ad.thumb_urls[0]} className="AdItemImage"/>
                             <div className="AdItemTextContainer">
                                 <h4>{ad.title}</h4>
                                 <div>{ad.location.city} {ad.location.zipcode}</div>

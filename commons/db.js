@@ -37,11 +37,11 @@ async function saveAdsToDb(ads) {
             Ad.insertMany(ads)
                 .then(mongooseDocuments => {
                     console.log("Saved to db");
-                    resolve();
+                    resolve(mongooseDocuments.length);
                 })
                 .catch(err => {
-                    console.log(err);
-                    resolve();
+                    console.error("Error saving to db: " + err.writeErrors);
+                    resolve(err.insertedDocs.length);
                 });
         } else {
             console.log("No data to save");
