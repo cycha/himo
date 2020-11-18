@@ -5,18 +5,18 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "dev": "nodemon main.js"
+    "dev": "nodemon main.js",
+    "lbc": "node scrappers/leboncoin.js"
   },
   "author": "Charly",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.0",
     "commons": "file:../commons",
     "dotenv": "^8.2.0",
+    "https-proxy-agent": "^5.0.0",
     "mongoose": "^5.10.11",
     "node-fetch": "^2.6.1",
-    "nodemon": "^2.0.6",
-    "puppeteer": "^5.4.1",
-    "puppeteer-extra": "^3.1.15",
-    "puppeteer-extra-plugin-stealth": "^2.6.3"
+    "nodemon": "^2.0.6"
   }
 }
