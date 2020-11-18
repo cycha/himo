@@ -4,7 +4,7 @@
   "description": "Scrapper",
   "main": "index.js",
   "scripts": {
-    "start": "scrapoxy start config.js & node index.js",
+    "start": "node index.js",
     "dev": "nodemon index.js",
     "lbc": "node scrappers/leboncoin.js"
   },
@@ -16,6 +16,7 @@
     "dotenv": "^8.2.0",
     "https-proxy-agent": "^5.0.0",
     "mongoose": "^5.10.11",
+    "node-cron": "^2.0.3",
     "node-fetch": "^2.6.1",
     "nodemon": "^2.0.6"
   }
