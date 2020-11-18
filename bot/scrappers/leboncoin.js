@@ -10,20 +10,11 @@ const HttpsProxyAgent = require('https-proxy-agent');
 const agent = new HttpsProxyAgent('http://127.0.0.1:8888');
 
 const regex = /"ads"[:](\[.*\],"ads_alu")/g;
-const url = "https://www.leboncoin.fr/recherche/?category=9";
+const defaultUrl = "https://www.leboncoin.fr/recherche/?category=9";
 const pagesLimit = 10; // Maximum pages to scrap
 const maxRetry = 10;
 const waitSuccess = 5;
 const waitError = 15
-
-db.connect()
-    .then(() => startScrapping(url))
-    .then(results => {
-        console.log("Scrapping completed, " + results.adsSaved + " ads saved with "
-            + results.failurePercentage + "% requests needing a retry and an average of "
-            + results.averageRetriesPerRequest + " retries per request with error.");
-    })
-    .then(() => db.close());
 
 //################ SAVE MOCK DATA EXAMPLE #########
 // saveHtmlFromInternetToFile(url,"./mock/leboncoin.html");
@@ -44,7 +35,7 @@ async function startScrapping(url) {
 
     do {
         try {
-            const urlWithPage = url + (pageNumber === 1 ? "" : "&page=" + pageNumber);
+            const urlWithPage = (url ? url : defaultUrl) + (pageNumber === 1 ? "" : "&page=" + pageNumber);
             let requestWorked = false;
             let retry = 0;
             let html;
@@ -258,3 +249,5 @@ function getRandomUserAgent() {
     const random = Math.floor(Math.random() * uaArray.length);
     return uaArray[random];
 }
+
+module.exports.startScrapping = startScrapping;

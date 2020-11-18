@@ -2,10 +2,10 @@
   "name": "bot",
   "version": "1.0.0",
   "description": "Scrapper",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node main.js",
-    "dev": "nodemon main.js",
+    "start": "scrapoxy start config.js & node index.js",
+    "dev": "nodemon index.js",
     "lbc": "node scrappers/leboncoin.js"
   },
   "author": "Charly",

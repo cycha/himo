@@ -16,6 +16,7 @@ services:
       - api
     networks:
       - app-network
+
   api:
     image: himo-api
     container_name: himo-node-api
@@ -32,9 +33,29 @@ services:
       MONGODB_URL: mongodb://mongo/db
     ports:
       - 9000:9000
-#      - 9229:9229 # Used for debugger not used yet
-
+    #      - 9229:9229 # Used for debugger not used yet
     command: npm run dev
+    networks:
+      - app-network
+
+  bot:
+    image: himo-bot
+    container_name: himo-node-bot
+    build:
+      context: ./bot
+    volumes:
+      - ./bot:/bot
+      - ./commons:/commons
+      - /bot/node_modules
+    depends_on:
+      - mongo
+    environment:
+      NODE_ENV: development
+      MONGODB_URL: mongodb://mongo/db
+      INSTANCE_SCALING_MIN: 0
+    ports:
+      - 8889:8889
+    command: npm run start
     networks:
       - app-network
 
