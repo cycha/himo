@@ -3,8 +3,8 @@
 FROM node:alpine
 
 # Create App Directory
-RUN mkdir -p /api
-WORKDIR /api
+RUN mkdir -p /client
+WORKDIR /client
 
 # Install Dependencies
 COPY package*.json ./
