@@ -9,7 +9,7 @@ const mdq = require('mongo-date-query');
 proxy.start();
 
 // Task to scrap le bon coin every 10 mins
-cron.schedule(' 6-0/10 * * * *', () => {
+cron.schedule('*/10 6-23 * * *', () => {
     console.log("##################################################################");
     console.log('## TASK LEBONCOIN STARTING... ' + new Date().toISOString());
     console.log("##################################################################");
@@ -25,7 +25,7 @@ cron.schedule(' 6-0/10 * * * *', () => {
 });
 
 // Clean db once a month
-cron.schedule(' 0 0 1 * *', () => {
+cron.schedule('0 0 1 * *', () => {
     console.log("Cleaning db...");
     db.connect()
         .then(() => Ad.countDocuments({release_date: mdq.beforeLastYear()}))

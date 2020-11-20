@@ -11,7 +11,7 @@ const agent = new HttpsProxyAgent('http://127.0.0.1:8888');
 
 const regex = /"ads"[:](\[.*\],"ads_alu")/g;
 const defaultUrl = "https://www.leboncoin.fr/recherche/?category=9";
-const pagesLimit = 10; // Maximum pages to scrap
+const pagesLimit = 20; // Maximum pages to scrap
 const maxRetry = 10;
 const waitSuccess = 5;
 const waitError = 15
