@@ -14,7 +14,14 @@ const scrappingTask = cron.schedule('*/10 6-23 * * *', () => {
     console.log("##################################################################");
     console.log('## TASK LEBONCOIN STARTING... ' + new Date().toLocaleString());
     console.log("##################################################################");
-    proxy.scale(0,10,10)
+    // Check if proxy ready
+    proxy.getInstances()
+        .then(async instances => {
+            if (instances <= 1) {
+                await proxy.scale(0, 10, 10)
+            }
+        })
+        // Then start scrapping
         .then(() => db.connect())
         .then(() => leboncoin.startScrapping())
         .then(results => {
@@ -39,13 +46,13 @@ cron.schedule('0 0 1 * *', () => {
 // Stop proxy at midnight
 cron.schedule('0 0 * * *', () => {
     console.log("Stopping proxy instances");
-    proxy.scale(0,0,0);
+    proxy.scale(0, 0, 0);
 })
 
 console.log("Scrapping task " + scrappingTask.getStatus());
 
 // Handle exit
-const exitEvents = [`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`,`SIGTERM`];
+const exitEvents = [`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`];
 exitEvents.forEach((eventType) => {
     process.on(eventType, error => console.log("Bot terminated with " + eventType + " " + error));
 })
