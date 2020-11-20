@@ -20,7 +20,7 @@ async function saveToFile(fileName, data) {
 
 function sleep(s) {
     return new Promise((resolve) => {
-        console.log(`Wait for ${Math.round(s)} seconds.`);
+        // console.log(`Wait for ${Math.round(s)} seconds.`);
         setTimeout(resolve, s * 1000);
     });
 }

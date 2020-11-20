@@ -1,4 +1,7 @@
-const { spawn } = require("child_process");
+const {spawn} = require("child_process");
+const axios = require('axios');
+const headers = {headers: {'Authorization': new Buffer.from(process.env.COMMANDER_PASSWORD).toString('base64')}};
+const {sleep} = require("./utils/utils");
 
 let ls;
 
@@ -23,9 +26,46 @@ async function start() {
     });
 }
 
+async function scale(min, required, max) {
+    console.log("Scaling proxy to " + required + " instances...")
+    return await axios.patch("http://localhost:8889/api/scaling",
+        {
+            min: min,
+            required: required,
+            max: max,
+        },
+        headers)
+        .then(data => {
+            if (data.error) {
+                throw data.error
+            }
+            console.log("Scaling request sent.");
+        })
+        .then(async () => {
+            let instancesAlive = 0;
+            while (instancesAlive < required / 2) {
+                await sleep(10)
+                    .then(() => getInstances())
+                    .then(instances => {
+                        instancesAlive = instances.filter(instance => instance.alive).length
+                        console.log(instancesAlive + " instances alive.");
+                    });
+            }
+            console.log("Proxy scaled to " + instancesAlive + " instances.");
+        });
+}
+
+async function getInstances() {
+    return axios.get("http://localhost:8889/api/instances", headers)
+        .then(res => {
+            return res.data;
+        });
+}
+
 function stop() {
     return ls.kill();
 }
 
-
 module.exports.start = start;
+module.exports.getInstances = getInstances;
+module.exports.scale = scale;

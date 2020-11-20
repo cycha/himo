@@ -5,23 +5,26 @@ const proxy = require('./proxy');
 const Ad = require('commons/schema/schemaAd');
 const mdq = require('mongo-date-query');
 
-
 proxy.start();
 
 // Task to scrap le bon coin every 10 mins
-cron.schedule('*/10 6-23 * * *', () => {
+const scrappingTask = cron.schedule('*/10 6-23 * * *', () => {
+    const timeTaken = "Time taken to scrap";
+    console.time(timeTaken);
     console.log("##################################################################");
-    console.log('## TASK LEBONCOIN STARTING... ' + new Date().toISOString());
+    console.log('## TASK LEBONCOIN STARTING... ' + new Date().toLocaleString());
     console.log("##################################################################");
-
-    db.connect()
+    proxy.scale(0,10,10)
+        .then(() => db.connect())
         .then(() => leboncoin.startScrapping())
         .then(results => {
             console.log("Scrapping completed, " + results.adsSaved + " ads saved with "
                 + results.failurePercentage + "% requests needing a retry and an average of "
                 + results.averageRetriesPerRequest + " retries per request with error.");
         })
-        .then(() => db.close());
+        .then(() => db.close())
+        // .then(() => proxy.scale(0,0,0))
+        .then(() => console.timeEnd(timeTaken));
 });
 
 // Clean db once a month
@@ -33,8 +36,16 @@ cron.schedule('0 0 1 * *', () => {
         .then(() => db.close());
 })
 
+// Stop proxy at midnight
+cron.schedule('0 0 * * *', () => {
+    console.log("Stopping proxy instances");
+    proxy.scale(0,0,0);
+})
+
+console.log("Scrapping task " + scrappingTask.getStatus());
+
 // Handle exit
 const exitEvents = [`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`,`SIGTERM`];
 exitEvents.forEach((eventType) => {
-    process.on(eventType, () => console.log("Bot terminated with " + eventType));
+    process.on(eventType, error => console.log("Bot terminated with " + eventType + " " + error));
 })

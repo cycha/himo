@@ -29,15 +29,15 @@ module.exports = {
         addProxyNameInRequest: process.env.INSTANCE_ADDPROXYNAMEINREQUEST === 'false',
 
         autorestart: {
-            minDelay: parseInt(process.env.INSTANCE_AUTORESTART_MINDELAY || '3600000'),
-            maxDelay: parseInt(process.env.INSTANCE_AUTORESTART_MAXDELAY || '43200000'),
+            minDelay: parseInt(process.env.INSTANCE_AUTORESTART_MINDELAY || '600000'),
+            maxDelay: parseInt(process.env.INSTANCE_AUTORESTART_MAXDELAY || '1200000'),
         },
 
         port: parseInt(process.env.INSTANCE_PORT || '3128'),
 
         scaling: {
-            min: parseInt(process.env.INSTANCE_SCALING_MIN || '1'),
-            max: parseInt(process.env.INSTANCE_SCALING_MAX || '2'),
+            min: parseInt(process.env.INSTANCE_SCALING_MIN || '0'),
+            max: parseInt(process.env.INSTANCE_SCALING_MAX || '0'),
 
             downscaleDelay: parseInt(process.env.INSTANCE_SCALING_DOWNSCALEDELAY || '600000'),
         },

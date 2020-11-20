@@ -1,20 +1,19 @@
-//TODO Add pagination
 //Example url: "https://www.leboncoin.fr/recherche/?category=9&locations=Strasbourg__48.572862300652176_7.7376447971243545_10000"
 
 const fetch = require("node-fetch");
 const axios = require('axios')
 const db = require('commons/db')
 const Ad = require('commons/schema/schemaAd')
-const utils = require('../utils')
+const utils = require('../utils/utils')
 const HttpsProxyAgent = require('https-proxy-agent');
-const agent = new HttpsProxyAgent('http://127.0.0.1:8888');
-
+const proxyAgent = new HttpsProxyAgent('http://127.0.0.1:8888');
+const userAgents = require('../utils/userAgents');
 const regex = /"ads"[:](\[.*\],"ads_alu")/g;
 const defaultUrl = "https://www.leboncoin.fr/recherche/?category=9";
-const pagesLimit = 20; // Maximum pages to scrap
-const maxRetry = 10;
-const waitSuccess = 5;
-const waitError = 15
+const pagesLimit = 30; // Maximum pages to scrap
+const maxRetry = 5;
+const waitSuccess = 10;
+const waitError = 30
 
 //################ SAVE MOCK DATA EXAMPLE #########
 // saveHtmlFromInternetToFile(url,"./mock/leboncoin.html");
@@ -46,7 +45,8 @@ async function startScrapping(url) {
                     requestWorked = true;
                     retryArray.push(retry);
                 } catch (e) {
-                    console.error("Request failed: " + e + ", retry " + retry);
+                    const waitTime = Math.round(waitError * Math.random());
+                    console.error(e + ", retry " + retry + " - Wait " + waitTime + " s.");
                     if (retry < maxRetry) {
                         retry++;
                     } else {
@@ -54,7 +54,7 @@ async function startScrapping(url) {
                         throw "Max retry reached for request";
                     }
                     // Wait a long time
-                    await utils.sleep(waitError + 15 * Math.random());
+                    await utils.sleep(waitTime);
                 }
             } while (!requestWorked)
             // Handle exception when capcha
@@ -64,7 +64,7 @@ async function startScrapping(url) {
             pageNumber++;
             // Wait a little bit before scrapping again`
             if (!isDbUpToDate && pageNumber < pagesLimit) {
-                await utils.sleep(waitSuccess + 15 * Math.random());
+                await utils.sleep(waitSuccess * Math.random());
             }
         } catch (e) {
             console.error(e)
@@ -75,8 +75,8 @@ async function startScrapping(url) {
     console.log("Requests retries array: " + retryArray);
     return {
         "adsSaved": adsSaved,
-        "failurePercentage": Math.round(((retryArray.reduce((a, b) => b === 0 ? a : a + 1,0)) / retryArray.length) * 100),
-        "averageRetriesPerRequest": Math.round((retryArray.reduce((a, b) => a + b) / (retryArray.reduce((a, b) => b === 0 ? a : a + 1,0))))
+        "failurePercentage": Math.floor(((retryArray.reduce((a, b) => b === 0 ? a : a + 1, 0)) / retryArray.length) * 100),
+        "averageRetriesPerRequest": Math.floor((retryArray.reduce((a, b) => a + b) / (retryArray.reduce((a, b) => b === 0 ? a : a + 1, 0))))
     };
 }
 
@@ -93,7 +93,7 @@ async function saveHtmlFromInternetToFile(url, fileName) {
 
 async function getAdsWithAxiosFromInternet(url) {
     const randomUserAgent = getRandomUserAgent();
-    console.log("Request started for " + url + " - " + randomUserAgent);
+    console.log("-> Requesting " + url + " - " + randomUserAgent);
 
     let response = await axios.get(url,
         {
@@ -109,7 +109,7 @@ async function getAdsWithAxiosFromInternet(url) {
                 'Sec-Fetch-Dest': 'document',
                 'Accept-Language': 'fr-FR,fr;q=0.9'
             },
-            httpsAgent: agent
+            httpsAgent: proxyAgent
         });
     return response.data;
 }
@@ -137,7 +137,7 @@ async function getAdsFromInternet(url) {
         "body": null,
         "method": "GET",
         "mode": "cors",
-        "agent": agent
+        "agent": proxyAgent
     })
         .then(res => {
             if (res.ok) {
@@ -154,7 +154,7 @@ async function getAdsFromInternet(url) {
 }
 
 async function parseAdsFromHtml(results, latestDate, latestTitle) {
-    console.log("Parsing...")
+    console.log("Parsing...");
     let array = results.toString().match(regex);
     let jsonArrayStr = array[array.length - 1]
         .replace('"ads":', '')
@@ -222,8 +222,8 @@ async function parseAdsFromHtml(results, latestDate, latestTitle) {
         });
         if (ad.release_date > latestDate && ad.title !== latestTitle) {
             if (ad.price) {
-                console.log(ad.release_date + " " + element.subject + " " + element.location.city + " - "
-                    + element.price + " € - " + ad.immo_sell_type + " " + ad.real_estate_type);
+                // console.log(ad.release_date.toLocaleString() + " " + element.subject + " " + element.location.city + " - "
+                //     + element.price + " € - " + ad.immo_sell_type + " " + ad.real_estate_type);
                 ads.push(ad);
             } else {
                 console.error("Ad not added: " + ad);
@@ -234,10 +234,11 @@ async function parseAdsFromHtml(results, latestDate, latestTitle) {
             break;
         }
     }
-    console.log("------------\n" + jsonArray.length + " ads found. " + ads.length + " added.");
+    console.log("------------> " + jsonArray.length + " ads found. " + ads.length + " kept.");
     return {"ads": ads, "isUpToDate": isUpToDate};
 }
 
+// Get from JSON downloaded at https://techblog.willshouse.com/2012/01/03/most-common-user-agents/
 function getRandomUserAgent() {
     const uaArray = ["Mozilla/5.0 (Linux; Android 10; ONEPLUS A6003) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36",
@@ -245,9 +246,27 @@ function getRandomUserAgent() {
         "Mozilla/5.0 (Linux; Android 9; Mi 9 Lite) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 Mobile Safari/537.36",
         "Mozilla/5.0 (Linux; U; Android 9; fr-fr; Mi 9 Lite Build/PKQ1.181121.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/71.0.3578.141 Mobile Safari/537.36 XiaoMi/MiuiBrowser/12.5.2-go",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69"]
-    const random = Math.floor(Math.random() * uaArray.length);
-    return uaArray[random];
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69",
+        // Found on internet
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:53.0) Gecko/20100101 Firefox/53.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393",
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1",
+        "Mozilla/5.0 (iPad; CPU OS 8_4_1 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12H321 Safari/600.1.4",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"]
+    // const random = Math.floor(Math.random() * uaArray.length);
+    // return uaArray[random];
+    const random = Math.floor(Math.random() * userAgents.length);
+    return userAgents[random].useragent;
 }
 
 module.exports.startScrapping = startScrapping;

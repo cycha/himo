@@ -1,0 +1,467 @@
+[
+  {
+    "percent": "9.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 Win10"
+  },
+  {
+    "percent": "8.1%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "4.9%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "4.3%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 Linux"
+  },
+  {
+    "percent": "3.5%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.198 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "3.1%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/14.0 Safari\/605.1.15",
+    "system": "Safari Generic macOS"
+  },
+  {
+    "percent": "3.0%",
+    "useragent": "Mozilla\/5.0 (X11; Ubuntu; Linux x86_64; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 Linux"
+  },
+  {
+    "percent": "2.9%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.75 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "2.9%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; rv:78.0) Gecko\/20100101 Firefox\/78.0",
+    "system": "Firefox 78.0 Win10"
+  },
+  {
+    "percent": "2.5%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "2.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.193 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "1.5%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64; rv:81.0) Gecko\/20100101 Firefox\/81.0",
+    "system": "Firefox 81.0 Win10"
+  },
+  {
+    "percent": "1.5%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10.15; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 macOS"
+  },
+  {
+    "percent": "1.4%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.9%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 Linux"
+  },
+  {
+    "percent": "0.9%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/14.0.1 Safari\/605.1.15",
+    "system": "Safari Generic macOS"
+  },
+  {
+    "percent": "0.8%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/14.0 Safari\/605.1.15",
+    "system": "Safari Generic macOS"
+  },
+  {
+    "percent": "0.8%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.80 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.8%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 Win7"
+  },
+  {
+    "percent": "0.8%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64; rv:78.0) Gecko\/20100101 Firefox\/78.0",
+    "system": "Firefox 78.0 Linux"
+  },
+  {
+    "percent": "0.7%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36 Edg\/86.0.622.63",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.7%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10.15; rv:81.0) Gecko\/20100101 Firefox\/81.0",
+    "system": "Firefox 81.0 macOS"
+  },
+  {
+    "percent": "0.7%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36",
+    "system": "Chrome 86.0 Linux"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 Win7"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko\/20100101 Firefox\/83.0",
+    "system": "Firefox 83.0 Win10"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36 Edg\/86.0.622.51",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.193 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.198 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.198 Safari\/537.36 Edg\/86.0.622.69",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.6%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.121 Safari\/537.36",
+    "system": "Chrome 85.0 Win10"
+  },
+  {
+    "percent": "0.5%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.5%",
+    "useragent": "Mozilla\/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko\/20100101 Firefox\/81.0",
+    "system": "Firefox 81.0 Linux"
+  },
+  {
+    "percent": "0.5%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.75 Safari\/537.36",
+    "system": "Chrome 86.0 Linux"
+  },
+  {
+    "percent": "0.5%",
+    "useragent": "Mozilla\/5.0 (X11; Fedora; Linux x86_64; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 Linux"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64; rv:83.0) Gecko\/20100101 Firefox\/83.0",
+    "system": "Firefox 83.0 Linux"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko\/20100101 Firefox\/78.0",
+    "system": "Firefox 78.0 Win10"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.102 Safari\/537.36",
+    "system": "Chrome 85.0 Win10"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/87.0.4280.66 Safari\/537.36",
+    "system": "Chrome 87.0 Win10"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 11_0_0) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.198 Safari\/537.36",
+    "system": "Chrome 86.0 MacOSX"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.80 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36 Edg\/86.0.622.58",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.4%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36",
+    "system": "Chrome 86.0 Win7"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/13.1.2 Safari\/605.1.15",
+    "system": "Safari 13.1 macOS"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/76.0.3809.100 Safari\/537.36",
+    "system": "Chrome 76.0 Win10"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.121 Safari\/537.36 OPR\/71.0.3770.284",
+    "system": "Opera 71 Win10"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36 OPR\/72.0.3815.186",
+    "system": "Opera 72 Win10"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36 OPR\/72.0.3815.320",
+    "system": "Opera 72 Win10"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.198 Safari\/537.36",
+    "system": "Chrome 86.0 Win7"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.75 Safari\/537.36",
+    "system": "Chrome 86.0 Win7"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64; rv:81.0) Gecko\/20100101 Firefox\/81.0",
+    "system": "Firefox 81.0 Linux"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/14.0 Safari\/605.1.15",
+    "system": "Safari Generic macOS"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.193 Safari\/537.36",
+    "system": "Chrome 86.0 Win7"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.80 Safari\/537.36 Edg\/86.0.622.48",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.3; Win64; x64; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 Win8.1"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.198 Safari\/537.36",
+    "system": "Chrome 86.0 Linux"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.80 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/14.0.1 Safari\/605.1.15",
+    "system": "Safari Generic macOS"
+  },
+  {
+    "percent": "0.3%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.121 Safari\/537.36",
+    "system": "Chrome 85.0 Linux"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko\/20100101 Firefox\/84.0",
+    "system": "Firefox 84.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64; rv:68.0) Gecko\/20100101 Firefox\/68.0",
+    "system": "Firefox 68.0 Linux"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/13.1 Safari\/605.1.15",
+    "system": "Safari 13.1 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36 Edg\/86.0.622.61",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; WOW64; Trident\/7.0; rv:11.0) like Gecko",
+    "system": "IE 11.0 for Desktop Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36 Edg\/86.0.622.56",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.80 Safari\/537.36 Edg\/86.0.622.43",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/13.1.2 Safari\/605.1.15",
+    "system": "Safari 13.1 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10.14; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.193 Safari\/537.36 Edg\/86.0.622.68",
+    "system": "Edge 86.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10.16; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 MacOSX"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; WOW64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10.13; rv:82.0) Gecko\/20100101 Firefox\/82.0",
+    "system": "Firefox 82.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/13.1.1 Safari\/605.1.15",
+    "system": "Safari 13.1 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.83 Safari\/537.36",
+    "system": "Chrome 85.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.1; Win64; x64; rv:81.0) Gecko\/20100101 Firefox\/81.0",
+    "system": "Firefox 81.0 Win7"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 Win8.1"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/81.0.4044.92 Safari\/537.36",
+    "system": "Chrome 81.0 Linux"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10.14; rv:81.0) Gecko\/20100101 Firefox\/81.0",
+    "system": "Firefox 81.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.111 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.121 Safari\/537.36",
+    "system": "Chrome 85.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.83 Safari\/537.36\/8mqQhSuL-09",
+    "system": "Chrome 85.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko\/20100101 Firefox\/80.0",
+    "system": "Firefox 80.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko\/20100101 Firefox\/77.0",
+    "system": "Firefox 77.0 Linux"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.80 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.198 Safari\/537.36",
+    "system": "Chrome 86.0 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/13.1.3 Safari\/605.1.15",
+    "system": "Safari 13.1 macOS"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.102 YaBrowser\/20.9.3.126 Yowser\/2.5 Safari\/537.36",
+    "system": "Yandex Browser Generic Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; WOW64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.183 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (Windows NT 10.0; WOW64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/86.0.4240.75 Safari\/537.36",
+    "system": "Chrome 86.0 Win10"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.102 Safari\/537.36",
+    "system": "Chrome 85.0 Linux"
+  },
+  {
+    "percent": "0.2%",
+    "useragent": "Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/85.0.4183.102 Safari\/537.36",
+    "system": "Chrome 85.0 Linux"
+  }
+]
