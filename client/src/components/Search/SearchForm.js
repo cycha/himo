@@ -41,7 +41,13 @@ export let SearchForm = (props) => {
                 <Col span={8} key={2}>
                     <Form.Item name="location" label="Location">
                         <GeoSuggest country="fr" autoActivateFirstSuggest="true" autoComplete="off"
-                                    inputClassName="ant-input" types={["geocode"]}
+                                    inputClassName="ant-input"
+                                    suggestItemClassName="ant-select-item"
+                                    suggestItemActiveClassName="ant-select-item-option-active"
+                                    suggestsHiddenClassName="ant-select-dropdown-hidden"
+                                    suggestsClassName="ant-select-dropdown "
+                                    style={{suggests: {minWidth: "200px", left: "0px", top: "2rem", padding: "0px"}}}
+                                    types={["geocode"]}
                                     onSuggestSelect={onSuggestSelect}
                                     getSuggestLabel={getSuggestLabel}/>
                     </Form.Item>
