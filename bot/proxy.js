@@ -22,7 +22,7 @@ async function start() {
     });
 
     ls.on("[PROXY] close", code => {
-        console.log(`child process exited with code ${code}`);
+        console.log(`Scrapoxy exited with code ${code}`);
     });
 }
 

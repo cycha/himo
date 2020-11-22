@@ -14,7 +14,7 @@ class App extends Component {
         return (
             <div className="App">
                 <div className="App-header">
-                    <HomeOutlined /> <span style={{"padding-left": "1rem"}}>HIMO</span>
+                    <HomeOutlined /> <span style={{"paddingLeft": "1rem"}}>HIMO</span>
                 </div>
                 <div className="App-content">
                     <Switch>

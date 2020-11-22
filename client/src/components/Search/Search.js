@@ -9,8 +9,10 @@ export class Search extends React.Component {
         isSearchControlDisplayed: true
     };
 
-    search = (params) => {
-        return API.search(params)
+    search = (body) => {
+        body.page = 0; //TODO Useful for pagination
+        console.log(body);
+        return API.search(body)
             .then(response => response.data)
             .then(ads => <AdList ads={ads}/>)
             .then(element => {
@@ -37,24 +39,26 @@ class AdList extends React.Component {
     render() {
         return (
             <dl>
-                {this.props.ads.map((ad, index) =>
-                    <a href={ad.url} rel="nofollow" target="_blank">
-                        <dt key={index} className="AdItemContainer">
-                            <img src={ad.thumb_urls[0]} className="AdItemImage"/>
-                            <div className="AdItemTextContainer">
-                                <h4>{ad.title}</h4>
-                                <div>{ad.location.city} {ad.location.zipcode}</div>
-                                <div>{new Date(ad.release_date).toLocaleDateString()}</div>
-                                {ad.surface &&
-                                <p>{ad.surface} m²</p>
-                                }
-                            </div>
-                            <h3 className="price">{new Intl.NumberFormat(
-                                'fr-FR',
-                                {style: 'currency', currency: 'EUR', maximumSignificantDigits: 1})
-                                .format(ad.price)}</h3>
-                        </dt>
-                    </a>
+                {this.props.ads.map((ad, index) => {
+                        const date = new Date(ad.release_date);
+                        return <a key={index} href={ad.url} rel="noreferrer" target="_blank">
+                            <dt className="AdItemContainer">
+                                <img src={ad.thumb_urls[0]} className="AdItemImage"/>
+                                <div className="AdItemTextContainer">
+                                    <h4>{ad.title}</h4>
+                                    <div>{ad.location.city} {ad.location.zipcode}</div>
+                                    <div>{date.toLocaleDateString()} à {date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</div>
+                                    {ad.surface &&
+                                    <p>{ad.surface} m²</p>
+                                    }
+                                </div>
+                                <h3 className="price">{new Intl.NumberFormat(
+                                    'fr-FR',
+                                    {style: 'currency', currency: 'EUR', maximumSignificantDigits: 1})
+                                    .format(ad.price)}</h3>
+                            </dt>
+                        </a>
+                    }
                 )}
             </dl>
         )

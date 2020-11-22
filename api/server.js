@@ -31,7 +31,7 @@ app.use(function (req, res, next) {
 //Définition du routeur
 //TODO
 
-app.get('/search', (req, res) => ad.search(req, res));
+app.post('/search', (req, res) => ad.search(req, res));
 
 app.post('/user/signup', (req, res) => user.signup(req, res));
 app.post('/user/login', (req, res)=> user.login(req, res));

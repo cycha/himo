@@ -19,6 +19,9 @@
     "mongoose": "^5.10.11",
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.1",
+    "scrapoxy": "^3.1.1"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.6"
   }
 }

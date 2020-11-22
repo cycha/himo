@@ -31,16 +31,23 @@ const adSchema = mongoose.Schema(
             required: true
         },
         location: {
-            region_name: String,
-            department_id: String,
-            department_name: String,
-            city: String,
-            zipcode:  {
+            region_name: {
+                type: String
+            },
+            department_id: {
+                type: String
+            },
+            department_name: {
+                type: String
+            },
+            city: {
+                type: String
+            },
+            zipcode: {
                 type: String,
                 required: true
             },
-            lat: String,
-            lng: String,
+            coordinates: [Number] // lng, lat
         },
         release_date: {
             type: Date,
@@ -53,6 +60,7 @@ const adSchema = mongoose.Schema(
         }
     }
 );
+adSchema.index({"title": "text", "description": "text", "location.coordinates": "2dsphere"}, {collation: {locale: "fr"}});
 
 adSchema.methods = {
     // authenticate: function(password) {

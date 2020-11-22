@@ -199,25 +199,24 @@ async function parseAdsFromHtml(results, latestDate, latestTitle) {
             console.error("Cannot find realEstateType, element.attributes => " + element.attributes);
         }
         let ad = Ad({
-            "title": element.subject,
-            "description": element.body,
-            "url": element.url,
-            "provider": "lbc",
-            "release_date": element.index_date,
-            "price": element.price ? element.price[0] : null,
-            "surface": surface,
-            "thumb_urls": element.images.urls_thumb,
-            "real_estate_type": realEstateType,
-            "rooms": rooms,
-            "immo_sell_type": immoCellType,
-            "location": {
-                "region_name": element.location.region_name,
-                "department_id": element.location.department_id,
-                "department_name": element.location.department_name,
-                "city": element.location.city,
-                "zipcode": element.location.zipcode,
-                "lat": element.location.lat,
-                "lng": element.location.lng,
+            title: element.subject,
+            description: element.body,
+            url: element.url,
+            provider: "lbc",
+            release_date: element.index_date,
+            price: element.price ? element.price[0] : null,
+            surface: surface,
+            thumb_urls: element.images.urls_thumb,
+            real_estate_type: realEstateType,
+            rooms: rooms,
+            immo_sell_type: immoCellType,
+            location: {
+                region_name: element.location.region_name,
+                department_id: element.location.department_id,
+                department_name: element.location.department_name,
+                city: element.location.city,
+                zipcode: element.location.zipcode,
+                coordinates: [element.location.lng, element.location.lat]
             }
         });
         if (ad.release_date > latestDate && ad.title !== latestTitle) {

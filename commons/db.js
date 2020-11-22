@@ -36,7 +36,7 @@ async function saveAdsToDb(ads) {
             console.log("Saving data...");
             Ad.insertMany(ads)
                 .then(mongooseDocuments => {
-                    console.log("Saved to db");
+                    console.log(mongooseDocuments.length + " ads Saved to db");
                     resolve(mongooseDocuments.length);
                 })
                 .catch(err => {

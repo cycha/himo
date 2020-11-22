@@ -1,8 +1,25 @@
 import React from 'react';
 import {Form, Row, Col, Input, Button} from 'antd';
+import GeoSuggest from 'react-geosuggest';
 
 export let SearchForm = (props) => {
+
     const [form] = Form.useForm();
+
+    const onSuggestSelect = suggest => {
+        if (suggest) {
+            form.setFieldsValue({
+                location: {
+                    address_components: suggest.gmaps.address_components,
+                    coordinates: [suggest.location.lng, suggest.location.lat]
+                }
+            });
+        }
+    }
+
+    function getSuggestLabel(suggest) {
+        return suggest.description.replace(", France", "");
+    }
 
     const onFinish = (values) => {
         props.onSearchClick(values);
@@ -18,37 +35,25 @@ export let SearchForm = (props) => {
             <Row gutter={24}>
                 <Col span={8} key={1}>
                     <Form.Item name="title" label="Title">
-                        <Input placeholder="placeholder"/>
+                        <Input placeholder="placeholder" autoComplete="off"/>
                     </Form.Item>
                 </Col>
                 <Col span={8} key={2}>
                     <Form.Item name="location" label="Location">
-                        <Input placeholder="placeholder"/>
+                        <GeoSuggest country="fr" autoActivateFirstSuggest="true" autoComplete="off"
+                                    inputClassName="ant-input" types={["geocode"]}
+                                    onSuggestSelect={onSuggestSelect}
+                                    getSuggestLabel={getSuggestLabel}/>
                     </Form.Item>
                 </Col>
             </Row>
 
             <Row>
-                <Col
-                    span={24}
-                    style={{
-                        textAlign: 'right',
-                    }}
-                >
-                    <Button type="primary" htmlType="submit">
-                        Search
-                    </Button>
-                    <Button
-                        style={{
-                            margin: '0 8px',
-                        }}
-                        onClick={() => {
-                            form.resetFields();
-                        }}
-                    >
-                        Clear
-                    </Button>
-
+                <Col span={24} style={{textAlign: 'right',}}>
+                    <Button type="primary" htmlType="submit">Search</Button>
+                    <Button style={{margin: '0 8px',}} onClick={() => {
+                        form.resetFields();
+                    }}>Clear</Button>
                 </Col>
             </Row>
         </Form>

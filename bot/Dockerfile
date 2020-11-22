@@ -21,6 +21,4 @@ RUN npm install --silent
 # Copy app source code
 COPY . .
 
-RUN npm install scrapoxy
-
 CMD ["npm","start"]
