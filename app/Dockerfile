@@ -1,5 +1,4 @@
-#  Dockerfile for bot
-
+# Dockerfile for Dev Node Express Backend
 FROM node:alpine
 
 # Copy common folder
@@ -7,17 +6,16 @@ WORKDIR /commons
 COPY ./commons/package*.json ./
 RUN npm install --silent
 COPY ./commons .
-RUN ls
 
 # Create App Directory
-WORKDIR /bot
+WORKDIR /app
 
 # Install Dependencies
-COPY ./bot/package*.json ./
-
+COPY ./app/package*.json ./
 RUN npm install --silent
 
 # Copy app source code
-COPY ./bot .
+COPY ./app .
+RUN rm -r ./client
 
-CMD ["npm","start"]
+CMD ["npm","dev"]

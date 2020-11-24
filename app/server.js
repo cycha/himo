@@ -28,6 +28,11 @@ app.use(function (req, res, next) {
   next();
 });
 
+if (process.env.NODE_ENV === 'production') {
+  console.log("PRODUCTION")
+  app.use(express.static('static'));
+}
+
 //Définition du routeur
 //TODO
 
@@ -40,5 +45,5 @@ app.post('/user/login', (req, res)=> user.login(req, res));
 // require(__dirname + "/controllers/userController")(router);
 
 //Définition et mise en place du port d'écoute
-const port = 9000; //TODO ENV
+const port = process.env.API_PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}`));

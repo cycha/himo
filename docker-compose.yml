@@ -1,40 +1,18 @@
-# Dev conf file no production
+# Base conf file
 version: "3.7"
-services:
-  client:
-    image: himo-client
-    container_name: himo-react-client
-    build:
-      context: ./client
-    volumes:
-      - ./client/:/client
-      - /client/node_modules
-    ports:
-      - 80:3000
-    command: yarn start
-    links:
-      - api
-    networks:
-      - app-network
 
-  api:
-    image: himo-api
-    container_name: himo-node-api
+services:
+  app:
+    image: himo-app
+    container_name: himo-node-app
     build:
-      context: ./api
+      context: .
     volumes:
-      - ./api:/api
-      - ./commons:/commons
-      - /api/node_modules
+    - /app/node_modules
+    - /commons/node_modules
+
     depends_on:
       - mongo
-    environment:
-      NODE_ENV: development
-      MONGODB_URL: mongodb://mongo/db
-    ports:
-      - 9000:9000
-    #      - 9229:9229 # Used for debugger not used yet
-    command: npm run dev
     networks:
       - app-network
 
@@ -42,44 +20,16 @@ services:
     image: himo-bot
     container_name: himo-node-bot
     build:
-      context: ./bot
+      context: .
+      dockerfile: ./bot/Dockerfile
     volumes:
-      - ./bot:/bot
-      - ./commons:/commons
-      - /bot/node_modules
+    - /bot/node_modules
+    - /commons/node_modules
     depends_on:
       - mongo
-    environment:
-      NODE_ENV: development
-      MONGODB_URL: mongodb://mongo/db
-#      INSTANCE_SCALING_MIN: 0
-    ports:
-      - 8889:8889
-    command: npm run start
-    networks:
-      - app-network
-
-  mongo:
-    image: mongo
-    expose:
-      - 27017
-    ports:
-      - 27017:27017
-    volumes:
-      - data-volume:/data/db
-    restart: always
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  data-volume:
-  node_modules:
-  web-root:
-    driver: local
-#      environment:
-#        MONGO_INITDB_ROOT_USERNAME: root
-#        MONGO_INITDB_ROOT_PASSWORD: example

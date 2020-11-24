@@ -1,0 +1,63 @@
+# Dev conf file no production
+version: "3.7"
+services:
+  client:
+    image: himo-client
+    container_name: himo-react-client
+    links:
+      - app
+    networks:
+      - app-network
+    build:
+      context: app/client
+    volumes:
+      - ./app/client/:/client
+      - /client/node_modules
+    ports:
+      - 80:3000
+    command: yarn start
+
+  app:
+    build:
+      dockerfile: ./app/Dockerfile
+    volumes:
+      - ./app:/app
+      - ./commons:/commons
+    environment:
+      NODE_ENV: development
+      MONGODB_URL: mongodb://mongo/db
+    ports:
+      - 3000:3000
+    #      - 9229:9229 # Used for debugger not used yet
+    command: npm run dev
+
+  bot:
+    volumes:
+      - ./bot:/bot
+      - ./commons:/commons
+    environment:
+      NODE_ENV: development
+      MONGODB_URL: mongodb://mongo/db
+    #      INSTANCE_SCALING_MIN: 0
+    ports:
+      - 8889:8889
+    command: npm run start
+
+  mongo:
+    image: mongo
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    volumes:
+      - data-volume:/data/db
+    restart: always
+    networks:
+      - app-network
+
+volumes:
+  data-volume:
+  node_modules:
+#      environment:
+#        MONGO_INITDB_ROOT_USERNAME: root
+#        MONGO_INITDB_ROOT_PASSWORD: example

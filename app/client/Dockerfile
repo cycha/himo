@@ -15,6 +15,6 @@ RUN yarn install
 COPY . .
 
 # Exports
-EXPOSE 9000
+#EXPOSE 9000
 
 CMD ["yarn","start"]
