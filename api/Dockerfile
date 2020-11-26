@@ -8,14 +8,13 @@ RUN npm install --silent
 COPY ./commons .
 
 # Create App Directory
-WORKDIR /app
+WORKDIR /api
 
 # Install Dependencies
-COPY ./app/package*.json ./
+COPY ./api/package*.json ./
 RUN npm install --silent
 
 # Copy app source code
-COPY ./app .
-RUN rm -r ./client
+COPY ./api .
 
 CMD ["npm","dev"]

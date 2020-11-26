@@ -3,7 +3,7 @@ import axios from "axios";
 const headers = {
     "Content-Type": "application/json"
 };
-const burl = "http://localhost:" + process.env.REACT_APP_PORT || 3000;
+const burl = process.env.REACT_APP_END_POINT;
 
 // eslint-disable-next-line
 export default {
@@ -25,7 +25,6 @@ export default {
     signup: function (send) {
         return axios.post(`${burl}/user/signup`, send, {headers: headers});
     },
-
     isAuth: function () {
         return localStorage.getItem("token") !== null;
     },

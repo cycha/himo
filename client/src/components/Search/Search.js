@@ -11,7 +11,6 @@ export class Search extends React.Component {
 
     search = (body) => {
         body.page = 0; //TODO Useful for pagination
-        console.log(body);
         return API.search(body)
             .then(response => response.data)
             .then(ads => <AdList ads={ads}/>)

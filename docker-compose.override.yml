@@ -5,23 +5,23 @@ services:
     image: himo-client
     container_name: himo-react-client
     links:
-      - app
+      - api
     networks:
       - app-network
     build:
-      context: app/client
+      context: client
     volumes:
-      - ./app/client/:/client
+      - ./client/:/client
       - /client/node_modules
     ports:
       - 80:3000
     command: yarn start
 
-  app:
+  api:
     build:
-      dockerfile: ./app/Dockerfile
+      dockerfile: api/Dockerfile
     volumes:
-      - ./app:/app
+      - ./api:/api
       - ./commons:/commons
     environment:
       NODE_ENV: development

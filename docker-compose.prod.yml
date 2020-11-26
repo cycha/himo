@@ -2,42 +2,44 @@
 version: "3.7"
 services:
 
-  app:
+  client:
+    image: himo-client
+    container_name: himo-react-client
+    links:
+      - api
+    networks:
+      - app-network
     build:
-      dockerfile: ./app/Dockerfile.prod
+      context: client
+      dockerfile: Dockerfile.prod
     volumes:
-    - /app/client/node_modules
+      - /client/node_modules
+    ports:
+      - 80:80
+
+  api:
+    build:
+      dockerfile: api/Dockerfile.prod
+    volumes:
+    - /api/client/node_modules
     environment:
       NODE_ENV: production
       MONGODB_URL: mongodb://mongo/db
-      REACT_PORT: 80
       API_PORT: 3000
-#    expose:
-#      - 3000
     ports:
-      - 80:3000
+      - 3000
+    restart: unless-stopped
     command: npm run start
 
-#  bot:
-#    image: himo-bot
-#    container_name: himo-node-bot
-#    build:
-#      context: ./bot
-#    volumes:
-#      - ./bot:/bot
-#      - ./commons:/commons
-#      - /bot/node_modules
-#    depends_on:
-#      - mongo
-#    environment:
-#      NODE_ENV: production
-#      MONGODB_URL: mongodb://mongo/db
-##      INSTANCE_SCALING_MIN: 0
+  bot:
+    environment:
+      NODE_ENV: production
+      MONGODB_URL: mongodb://mongo/db
+#      INSTANCE_SCALING_MIN: 0
 #    ports:
 #      - 8889:8889
-#    command: npm run start
-#    networks:
-#      - app-network
+    restart: unless-stopped
+    command: npm run start
 
   mongo:
     image: mongo
@@ -47,7 +49,7 @@ services:
       - 27017:27017
     volumes:
       - data-volume:/data/db
-    restart: always
+    restart: unless-stopped
     networks:
       - app-network
 

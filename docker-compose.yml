@@ -2,15 +2,14 @@
 version: "3.7"
 
 services:
-  app:
-    image: himo-app
-    container_name: himo-node-app
+  api:
+    image: himo-api
+    container_name: himo-node-api
     build:
       context: .
     volumes:
-    - /app/node_modules
+    - /api/node_modules
     - /commons/node_modules
-
     depends_on:
       - mongo
     networks:

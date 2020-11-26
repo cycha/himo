@@ -5,7 +5,8 @@ const adsPerPage = 35;
 //TODO Add pagination and search parameters
 async function search(req, res) {
     const body = req.body
-    console.log("Received: " + body);
+    console.log("Received at " + new Date().toLocaleString());
+    console.log(body);
 
     const query = {};
     if (body.title) {
@@ -24,7 +25,7 @@ async function search(req, res) {
             }
         ]
     }
-
+    // console.log(query);
     const ads = await Ad.find(query)
         .collation({locale: "fr", strength: 1})
         .sort('-release_date')

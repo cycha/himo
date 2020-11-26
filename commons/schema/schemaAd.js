@@ -60,7 +60,8 @@ const adSchema = mongoose.Schema(
         }
     }
 );
-adSchema.index({"title": "text", "description": "text", "location.coordinates": "2dsphere"}, {collation: {locale: "fr"}});
+adSchema.index({"title": "text", "description": "text"});
+adSchema.index({"location.coordinates": "2dsphere"});
 
 adSchema.methods = {
     // authenticate: function(password) {
