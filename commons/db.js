@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
 const Ad = require('./schema/schemaAd')
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config();
 
 //Connexion à la base de donnée
 async function connect() {
-    console.log("Connecting to mongoDB...");
+    console.log("Connecting to mongoDB... " + process.env.MONGODB_URL);
     return new Promise((resolve, reject) => {
         mongoose
             .connect(process.env.MONGODB_URL, {

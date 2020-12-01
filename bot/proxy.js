@@ -1,5 +1,6 @@
 const {spawn} = require("child_process");
 const axios = require('axios');
+require('dotenv').config();
 const headers = {headers: {'Authorization': new Buffer.from(process.env.COMMANDER_PASSWORD).toString('base64')}};
 const {sleep} = require("./utils/utils");
 

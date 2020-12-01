@@ -8,10 +8,11 @@ const utils = require('../utils/utils')
 const HttpsProxyAgent = require('https-proxy-agent');
 const proxyAgent = new HttpsProxyAgent('http://127.0.0.1:8888');
 const userAgents = require('../utils/userAgents');
-const regex = /"ads"[:](\[.*\],"ads_alu")/g;
+const cloudProviderUrls = require('../utils/cloudProviderUrls');
+const regex = /(?<="ads":).*\[.*].+?(?=,"ads_alu")/g;
 const defaultUrl = "https://www.leboncoin.fr/recherche/?category=9";
 const pagesLimit = 30; // Maximum pages to scrap
-const maxRetry = 5;
+const maxRetry = 10;
 const waitSuccess = 10;
 const waitError = 30
 
@@ -19,6 +20,9 @@ const waitError = 30
 // saveHtmlFromInternetToFile(url,"./mock/leboncoin.html");
 // saveAdsFromFileToDb("./mock/leboncoin.html");
 //###############################
+// db.connect()
+//     .then(() => startScrapping())
+//     .then(() => console.log("Done"))
 
 async function startScrapping(url) {
     console.log("Start scrapping Leboncoin...");
@@ -26,11 +30,14 @@ async function startScrapping(url) {
     let pageNumber = 1;
     let adsSaved = 0;
     const retryArray = []
+    let requestCount = 0;
 
     const latestAdInDb = await db.getMostRecentAdInDb("lbc");
     // Compare latest ad date and title from db to know if it can be saved
     const latestDate = latestAdInDb ? latestAdInDb.release_date : new Date(0);
     const latestTitle = latestAdInDb ? latestAdInDb.title : "";
+    // Shuffle proxy array
+    cloudProviderUrls.sort(() => Math.random() - 0.5);
 
     do {
         try {
@@ -40,8 +47,13 @@ async function startScrapping(url) {
             let html;
             do {
                 try {
+                    const randomUserAgent = getRandomUserAgent();
+                    const cloudChosen = cloudProviderUrls[requestCount % cloudProviderUrls.length];
+                    requestCount++;
+                    console.log("-> Requesting " + urlWithPage + " - " + cloudChosen /*randomUserAgent*/);
                     // html = await getAdsFromInternet(urlWithPage);
-                    html = await getAdsWithAxiosFromInternet(urlWithPage);
+                    // html = await getHtmlFromInternetWithAxios(urlWithPage);
+                    html = await getHtmlFromCloudProxy(urlWithPage, randomUserAgent, cloudChosen);
                     requestWorked = true;
                     retryArray.push(retry);
                 } catch (e) {
@@ -91,9 +103,15 @@ async function saveHtmlFromInternetToFile(url, fileName) {
         .then(results => utils.saveToFile(fileName, results))
 }
 
-async function getAdsWithAxiosFromInternet(url) {
-    const randomUserAgent = getRandomUserAgent();
-    console.log("-> Requesting " + url + " - " + randomUserAgent);
+async function getHtmlFromCloudProxy(url, userAgent, providerUrl) {
+    return await axios.post(providerUrl, {"url": url, "userAgent": userAgent})
+        .then(res => {
+            // console.log(res.data);
+            return res.data
+        });
+}
+
+async function getHtmlFromInternetWithAxios(url, userAgent) {
 
     let response = await axios.get(url,
         {
@@ -101,7 +119,7 @@ async function getAdsWithAxiosFromInternet(url) {
                 'Connection': 'keep-alive',
                 'DNT': '1',
                 'Upgrade-Insecure-Requests': '1',
-                'User-Agent': randomUserAgent,
+                'User-Agent': userAgent,
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
                 'Sec-Fetch-Site': 'none',
                 'Sec-Fetch-Mode': 'navigate',
@@ -115,9 +133,7 @@ async function getAdsWithAxiosFromInternet(url) {
 }
 
 // Unused, prefer axios
-async function getAdsFromInternet(url) {
-    const randomUserAgent = getRandomUserAgent();
-    console.log("Request started for " + url + " - " + randomUserAgent);
+async function getAdsFromInternet(url, userAgent) {
 
     return fetch(url, {
         "headers": {
@@ -129,7 +145,7 @@ async function getAdsFromInternet(url) {
             "sec-fetch-site": "none",
             "sec-fetch-user": "?1",
             "upgrade-insecure-requests": "1",
-            // "user-agent": randomUserAgent
+            // "user-agent": userAgent
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36"
         },
         "referrer": "https://www.leboncoin.fr/recherche/?category=9",
@@ -155,11 +171,7 @@ async function getAdsFromInternet(url) {
 
 async function parseAdsFromHtml(results, latestDate, latestTitle) {
     console.log("Parsing...");
-    let array = results.toString().match(regex);
-    let jsonArrayStr = array[array.length - 1]
-        .replace('"ads":', '')
-        .replace(",\"ads_alu\"", "");
-    let jsonArray = JSON.parse(jsonArrayStr);
+    let jsonArray = JSON.parse(results.toString().match(regex)[0]);
 
     let ads = [];
     let isUpToDate = false
