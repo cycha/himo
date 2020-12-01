@@ -15,5 +15,8 @@
   "https://asia-east2-himo-398d8.cloudfunctions.net/get-html-12",
   "https://asia-northeast1-himo-398d8.cloudfunctions.net/get-html-13",
   "https://asia-northeast2-himo-398d8.cloudfunctions.net/get-html-14",
-  "https://asia-northeast3-himo-398d8.cloudfunctions.net/get-html-15"
+  "https://asia-northeast3-himo-398d8.cloudfunctions.net/get-html-15",
+  "https://asia-south1-himo-398d8.cloudfunctions.net/get-html-16",
+  "https://asia-southeast2-himo-398d8.cloudfunctions.net/get-html-17",
+  "https://australia-southeast1-himo-398d8.cloudfunctions.net/get-html-18"
 ]

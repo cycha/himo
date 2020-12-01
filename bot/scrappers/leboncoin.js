@@ -13,8 +13,8 @@ const regex = /(?<="ads":).*\[.*].+?(?=,"ads_alu")/g;
 const defaultUrl = "https://www.leboncoin.fr/recherche/?category=9";
 const pagesLimit = 30; // Maximum pages to scrap
 const maxRetry = 10;
-const waitSuccess = 10;
-const waitError = 30
+const waitSuccess = 5;
+const waitError = 10;
 
 //################ SAVE MOCK DATA EXAMPLE #########
 // saveHtmlFromInternetToFile(url,"./mock/leboncoin.html");

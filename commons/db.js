@@ -30,9 +30,12 @@ async function close() {
 }
 
 async function saveAdsToDb(ads) {
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
         if (ads.length) {
             console.log("Saving data...");
+            if (!isConnected()) {
+                await connect();
+            }
             Ad.insertMany(ads)
                 .then(mongooseDocuments => {
                     console.log(mongooseDocuments.length + " ads Saved to db");
@@ -47,6 +50,10 @@ async function saveAdsToDb(ads) {
             resolve()
         }
     });
+}
+
+function isConnected() {
+    return mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2; // Check if connected or connecting
 }
 
 async function getMostRecentAdInDb(source) {

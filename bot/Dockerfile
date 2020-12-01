@@ -7,7 +7,6 @@ WORKDIR /commons
 COPY ./commons/package*.json ./
 RUN npm install --silent
 COPY ./commons .
-RUN ls
 
 # Create App Directory
 WORKDIR /bot
