@@ -86,6 +86,15 @@ a {
     right: 1rem;
 }
 
+.providerImage {
+    position: absolute;
+    max-height: 4rem;
+    height:auto;
+    /*width: max-content;*/
+    bottom: 0;
+    right: 0;
+}
+
 @keyframes App-logo-spin {
     from {
         transform: rotate(0deg);

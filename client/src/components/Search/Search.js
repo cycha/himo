@@ -35,6 +35,12 @@ export class Search extends React.Component {
 
 class AdList extends React.Component {
 
+    getProviderImageUrl(provider) {
+        switch (provider) {
+            case "lbc": return "https://sitinweb.fr/blog/data/medias/leboncoin.png"
+        }
+    }
+
     render() {
         return (
             <dl>
@@ -55,6 +61,7 @@ class AdList extends React.Component {
                                     'fr-FR',
                                     {style: 'currency', currency: 'EUR', maximumSignificantDigits: 1})
                                     .format(ad.price)}</h3>
+                                <img src={this.getProviderImageUrl(ad.provider)} className="providerImage" />
                             </dt>
                         </a>
                     }
