@@ -13,17 +13,35 @@ async function search(req, res) {
         query["$text"] = {$search: body.title};
     }
     if (body.location) {
-        query["$or"] = [{
-            "location.coordinates": {
-                $geoWithin: {$centerSphere: [body.location.coordinates, 5 / 6378]}
-            }
-        },
-            {
-                "location.city": body.location.address_components
-                    .find(o => o.types.find(o => o === "locality"))
-                    .short_name
-            }
-        ]
+        let city;
+        let political;
+        try {
+            city = body.location.address_components
+                .find(o => o.types.find(o => o === "locality"))
+                .short_name;
+        } catch (e) {
+            console.log(e);
+            political = body.location.address_components
+                .find(o => o.types.find(o => o === "political"))
+                .short_name
+        }
+
+        let orArray = []
+        if (body.location.coordinates) {
+            orArray.push({
+                "location.coordinates": {
+                    $geoWithin: {$centerSphere: [body.location.coordinates, 5 / 6378]}
+                }
+            });
+        }
+        if (city) {
+            orArray.push({"location.city": city})
+        } else if (political) {
+            orArray.push({"location.department_name": political})
+            orArray.push({"location.region_name": political})
+        }
+
+        query["$or"] = orArray;
     }
     // console.log(query);
     const ads = await Ad.find(query)
