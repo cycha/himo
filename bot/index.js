@@ -7,8 +7,8 @@ const mdq = require('mongo-date-query');
 
 // proxy.start();
 
-// Task to scrap le bon coin every 10 mins from 6 to midnight
-const scrappingTask = cron.schedule('*/2 6-23 * * *', ScrappingTask);
+// Task to scrap le bon coin every 2 mins from 6 to midnight
+const scrappingTask = cron.schedule('*/2 5-22 * * *', ScrappingTask);
 
 // Clean db once a month
 cron.schedule('0 0 1 * *', () => {
