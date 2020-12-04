@@ -65,7 +65,7 @@ export let SearchForm = (props) => {
                     <Input placeholder="Ensoleillé, balcon, etc..." autoComplete="off"/>
                 </Form.Item>
                 <Form.Item name="location" label="Localisation">
-                    <GeoSuggest country="fr" autoActivateFirstSuggest="true" autoComplete="off"
+                    <GeoSuggest country="fr" autoActivateFirstSuggest="true"
                                 placeholder="Ville, département, région..."
                                 inputClassName="ant-input"
                                 suggestItemClassName="ant-select-item"
