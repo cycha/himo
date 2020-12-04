@@ -17,6 +17,7 @@ const urlencodedParser = bodyParser.urlencoded({
 });
 app.use(urlencodedParser);
 app.use(bodyParser.json());
+app.set('trust proxy', true);
 //TODO Use Helmet for protection
 
 //Définition des CORS
@@ -25,6 +26,9 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Credentials', true);
+    if (req.complete) {
+        console.log(new Date().toLocaleString() + " " + req.ip + " " + req.url + " - " + JSON.stringify(req.body));
+    }
     next();
 });
 

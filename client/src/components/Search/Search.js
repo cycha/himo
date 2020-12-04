@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import {Button} from "antd";
+import {Button, BackTop} from "antd";
 import API from "../../utils/API";
 import {SearchForm} from "./SearchForm";
 
@@ -28,6 +28,7 @@ export class Search extends React.Component {
                 <SearchForm onSearchClick={this.search}/>
                 }
                 <div id="results"/>
+                <BackTop />
             </div>
         );
     }
@@ -59,7 +60,7 @@ class AdList extends React.Component {
                                 </div>
                                 <h3 className="price">{new Intl.NumberFormat(
                                     'fr-FR',
-                                    {style: 'currency', currency: 'EUR', maximumSignificantDigits: 1})
+                                    {style: 'currency', currency: 'EUR', minimumFractionDigits: 0})
                                     .format(ad.price)}</h3>
                                 <img src={this.getProviderImageUrl(ad.provider)} className="providerImage" />
                             </dt>

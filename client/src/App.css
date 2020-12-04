@@ -79,6 +79,10 @@ a {
     object-fit: cover;
 }
 
+.ant-form-item {
+    margin-right: 1rem!important;
+}
+
 .price {
     position: absolute;
     top: 50%;

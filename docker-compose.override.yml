@@ -1,4 +1,4 @@
-# Dev conf file no production
+# Dev conf file not production
 version: "3.7"
 services:
   client:

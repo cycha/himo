@@ -2,16 +2,40 @@ const Ad = require("commons/schema/schemaAd");
 
 const adsPerPage = 35;
 
-//TODO Add pagination and search parameters
 async function search(req, res) {
     const body = req.body
-    console.log("Received at " + new Date().toLocaleString());
-    console.log(body);
-
     const query = {};
     if (body.title) {
         query["$text"] = {$search: body.title};
     }
+    if (body.type) {
+        query["real_estate_type"] = body.type;
+    }
+    if (body.sellType) {
+        query["immo_sell_type"] = body.sellType;
+    }
+    if (body.priceMin || body.priceMax) {
+        let priceObj = {};
+        if (body.priceMin) {
+            priceObj["$gte"] = body.priceMin;
+        }
+        if (body.priceMax) {
+            priceObj["$lte"] = body.priceMax;
+        }
+        query["price"] = priceObj;
+    }
+
+    if (body.surfaceMin || body.surfaceMax) {
+        let surfaceObj = {};
+        if (body.surfaceMin) {
+            surfaceObj["$gte"] = body.surfaceMin;
+        }
+        if (body.surfaceMax) {
+            surfaceObj["$lte"] = body.surfaceMax;
+        }
+        query["surface"] = surfaceObj;
+    }
+
     if (body.location) {
         let city;
         let political;
@@ -55,10 +79,6 @@ async function search(req, res) {
     } catch (error) {
         return res.status(500).json({error});
     }
-}
-
-function getStringWithQuotes(value) {
-    return "\"" + value + "\"";
 }
 
 module.exports.search = search;
