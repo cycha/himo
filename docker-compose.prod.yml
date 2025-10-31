@@ -1,61 +1,86 @@
-# Prod conf file
-version: "3.7"
-services:
+# Production Docker Compose Configuration
+# Updated for Vite + npm + modern setup
+version: "3.8"
 
+services:
+  # Frontend - React App with Nginx
   client:
-    image: himo-client
-    container_name: himo-react-client
-    links:
+    image: himo-client:latest
+    container_name: himo-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    depends_on:
       - api
     networks:
       - app-network
-    build:
-      context: client
-      dockerfile: Dockerfile.prod
-    volumes:
-      - /client/node_modules
-    ports:
-      - 80:80
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  # Backend - Node.js API
   api:
+    image: himo-api:latest
+    container_name: himo-api
     build:
-      dockerfile: api/Dockerfile.prod
-    volumes:
-    - /api/client/node_modules
+      context: ./api
+      dockerfile: Dockerfile.prod
     environment:
       NODE_ENV: production
-      MONGODB_URL: mongodb://mongo/db
-      API_PORT: 3000
+      MONGODB_URI: mongodb://mongo:27017/himo
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET}
     ports:
-      - 3000
-    restart: unless-stopped
-    command: npm run start
-
-  bot:
-    environment:
-      NODE_ENV: production
-      MONGODB_URL: mongodb://mongo/db
-#      INSTANCE_SCALING_MIN: 0
-#    ports:
-#      - 8889:8889
-    restart: unless-stopped
-    command: npm run start
-
-  mongo:
-    image: mongo
-    expose:
-      - 27017
-    ports:
-      - 27017:27017
-    volumes:
-      - data-volume:/data/db
-    restart: unless-stopped
+      - "3000:3000"
+    depends_on:
+      - mongo
     networks:
       - app-network
+    restart: unless-stopped
+    command: npm run start
+
+  # Bot - Web Scraper
+  bot:
+    image: himo-bot:latest
+    container_name: himo-bot
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongo:27017/himo
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Database - MongoDB
+  mongo:
+    image: mongo:6-alpine
+    container_name: himo-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
-  data-volume:
-  node_modules:
-#      environment:
-#        MONGO_INITDB_ROOT_USERNAME: root
-#        MONGO_INITDB_ROOT_PASSWORD: example
+  mongo-data:
+    driver: local
