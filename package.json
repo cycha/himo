@@ -6,7 +6,6 @@
   "workspaces": [
     "api",
     "bot",
-    "client",
     "commons"
   ],
   "scripts": {
