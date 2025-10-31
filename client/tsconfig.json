@@ -22,7 +22,7 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "types": ["node", "vite/client"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "build"]

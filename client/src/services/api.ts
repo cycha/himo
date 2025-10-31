@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import type { AuthResponse, SearchFilters, SearchResponse, LoginForm, SignupForm, User } from '../types';
 
-const API_URL = process.env.REACT_APP_END_POINT || 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 class ApiClient {
   private client: AxiosInstance;
