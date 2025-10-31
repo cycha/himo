@@ -2,8 +2,9 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ConfigProvider, Layout, Menu, Button } from 'antd';
-import { HomeOutlined, LoginOutlined, UserAddOutlined, DashboardOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Home, LogIn, UserPlus, LayoutDashboard, LogOut } from 'lucide-react';
+import { Button } from './components/ui/button';
+import { Toaster } from './components/ui/toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
 
@@ -13,8 +14,6 @@ import LoginForm from './features/auth/LoginForm';
 import SignupForm from './features/auth/SignupForm';
 import DashboardPage from './features/dashboard/DashboardPage';
 import PrivateRoute from './components/PrivateRoute';
-
-const { Header, Content } = Layout;
 
 // Create a client
 const queryClient = new QueryClient({
@@ -32,59 +31,69 @@ const AppLayout: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <HomeOutlined style={{ fontSize: '24px', color: 'white', marginRight: '16px' }} />
-          <span style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>HIMO</span>
-        </div>
-        
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          selectedKeys={[location.pathname]}
-          style={{ flex: 1, marginLeft: '50px' }}
-          items={[
-            {
-              key: '/',
-              icon: <HomeOutlined />,
-              label: <Link to="/">Search</Link>,
-            },
-            ...(isAuthenticated
-              ? [
-                  {
-                    key: '/dashboard',
-                    icon: <DashboardOutlined />,
-                    label: <Link to="/dashboard">Dashboard</Link>,
-                  },
-                ]
-              : []),
-          ]}
-        />
-
-        <div>
-          {isAuthenticated ? (
-            <Button type="primary" icon={<LogoutOutlined />} onClick={logout}>
-              Logout
-            </Button>
-          ) : (
-            <>
-              <Link to="/login">
-                <Button type="text" icon={<LoginOutlined />} style={{ color: 'white' }}>
-                  Login
-                </Button>
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-slate-900 border-b border-slate-800">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <Home className="h-6 w-6 text-white" />
+              <span className="text-white text-xl font-bold">HIMO</span>
+            </div>
+            
+            {/* Navigation */}
+            <nav className="flex items-center gap-6 flex-1 ml-12">
+              <Link 
+                to="/" 
+                className={`flex items-center gap-2 text-sm font-medium transition-colors ${
+                  location.pathname === '/' ? 'text-white' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Home className="h-4 w-4" />
+                Search
               </Link>
-              <Link to="/signup">
-                <Button type="primary" icon={<UserAddOutlined />} style={{ marginLeft: '8px' }}>
-                  Sign Up
-                </Button>
-              </Link>
-            </>
-          )}
-        </div>
-      </Header>
+              {isAuthenticated && (
+                <Link 
+                  to="/dashboard"
+                  className={`flex items-center gap-2 text-sm font-medium transition-colors ${
+                    location.pathname === '/dashboard' ? 'text-white' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  Dashboard
+                </Link>
+              )}
+            </nav>
 
-      <Content style={{ padding: '0' }}>
+            {/* Auth Buttons */}
+            <div className="flex items-center gap-2">
+              {isAuthenticated ? (
+                <Button onClick={logout} variant="default" size="sm">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-slate-800">
+                      <LogIn className="h-4 w-4 mr-2" />
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button size="sm">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1">
         <Routes>
           <Route path="/" element={<SearchPage />} />
           <Route path="/login" element={<LoginForm />} />
@@ -99,29 +108,21 @@ const AppLayout: React.FC = () => {
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </Content>
-    </Layout>
+      </main>
+    </div>
   );
 };
 
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: '#1890ff',
-            borderRadius: 4,
-          },
-        }}
-      >
-        <AuthProvider>
-          <BrowserRouter>
-            <AppLayout />
-          </BrowserRouter>
-        </AuthProvider>
-      </ConfigProvider>
-      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+      <AuthProvider>
+        <BrowserRouter>
+          <AppLayout />
+          <Toaster position="top-right" />
+        </BrowserRouter>
+      </AuthProvider>
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 };

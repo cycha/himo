@@ -1,99 +1,90 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Input, Button, Card } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { useSignup } from '../../hooks/api/useAuth';
-import type { SignupForm as SignupFormType } from '../../types';
-import './Auth.css';
 
 const SignupForm: React.FC = () => {
-  const [form] = Form.useForm();
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
   const signupMutation = useSignup();
 
-  const onFinish = (values: SignupFormType) => {
-    signupMutation.mutate(values);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      return; // Could add toast here
+    }
+    if (email && password) {
+      signupMutation.mutate({ email, password });
+    }
   };
 
   return (
-    <div className="auth-container signup">
-      <Card className="auth-card" title="Create Your Account">
-        <Form
-          form={form}
-          name="signup"
-          onFinish={onFinish}
-          autoComplete="off"
-          layout="vertical"
-        >
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: 'Please input your email!' },
-              { type: 'email', message: 'Please enter a valid email!' },
-            ]}
-          >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Email"
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[
-              { required: true, message: 'Please input your password!' },
-              { min: 6, message: 'Password must be at least 6 characters!' },
-              {
-                pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                message: 'Password must contain uppercase, lowercase, and number!',
-              },
-            ]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Password"
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="confirmPassword"
-            dependencies={['password']}
-            rules={[
-              { required: true, message: 'Please confirm your password!' },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Passwords do not match!'));
-                },
-              }),
-            ]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Confirm Password"
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">
+            Create Your Account
+          </CardTitle>
+          <CardDescription className="text-center">
+            Sign up to start finding your dream property
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
             <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              block
-              loading={signupMutation.isPending}
+              type="submit"
+              className="w-full"
+              size="lg"
+              disabled={signupMutation.isPending || password !== confirmPassword}
             >
-              Sign up
+              {signupMutation.isPending ? 'Creating account...' : 'Sign up'}
             </Button>
-          </Form.Item>
-
-          <div style={{ textAlign: 'center' }}>
-            Already have an account? <Link to="/login">Log in</Link>
+          </form>
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary hover:underline font-medium">
+              Log in
+            </Link>
           </div>
-        </Form>
+        </CardContent>
       </Card>
     </div>
   );

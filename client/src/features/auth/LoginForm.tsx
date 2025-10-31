@@ -1,70 +1,74 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Input, Button, Card } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { useLogin } from '../../hooks/api/useAuth';
-import type { LoginForm as LoginFormType } from '../../types';
-import './Auth.css';
 
 const LoginForm: React.FC = () => {
-  const [form] = Form.useForm();
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const loginMutation = useLogin();
 
-  const onFinish = (values: LoginFormType) => {
-    loginMutation.mutate(values);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email && password) {
+      loginMutation.mutate({ email, password });
+    }
   };
 
   return (
-    <div className="auth-container">
-      <Card className="auth-card" title="Login to Himo">
-        <Form
-          form={form}
-          name="login"
-          onFinish={onFinish}
-          autoComplete="off"
-          layout="vertical"
-        >
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: 'Please input your email!' },
-              { type: 'email', message: 'Please enter a valid email!' },
-            ]}
-          >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Email"
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your password!' }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Password"
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">
+            Welcome to Himo
+          </CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
             <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              block
-              loading={loginMutation.isPending}
+              type="submit"
+              className="w-full"
+              size="lg"
+              disabled={loginMutation.isPending}
             >
-              Log in
+              {loginMutation.isPending ? 'Logging in...' : 'Log in'}
             </Button>
-          </Form.Item>
-
-          <div style={{ textAlign: 'center' }}>
-            Don't have an account? <Link to="/signup">Sign up now</Link>
+          </form>
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-primary hover:underline font-medium">
+              Sign up
+            </Link>
           </div>
-        </Form>
+        </CardContent>
       </Card>
     </div>
   );
