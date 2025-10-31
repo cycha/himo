@@ -1,35 +1,48 @@
-import { User, IUser } from '@himo/commons';
-import { SignupDto, LoginDto } from '../types/search.dto';
+import { IUser } from '@himo/commons';
+import { userRepository } from '../repositories/user.repository';
+import { SignupDto, LoginDto, AuthResponseDto, UserResponseDto } from '../dtos/user.dto';
 import { AppError } from '../middleware/error-handler';
 
-export class UserService {
-  async signup(signupDto: SignupDto): Promise<{ user: IUser; token: string }> {
+export interface IUserService {
+  signup(signupDto: SignupDto): Promise<AuthResponseDto>;
+  login(loginDto: LoginDto): Promise<AuthResponseDto>;
+  getUserById(id: string): Promise<UserResponseDto | null>;
+}
+
+export class UserService implements IUserService {
+  constructor(private readonly repository = userRepository) {}
+
+  async signup(signupDto: SignupDto): Promise<AuthResponseDto> {
     const { email, password } = signupDto;
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email }).exec();
-    if (existingUser) {
+    const exists = await this.repository.exists(email);
+    if (exists) {
       throw new AppError(409, 'A user with this email already exists');
     }
 
     // Create new user (password will be hashed by pre-save hook)
-    const user = new User({ email, password });
-    await user.save();
+    const user = await this.repository.create({ email, password });
 
     // Generate JWT token
     const token = user.getToken();
 
     return {
-      user,
-      token,
+      success: true,
+      message: 'User created successfully',
+      data: {
+        id: String(user._id),
+        email: user.email,
+        token,
+      },
     };
   }
 
-  async login(loginDto: LoginDto): Promise<{ user: IUser; token: string }> {
+  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const { email, password } = loginDto;
 
-    // Find user by email
-    const user = await User.findOne({ email }).exec();
+    // Find user by email (with password for authentication)
+    const user = await this.repository.findByEmail(email);
     if (!user) {
       throw new AppError(401, 'Invalid email or password');
     }
@@ -44,17 +57,27 @@ export class UserService {
     const token = user.getToken();
 
     return {
-      user,
-      token,
+      success: true,
+      message: 'Authentication successful',
+      data: {
+        id: String(user._id),
+        email: user.email,
+        token,
+      },
     };
   }
 
-  async getUserById(id: string): Promise<any | null> {
-    return User.findById(id).select('-password').lean().exec();
-  }
+  async getUserById(id: string): Promise<UserResponseDto | null> {
+    const user = await this.repository.findById(id);
+    if (!user) {
+      return null;
+    }
 
-  async getUserByEmail(email: string): Promise<any | null> {
-    return User.findOne({ email }).exec();
+    return {
+      id: String(user._id),
+      email: user.email,
+      created_at: user.created_at,
+    };
   }
 }
 

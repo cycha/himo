@@ -1,11 +1,39 @@
-import { Ad, IAd } from '@himo/commons';
-import { SearchAdDto } from '../types/search.dto';
+import { IAd } from '@himo/commons';
 import { FilterQuery } from 'mongoose';
+import { adRepository } from '../repositories/ad.repository';
+import { SearchAdDto, AdResponseDto, SearchResultDto } from '../dtos/ad.dto';
 
-const ADS_PER_PAGE = 35;
+export interface IAdService {
+  search(searchDto: SearchAdDto, page?: number): Promise<SearchResultDto>;
+  getById(id: string): Promise<AdResponseDto | null>;
+}
 
-export class AdService {
-  async search(searchDto: SearchAdDto, page: number = 0): Promise<any[]> {
+export class AdService implements IAdService {
+  constructor(private readonly repository = adRepository) {}
+
+  async search(searchDto: SearchAdDto, page: number = 0): Promise<SearchResultDto> {
+    const query = this.buildSearchQuery(searchDto);
+    
+    const [ads, totalCount] = await Promise.all([
+      this.repository.findWithFilters(query, page),
+      this.repository.count(query),
+    ]);
+
+    return {
+      success: true,
+      data: ads as AdResponseDto[],
+      page,
+      count: ads.length,
+      totalPages: Math.ceil(totalCount / 35),
+    };
+  }
+
+  async getById(id: string): Promise<AdResponseDto | null> {
+    const ad = await this.repository.findById(id);
+    return ad as AdResponseDto | null;
+  }
+
+  private buildSearchQuery(searchDto: SearchAdDto): FilterQuery<IAd> {
     const query: FilterQuery<IAd> = {};
 
     // Text search
@@ -85,26 +113,7 @@ export class AdService {
       }
     }
 
-    const ads = await Ad.find(query)
-      .collation({ locale: 'fr', strength: 1 })
-      .sort('-release_date')
-      .skip(page * ADS_PER_PAGE)
-      .limit(ADS_PER_PAGE)
-      .lean()
-      .exec();
-
-    return ads;
-  }
-
-  async getById(id: string): Promise<any | null> {
-    return Ad.findById(id).lean().exec();
-  }
-
-  async countByQuery(searchDto: SearchAdDto): Promise<number> {
-    const query: FilterQuery<IAd> = {};
-    // Implement the same query logic as search method
-    // (omitted for brevity - would mirror the search method)
-    return Ad.countDocuments(query).exec();
+    return query;
   }
 }
 

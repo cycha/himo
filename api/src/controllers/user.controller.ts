@@ -1,24 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services/user.service';
-import { SignupDto, LoginDto } from '../types/search.dto';
+import { SignupDto, LoginDto } from '../dtos/user.dto';
 import { AuthRequest } from '../middleware/auth';
 
 export class UserController {
+  constructor(private readonly service = userService) {}
+
   async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const signupDto: SignupDto = req.body;
-
-      const { user, token } = await userService.signup(signupDto);
-
-      res.status(201).json({
-        success: true,
-        message: 'User created successfully',
-        data: {
-          id: user._id,
-          email: user.email,
-          token,
-        },
-      });
+      const result = await this.service.signup(signupDto);
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
@@ -27,18 +19,8 @@ export class UserController {
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const loginDto: LoginDto = req.body;
-
-      const { user, token } = await userService.login(loginDto);
-
-      res.status(200).json({
-        success: true,
-        message: 'Authentication successful',
-        data: {
-          id: user._id,
-          email: user.email,
-          token,
-        },
-      });
+      const result = await this.service.login(loginDto);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
@@ -54,7 +36,7 @@ export class UserController {
         return;
       }
 
-      const user = await userService.getUserById(req.user.id);
+      const user = await this.service.getUserById(req.user.id);
 
       if (!user) {
         res.status(404).json({
@@ -66,11 +48,7 @@ export class UserController {
 
       res.status(200).json({
         success: true,
-        data: {
-          id: user._id,
-          email: user.email,
-          created_at: user.created_at,
-        },
+        data: user,
       });
     } catch (error) {
       next(error);
