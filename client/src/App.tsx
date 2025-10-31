@@ -6,7 +6,6 @@ import { Home, LogIn, UserPlus, LayoutDashboard, LogOut } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Toaster } from './components/ui/toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import './App.css';
 
 // Feature Components
 import SearchPage from './features/ads/SearchPage';
