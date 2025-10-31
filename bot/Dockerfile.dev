@@ -1,0 +1,23 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files for all workspaces
+COPY package*.json ./
+COPY bot/package*.json ./bot/
+COPY commons/package*.json ./commons/
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY bot/ ./bot/
+COPY commons/ ./commons/
+COPY tsconfig.json ./
+
+# Build TypeScript
+RUN npm run build
+
+WORKDIR /app/bot
+
+CMD ["npm", "run", "dev"]

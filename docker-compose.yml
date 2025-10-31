@@ -1,34 +1,66 @@
-# Base conf file
-version: "3.7"
+# Base docker-compose configuration
+version: "3.8"
 
 services:
+  mongo:
+    image: mongo:latest
+    container_name: himo-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: himo
+    networks:
+      - himo-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
     image: himo-api
-    container_name: himo-node-api
+    container_name: himo-api
     build:
       context: .
-    volumes:
-    - /api/node_modules
-    - /commons/node_modules
+      dockerfile: api/Dockerfile
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      MONGODB_URL: mongodb://mongo:27017/himo
+      API_PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001}
+    ports:
+      - "3000:3000"
     networks:
-      - app-network
+      - himo-network
+    restart: unless-stopped
 
   bot:
     image: himo-bot
-    container_name: himo-node-bot
+    container_name: himo-bot
     build:
       context: .
-      dockerfile: ./bot/Dockerfile
-    volumes:
-    - /bot/node_modules
-    - /commons/node_modules
+      dockerfile: bot/Dockerfile
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      MONGODB_URL: mongodb://mongo:27017/himo
+      SCRAPING_INTERVAL: ${SCRAPING_INTERVAL:-*/2 5-22 * * *}
     networks:
-      - app-network
+      - himo-network
+    restart: unless-stopped
 
 networks:
-  app-network:
+  himo-network:
     driver: bridge
+
+volumes:
+  mongo-data:
