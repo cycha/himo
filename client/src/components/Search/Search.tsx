@@ -11,24 +11,26 @@ const { Text } = Typography;
 
 const Search: React.FC = () => {
   const [form] = Form.useForm();
-  const [filters, setFilters] = useState<SearchFilters>({});
+  const [filters, setFilters] = useState<SearchFilters>({ page: 0 });
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['ads', filters],
     queryFn: () => api.searchAds(filters),
-    enabled: Object.keys(filters).length > 0,
+    enabled: hasSearched,
   });
 
   const onFinish = (values: any) => {
     const searchFilters: SearchFilters = {
       type: values.type,
-      priceMin: values.priceMin,
-      priceMax: values.priceMax,
-      surfaceMin: values.surfaceMin,
-      surfaceMax: values.surfaceMax,
+      priceMin: values.priceMin ? Number(values.priceMin) : undefined,
+      priceMax: values.priceMax ? Number(values.priceMax) : undefined,
+      surfaceMin: values.surfaceMin ? Number(values.surfaceMin) : undefined,
+      surfaceMax: values.surfaceMax ? Number(values.surfaceMax) : undefined,
       page: 0,
     };
     setFilters(searchFilters);
+    setHasSearched(true);
   };
 
   const formatPrice = (price: number) => {
@@ -81,7 +83,24 @@ const Search: React.FC = () => {
         </Form>
       </Card>
 
-      {data && (
+      {!hasSearched && (
+        <Card className="results-card">
+          <Empty 
+            description="Click the search button to find real estate ads"
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        </Card>
+      )}
+
+      {hasSearched && isLoading && (
+        <Card className="results-card">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p>Loading results...</p>
+          </div>
+        </Card>
+      )}
+
+      {hasSearched && !isLoading && data && (
         <Card className="results-card" title={`${data.count} Results`}>
           {data.count === 0 ? (
             <Empty description="No ads found. Try adjusting your search criteria." />
