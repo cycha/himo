@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "clean": "rm -rf dist",
-    "test": "jest"
+    "test": "jest",
+    "seed": "tsx src/scripts/seed-db.ts"
   },
   "dependencies": {
     "@himo/commons": "file:../commons",
