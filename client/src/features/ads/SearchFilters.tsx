@@ -1,9 +1,10 @@
 import React from 'react';
-import { Form, Input, Button, Select, Row, Col } from 'antd';
-import { SearchOutlined, EuroOutlined } from '@ant-design/icons';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Select } from '../../components/ui/select';
+import { Label } from '../../components/ui/label';
+import { Search } from 'lucide-react';
 import type { SearchFilters as SearchFiltersType } from '../../types';
-
-const { Option } = Select;
 
 interface SearchFiltersProps {
   onSearch: (filters: SearchFiltersType) => void;
@@ -11,61 +12,84 @@ interface SearchFiltersProps {
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
-  const [form] = Form.useForm();
+  const [type, setType] = React.useState('');
+  const [priceMin, setPriceMin] = React.useState('');
+  const [priceMax, setPriceMax] = React.useState('');
+  const [surfaceMin, setSurfaceMin] = React.useState('');
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     const filters: SearchFiltersType = {
-      type: values.type,
-      priceMin: values.priceMin ? Number(values.priceMin) : undefined,
-      priceMax: values.priceMax ? Number(values.priceMax) : undefined,
-      surfaceMin: values.surfaceMin ? Number(values.surfaceMin) : undefined,
-      surfaceMax: values.surfaceMax ? Number(values.surfaceMax) : undefined,
+      type: type || undefined,
+      priceMin: priceMin ? Number(priceMin) : undefined,
+      priceMax: priceMax ? Number(priceMax) : undefined,
+      surfaceMin: surfaceMin ? Number(surfaceMin) : undefined,
       page: 0,
     };
     onSearch(filters);
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      <Row gutter={16}>
-        <Col xs={24} sm={12} md={6}>
-          <Form.Item name="type" label="Property Type">
-            <Select placeholder="Select type" allowClear>
-              <Option value="appartement">Appartement</Option>
-              <Option value="maison">Maison</Option>
-              <Option value="terrain">Terrain</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Form.Item name="priceMin" label="Min Price (€)">
-            <Input type="number" placeholder="0" prefix={<EuroOutlined />} />
-          </Form.Item>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Form.Item name="priceMax" label="Max Price (€)">
-            <Input type="number" placeholder="1000000" prefix={<EuroOutlined />} />
-          </Form.Item>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Form.Item name="surfaceMin" label="Min Surface (m²)">
-            <Input type="number" placeholder="0" />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          icon={<SearchOutlined />}
-          size="large"
-          block
-          loading={loading}
-        >
-          Search
-        </Button>
-      </Form.Item>
-    </Form>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="type">Property Type</Label>
+          <Select 
+            id="type" 
+            value={type} 
+            onChange={(e) => setType(e.target.value)}
+          >
+            <option value="">All Types</option>
+            <option value="appartement">Appartement</option>
+            <option value="maison">Maison</option>
+            <option value="terrain">Terrain</option>
+          </Select>
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="priceMin">Min Price (€)</Label>
+          <Input
+            id="priceMin"
+            type="number"
+            placeholder="0"
+            value={priceMin}
+            onChange={(e) => setPriceMin(e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="priceMax">Max Price (€)</Label>
+          <Input
+            id="priceMax"
+            type="number"
+            placeholder="1000000"
+            value={priceMax}
+            onChange={(e) => setPriceMax(e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="surfaceMin">Min Surface (m²)</Label>
+          <Input
+            id="surfaceMin"
+            type="number"
+            placeholder="0"
+            value={surfaceMin}
+            onChange={(e) => setSurfaceMin(e.target.value)}
+          />
+        </div>
+      </div>
+      
+      <Button 
+        type="submit" 
+        className="w-full"
+        size="lg"
+        disabled={loading}
+      >
+        <Search className="h-4 w-4 mr-2" />
+        {loading ? 'Searching...' : 'Search'}
+      </Button>
+    </form>
   );
 };
 

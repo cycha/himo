@@ -1,8 +1,7 @@
 import React from 'react';
-import { List, Typography } from 'antd';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { MapPin, Calendar, Home, Ruler } from 'lucide-react';
 import type { Ad } from '../../types';
-
-const { Text } = Typography;
 
 interface AdCardProps {
   ad: Ad;
@@ -18,44 +17,60 @@ const AdCard: React.FC<AdCardProps> = ({ ad }) => {
   };
 
   return (
-    <List.Item
-      key={ad._id}
-      extra={
-        ad.thumb_urls?.[0] && (
-          <img
-            width={200}
-            alt={ad.title}
-            src={ad.thumb_urls[0]}
-            style={{ objectFit: 'cover', height: '150px' }}
-          />
-        )
-      }
-    >
-      <List.Item.Meta
-        title={
-          <a href={ad.url} target="_blank" rel="noopener noreferrer">
-            {ad.title}
-          </a>
-        }
-        description={
-          <div>
-            <Text strong style={{ fontSize: '18px', color: '#1890ff' }}>
-              {formatPrice(ad.price)}
-            </Text>
-            {ad.surface && <Text> • {ad.surface} m²</Text>}
-            {ad.rooms && <Text> • {ad.rooms} rooms</Text>}
-            <br />
-            <Text type="secondary">
-              {ad.location.city}, {ad.location.zipcode}
-            </Text>
-            <br />
-            <Text type="secondary">
-              {new Date(ad.release_date).toLocaleDateString()}
-            </Text>
+    <Card className="hover:shadow-lg transition-shadow">
+      <div className="flex flex-col md:flex-row">
+        {ad.thumb_urls?.[0] && (
+          <div className="md:w-64 h-48 md:h-auto flex-shrink-0">
+            <img
+              alt={ad.title}
+              src={ad.thumb_urls[0]}
+              className="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
+            />
           </div>
-        }
-      />
-    </List.Item>
+        )}
+        <div className="flex-1">
+          <CardHeader>
+            <CardTitle className="text-lg">
+              <a 
+                href={ad.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+              >
+                {ad.title}
+              </a>
+            </CardTitle>
+            <CardDescription className="text-2xl font-bold text-primary">
+              {formatPrice(ad.price)}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+              {ad.surface && (
+                <div className="flex items-center gap-1">
+                  <Ruler className="h-4 w-4" />
+                  {ad.surface} m²
+                </div>
+              )}
+              {ad.rooms && (
+                <div className="flex items-center gap-1">
+                  <Home className="h-4 w-4" />
+                  {ad.rooms} rooms
+                </div>
+              )}
+              <div className="flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                {ad.location.city}, {ad.location.zipcode}
+              </div>
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                {new Date(ad.release_date).toLocaleDateString()}
+              </div>
+            </div>
+          </CardContent>
+        </div>
+      </div>
+    </Card>
   );
 };
 

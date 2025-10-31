@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Card, Empty } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Search } from 'lucide-react';
 import { useAdsSearch } from '../../hooks/api/useAds';
 import SearchFilters from './SearchFilters';
 import AdList from './AdList';
 import type { SearchFilters as SearchFiltersType } from '../../types';
-import './Ads.css';
 
 const SearchPage: React.FC = () => {
   const [filters, setFilters] = useState<SearchFiltersType>({ page: 0 });
@@ -19,31 +18,46 @@ const SearchPage: React.FC = () => {
   };
 
   return (
-    <div className="search-container">
-      <Card className="search-card" title={<><SearchOutlined /> Search Real Estate</>}>
-        <SearchFilters onSearch={handleSearch} loading={isLoading} />
+    <div className="container mx-auto p-6 max-w-7xl">
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Search className="h-6 w-6" />
+            Search Real Estate
+          </CardTitle>
+          <CardDescription>
+            Find your dream property in France
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SearchFilters onSearch={handleSearch} loading={isLoading} />
+        </CardContent>
       </Card>
 
       {!hasSearched && (
-        <Card className="results-card">
-          <Empty
-            description="Click the search button to find real estate ads"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
+        <Card>
+          <CardContent className="py-12">
+            <div className="flex flex-col items-center justify-center text-center">
+              <Search className="h-16 w-16 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Start Your Search</h3>
+              <p className="text-muted-foreground">
+                Click the search button to find real estate ads
+              </p>
+            </div>
+          </CardContent>
         </Card>
       )}
 
-      {hasSearched && isLoading && (
-        <Card className="results-card">
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            <p>Loading results...</p>
-          </div>
-        </Card>
-      )}
-
-      {hasSearched && !isLoading && data && (
-        <Card className="results-card" title={`${data.count} Results`}>
-          <AdList ads={data.data} />
+      {hasSearched && (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {!isLoading && data ? `${data.count} Results` : 'Search Results'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AdList ads={data?.data || []} loading={isLoading} />
+          </CardContent>
         </Card>
       )}
     </div>
