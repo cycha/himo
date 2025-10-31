@@ -4,14 +4,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ConfigProvider, Layout, Menu, Button } from 'antd';
 import { HomeOutlined, LoginOutlined, UserAddOutlined, DashboardOutlined, LogoutOutlined } from '@ant-design/icons';
-import api from './services/api';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
 
-// Components
-import Search from './components/Search/Search';
-import Login from './components/Login/Login';
-import Signup from './components/Signup/Signup';
-import Dashboard from './components/Dashboard/Dashboard';
+// Feature Components
+import SearchPage from './features/ads/SearchPage';
+import LoginForm from './features/auth/LoginForm';
+import SignupForm from './features/auth/SignupForm';
+import DashboardPage from './features/dashboard/DashboardPage';
 import PrivateRoute from './components/PrivateRoute';
 
 const { Header, Content } = Layout;
@@ -29,11 +29,7 @@ const queryClient = new QueryClient({
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
-  const isAuthenticated = api.isAuthenticated();
-
-  const handleLogout = () => {
-    api.logout();
-  };
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -68,7 +64,7 @@ const AppLayout: React.FC = () => {
 
         <div>
           {isAuthenticated ? (
-            <Button type="primary" icon={<LogoutOutlined />} onClick={handleLogout}>
+            <Button type="primary" icon={<LogoutOutlined />} onClick={logout}>
               Logout
             </Button>
           ) : (
@@ -90,14 +86,14 @@ const AppLayout: React.FC = () => {
 
       <Content style={{ padding: '0' }}>
         <Routes>
-          <Route path="/" element={<Search />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<SearchPage />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignupForm />} />
           <Route
             path="/dashboard"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <DashboardPage />
               </PrivateRoute>
             }
           />
@@ -119,9 +115,11 @@ const App: React.FC = () => {
           },
         }}
       >
-        <BrowserRouter>
-          <AppLayout />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <AppLayout />
+          </BrowserRouter>
+        </AuthProvider>
       </ConfigProvider>
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
