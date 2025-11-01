@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { connect } from '@himo/commons';
+import { connect, disconnect } from './lib/prisma';
 import router from './routes';
 import { errorHandler } from './middleware/error-handler';
 
@@ -90,14 +90,15 @@ const PORT = process.env.API_PORT || 3000;
 
 const startServer = async () => {
   try {
-    // Connect to MongoDB
+    // Connect to PostgreSQL
     await connect();
 
     // Start listening
     app.listen(PORT, () => {
       console.log('========================================');
-      console.log(`🚀 Himo API Server v2.0.0`);
+      console.log(`🚀 Himo API Server v3.0.0`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`💾 Database: PostgreSQL + PostGIS`);
       console.log(`📡 Listening on port ${PORT}`);
       console.log(`🔗 http://localhost:${PORT}`);
       console.log('========================================');
@@ -113,9 +114,7 @@ const gracefulShutdown = async (signal: string) => {
   console.log(`\n${signal} received. Closing server gracefully...`);
   
   try {
-    const { close } = await import('@himo/commons');
-    await close();
-    console.log('Database connection closed');
+    await disconnect();
     process.exit(0);
   } catch (error) {
     console.error('Error during shutdown:', error);

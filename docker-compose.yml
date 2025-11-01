@@ -1,21 +1,23 @@
-# Base docker-compose configuration
+# Base docker-compose configuration - PostgreSQL + PostGIS
 version: "3.8"
 
 services:
-  mongo:
-    image: mongo:latest
-    container_name: himo-mongodb
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: himo-postgres
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - mongo-data:/data/db
+      - postgres-data:/var/lib/postgresql/data
     environment:
-      MONGO_INITDB_DATABASE: himo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: himo
     networks:
       - himo-network
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,13 +29,14 @@ services:
       context: .
       dockerfile: api/Dockerfile
     depends_on:
-      mongo:
+      postgres:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      MONGODB_URL: mongodb://mongo:27017/himo
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/himo?schema=public
       API_PORT: 3000
       JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
+      JWT_EXPIRES_IN: 7d
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001}
     ports:
       - "3000:3000"
@@ -48,11 +51,11 @@ services:
       context: .
       dockerfile: bot/Dockerfile
     depends_on:
-      mongo:
+      postgres:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      MONGODB_URL: mongodb://mongo:27017/himo
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/himo?schema=public
       SCRAPING_INTERVAL: ${SCRAPING_INTERVAL:-*/2 5-22 * * *}
     networks:
       - himo-network
@@ -63,4 +66,4 @@ networks:
     driver: bridge
 
 volumes:
-  mongo-data:
+  postgres-data:
