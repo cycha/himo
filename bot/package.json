@@ -10,23 +10,26 @@
     "dev": "tsx watch src/index.ts",
     "clean": "rm -rf dist",
     "lbc": "tsx src/scrappers/leboncoin.ts",
-    "test": "jest"
+    "test": "jest",
+    "prisma:generate": "prisma generate --schema=../api/prisma/schema.prisma"
   },
   "author": "Charly Joulie",
   "license": "MIT",
   "dependencies": {
     "@himo/commons": "file:../commons",
+    "@prisma/client": "^6.18.0",
     "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
     "https-proxy-agent": "^7.0.2",
     "node-cron": "^3.0.3",
-    "cheerio": "^1.0.0-rc.12",
     "playwright": "^1.40.1"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/node-cron": "^3.0.11",
     "nodemon": "^3.0.2",
+    "prisma": "^6.18.0",
     "tsx": "^4.7.0",
     "typescript": "^5.3.2"
   }

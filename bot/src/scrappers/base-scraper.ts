@@ -1,7 +1,31 @@
-import { IAd, Ad } from '@himo/commons';
+import { prisma } from '../lib/prisma';
+import { Provider, Prisma } from '@prisma/client';
 import { ScraperConfig, ScraperResult, ParseResult } from '../types/scraper.types';
 import { Logger } from '../utils/logger';
 import { sleep, calculateStatistics } from '../utils/utils';
+
+// Types for bot ad data
+export interface BotAdData {
+  title: string;
+  description: string;
+  thumb_urls?: string[];
+  url: string;
+  real_estate_type?: string;
+  rooms?: number;
+  surface?: number;
+  immo_sell_type?: string;
+  price: number;
+  provider: string;
+  location?: {
+    region_name?: string;
+    department_id?: string;
+    department_name?: string;
+    city?: string;
+    zipcode?: string;
+    coordinates?: number[];
+  };
+  release_date: Date;
+}
 
 export abstract class BaseScraper {
   protected config: ScraperConfig;
@@ -16,18 +40,18 @@ export abstract class BaseScraper {
   abstract parseAds(html: string, latestDate: Date, latestTitle: string): Promise<ParseResult>;
 
   async getLatestAdInDb(): Promise<{ date: Date; title: string }> {
-    const latestAd = await Ad.findOne({ provider: this.config.provider })
-      .sort('-release_date')
-      .lean()
-      .exec();
+    const latestAd = await prisma.ad.findFirst({
+      where: { provider: this.config.provider as Provider },
+      orderBy: { releaseDate: 'desc' },
+    });
 
     return {
-      date: latestAd?.release_date || new Date(0),
+      date: latestAd?.releaseDate || new Date(0),
       title: latestAd?.title || '',
     };
   }
 
-  async saveAds(ads: Partial<IAd>[]): Promise<number> {
+  async saveAds(ads: Partial<BotAdData>[]): Promise<number> {
     if (ads.length === 0) {
       this.logger.info('No ads to save');
       return 0;
@@ -35,16 +59,38 @@ export abstract class BaseScraper {
 
     try {
       this.logger.info(`Saving ${ads.length} ads...`);
-      const result = await Ad.insertMany(ads, { ordered: false });
-      this.logger.info(`✅ ${result.length} ads saved successfully`);
-      return result.length;
+      
+      // Transform ads to Prisma format
+      const prismaAds: Prisma.AdCreateManyInput[] = ads.map(ad => ({
+        title: ad.title!,
+        description: ad.description || '',
+        thumbUrls: ad.thumb_urls || [],
+        url: ad.url!,
+        realEstateType: ad.real_estate_type as any,
+        rooms: ad.rooms,
+        surface: ad.surface,
+        immoSellType: ad.immo_sell_type as any,
+        price: ad.price!,
+        provider: ad.provider as Provider,
+        releaseDate: ad.release_date!,
+        regionName: ad.location?.region_name,
+        departmentId: ad.location?.department_id,
+        departmentName: ad.location?.department_name,
+        city: ad.location?.city,
+        zipcode: ad.location?.zipcode || 'unknown',
+        latitude: ad.location?.coordinates?.[1],
+        longitude: ad.location?.coordinates?.[0],
+      }));
+
+      const result = await prisma.ad.createMany({
+        data: prismaAds,
+        skipDuplicates: true, // Skip ads with duplicate URLs
+      });
+
+      this.logger.info(`✅ ${result.count} ads saved successfully`);
+      return result.count;
     } catch (error: any) {
-      if (error.code === 11000) {
-        // Duplicate key error - count inserted docs
-        const insertedCount = error.insertedDocs?.length || 0;
-        this.logger.warn(`⚠️ ${insertedCount} ads saved (some duplicates skipped)`);
-        return insertedCount;
-      }
+      this.logger.error('Error saving ads:', error);
       throw error;
     }
   }

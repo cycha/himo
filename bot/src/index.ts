@@ -52,8 +52,8 @@ exitEvents.forEach((eventType) => {
     cleanupJob.stop();
     
     try {
-      const { close } = await import('@himo/commons');
-      await close();
+      const { disconnect } = await import('./lib/prisma');
+      await disconnect();
     } catch (err) {
       logger.error('Error closing database connection', err);
     }

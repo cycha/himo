@@ -1,4 +1,4 @@
-import { connect, close } from '@himo/commons';
+import { connect, disconnect } from '../lib/prisma';
 import { leboncoinScraper } from '../scrappers/leboncoin-scraper';
 import { Logger } from '../utils/logger';
 
@@ -28,7 +28,7 @@ export async function scrapingTask(): Promise<void> {
     logger.info('##################################################################');
 
     // Close database connection
-    await close();
+    await disconnect();
   } catch (error) {
     logger.error('Scraping task failed', error);
     throw error;

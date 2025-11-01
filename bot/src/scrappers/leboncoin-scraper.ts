@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { BaseScraper } from './base-scraper';
+import { BaseScraper, BotAdData } from './base-scraper';
 import { ScraperConfig, ParseResult, RawAdData } from '../types/scraper.types';
-import { IAd } from '@himo/commons';
 
 const DEFAULT_CONFIG: ScraperConfig = {
   maxPages: 30,
@@ -33,7 +32,7 @@ export class LeBonCoinScraper extends BaseScraper {
   }
 
   async parseAds(html: string, latestDate: Date, latestTitle: string): Promise<ParseResult> {
-    const ads: Partial<IAd>[] = [];
+    const ads: Partial<BotAdData>[] = [];
     let isUpToDate = false;
 
     try {
@@ -70,8 +69,8 @@ export class LeBonCoinScraper extends BaseScraper {
     return { ads, isUpToDate };
   }
 
-  private transformRawAd(rawAd: RawAdData, releaseDate: Date): Partial<IAd> {
-    const ad: Partial<IAd> = {
+  private transformRawAd(rawAd: RawAdData, releaseDate: Date): Partial<BotAdData> {
+    const ad: Partial<BotAdData> = {
       title: rawAd.subject,
       description: rawAd.body || '',
       thumb_urls: rawAd.images?.urls || [],
