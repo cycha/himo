@@ -11,6 +11,8 @@
     "clean": "rm -rf dist",
     "lbc": "tsx src/scrappers/leboncoin.ts",
     "test": "jest",
+    "test:scraper": "tsx src/test-scraper.ts",
+    "test:debug": "tsx src/test-debug.ts",
     "prisma:generate": "prisma generate --schema=../api/prisma/schema.prisma"
   },
   "author": "Charly Joulie",
@@ -23,7 +25,9 @@
     "dotenv": "^16.3.1",
     "https-proxy-agent": "^7.0.2",
     "node-cron": "^3.0.3",
-    "playwright": "^1.40.1"
+    "playwright": "^1.40.1",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

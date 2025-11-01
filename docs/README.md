@@ -12,6 +12,7 @@ Welcome to the Himo documentation! This folder contains comprehensive guides, ar
 ### 🚀 Getting Started
 - **[Getting Started Guide](guides/GETTING_STARTED.md)** - Installation and setup
 - **[Docker Guide](guides/DOCKER_GUIDE.md)** - Running with Docker
+- **[Scraping Guide](guides/SCRAPING_GUIDE.md)** - Advanced web scraping with Playwright
 - **[Commit Guide](guides/COMMIT_GUIDE.md)** - Git workflow and conventions
 
 ### 🏗️ Architecture

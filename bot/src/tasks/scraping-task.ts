@@ -1,5 +1,5 @@
 import { connect, disconnect } from '../lib/prisma';
-import { leboncoinScraper } from '../scrappers/leboncoin-scraper';
+import { leboncoinScraper } from '../scrappers/leboncoin-scraper-stealth';
 import { Logger } from '../utils/logger';
 
 const logger = new Logger('ScrappingTask');
