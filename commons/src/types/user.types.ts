@@ -1,9 +1,6 @@
-import { Document } from 'mongoose';
-
-export interface IUser extends Document {
+export interface IUser {
+  id: string;
   email: string;
   password: string;
-  created_at?: Date;
-  authenticate(password: string): Promise<boolean>;
-  getToken(): string;
+  createdAt?: Date;
 }

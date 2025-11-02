@@ -33,11 +33,11 @@ cd himo
 # Install dependencies
 npm install
 
-# Start MongoDB
-mongod
+# Start PostgreSQL (with Docker)
+docker-compose up -d postgres
 
-# Seed database (optional)
-npm run seed --workspace=api
+# Run migrations
+cd api && npx prisma migrate deploy
 
 # Start backend (terminal 1)
 npm run dev:api
@@ -88,7 +88,7 @@ npm run dev:client
 ### Backend
 - **Node.js + Express** - Web server
 - **TypeScript 5** - Type-safe backend
-- **MongoDB + Mongoose** - Database
+- **PostgreSQL + Prisma** - Database with PostGIS
 - **JWT + bcrypt** - Authentication (12 rounds)
 - **Clean Architecture** - SOLID principles
 
@@ -185,8 +185,8 @@ See [Getting Started Guide](docs/guides/GETTING_STARTED.md) for detailed instruc
 
 ### Recommended Platforms
 - **Frontend:** Vercel, Netlify, AWS S3
-- **Backend:** Railway, Heroku, AWS EC2
-- **Database:** MongoDB Atlas
+- **Backend:** Railway, Render, AWS EC2
+- **Database:** Supabase, Railway PostgreSQL, AWS RDS
 
 ---
 

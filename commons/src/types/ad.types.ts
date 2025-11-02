@@ -1,5 +1,3 @@
-import { Document } from 'mongoose';
-
 export interface ILocation {
   region_name?: string;
   department_id?: string;
@@ -9,20 +7,27 @@ export interface ILocation {
   coordinates?: [number, number]; // [lng, lat]
 }
 
-export interface IAd extends Document {
+export interface IAd {
+  id: string;
   title: string;
   description: string;
-  thumb_urls?: string[];
+  thumbUrls?: string[];
   url: string;
-  real_estate_type?: string; // Appartement, Maison, etc.
+  realEstateType?: string;
   rooms?: number;
   surface?: number;
-  immo_sell_type?: string; // Neuf ou ancien
+  immoSellType?: string;
   price: number;
   provider: string;
-  location: ILocation;
-  release_date: Date;
-  created_at?: Date;
+  regionName?: string;
+  departmentId?: string;
+  departmentName?: string;
+  city?: string;
+  zipcode: string;
+  latitude?: number;
+  longitude?: number;
+  releaseDate: Date;
+  createdAt?: Date;
 }
 
 export type AdProvider = 'leboncoin' | 'seloger' | 'pap' | 'bienici';

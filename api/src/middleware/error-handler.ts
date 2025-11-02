@@ -44,8 +44,8 @@ export const errorHandler = (
     return;
   }
 
-  // Mongoose duplicate key error
-  if (err.name === 'MongoServerError' && (err as any).code === 11000) {
+  // Prisma unique constraint error
+  if (err.name === 'PrismaClientKnownRequestError' && (err as any).code === 'P2002') {
     res.status(409).json({
       error: 'Duplicate entry',
       message: 'A record with this value already exists',
@@ -53,8 +53,8 @@ export const errorHandler = (
     return;
   }
 
-  // Mongoose validation error
-  if (err.name === 'ValidationError') {
+  // Prisma validation error
+  if (err.name === 'PrismaClientValidationError') {
     res.status(400).json({
       error: 'Validation error',
       message: err.message,
