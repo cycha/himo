@@ -68,9 +68,19 @@ export class AdServicePrisma implements IAdService {
       filters.surfaceMax = searchDto.surfaceMax;
     }
 
-    // Location filter (simplified)
+    // Direct city filter
+    if (searchDto.city) {
+      filters.city = searchDto.city;
+    }
+
+    // Direct zipcode filter
+    if (searchDto.zipcode) {
+      filters.zipcode = searchDto.zipcode;
+    }
+
+    // Location filter (backward compatibility with address_components)
     if (searchDto.location) {
-      if (searchDto.location.address_components) {
+      if (searchDto.location.address_components && !searchDto.city) {
         const city = searchDto.location.address_components.find((component) =>
           component.types.includes('locality')
         );

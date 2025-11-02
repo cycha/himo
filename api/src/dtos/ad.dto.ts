@@ -6,6 +6,8 @@ export interface SearchAdDto {
   priceMax?: number;
   surfaceMin?: number;
   surfaceMax?: number;
+  city?: string;  // Direct city filter
+  zipcode?: string;  // Direct zipcode filter
   location?: {
     address_components?: Array<{
       types: string[];
