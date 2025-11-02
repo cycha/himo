@@ -28,6 +28,32 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
   const [priceMax, setPriceMax] = React.useState('');
   const [surfaceMin, setSurfaceMin] = React.useState('');
 
+  // Format number with spaces (French format: 250 000)
+  const formatPrice = (value: string): string => {
+    const numStr = value.replace(/\s/g, '');
+    if (!numStr || isNaN(Number(numStr))) return '';
+    return Number(numStr).toLocaleString('fr-FR');
+  };
+
+  // Parse formatted price back to number
+  const parsePrice = (value: string): string => {
+    return value.replace(/\s/g, '');
+  };
+
+  const handlePriceMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\s/g, '');
+    if (value === '' || /^\d+$/.test(value)) {
+      setPriceMin(value);
+    }
+  };
+
+  const handlePriceMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\s/g, '');
+    if (value === '' || /^\d+$/.test(value)) {
+      setPriceMax(value);
+    }
+  };
+
   // Debounce timer ref
   const debounceTimer = React.useRef<NodeJS.Timeout>();
 
@@ -217,10 +243,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
           <Label htmlFor="priceMin">Min Price (€)</Label>
           <Input
             id="priceMin"
-            type="number"
-            placeholder="0"
-            value={priceMin}
-            onChange={(e) => setPriceMin(e.target.value)}
+            type="text"
+            inputMode="numeric"
+            placeholder="100 000"
+            value={formatPrice(priceMin)}
+            onChange={handlePriceMinChange}
+            className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
         
@@ -228,10 +256,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
           <Label htmlFor="priceMax">Max Price (€)</Label>
           <Input
             id="priceMax"
-            type="number"
-            placeholder="1000000"
-            value={priceMax}
-            onChange={(e) => setPriceMax(e.target.value)}
+            type="text"
+            inputMode="numeric"
+            placeholder="1 000 000"
+            value={formatPrice(priceMax)}
+            onChange={handlePriceMaxChange}
+            className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
         
@@ -240,9 +270,10 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
           <Input
             id="surfaceMin"
             type="number"
-            placeholder="0"
+            placeholder="50"
             value={surfaceMin}
             onChange={(e) => setSurfaceMin(e.target.value)}
+            className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
       </div>
