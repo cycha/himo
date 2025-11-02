@@ -56,10 +56,15 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/himo?schema=public
-      SCRAPING_INTERVAL: ${SCRAPING_INTERVAL:-*/2 5-22 * * *}
+      SCRAPING_INTERVAL: ${SCRAPING_INTERVAL:-0 */1 5-22 * * *}  # Every hour (DataDome rate limit)
+      DISPLAY: :99
+      HEADLESS: "false"
     networks:
       - himo-network
     restart: unless-stopped
+    # Increase memory for Xvfb + Chromium
+    mem_limit: 512m
+    shm_size: 256m
 
 networks:
   himo-network:

@@ -8,7 +8,7 @@ const DEFAULT_CONFIG: ScraperConfig = {
   maxRetries: 10,
   waitSuccess: 3,
   waitError: 6,
-  baseUrl: 'https://www.leboncoin.fr/recherche/?category=9',
+  baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
 };
 
@@ -247,7 +247,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       title: rawAd.subject,
       description: rawAd.body || '',
       thumb_urls: rawAd.images?.urls || [],
-      url: `https://www.leboncoin.fr/${rawAd.url}`,
+      url: rawAd.url.startsWith('http') ? rawAd.url : `https://www.leboncoin.fr/${rawAd.url}`,
       price: typeof rawAd.price === 'string' ? parseInt(rawAd.price) : rawAd.price,
       provider: 'leboncoin',
       location: {
@@ -275,7 +275,15 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
             ad.surface = parseInt(attr.value);
             break;
           case 'immo_sell_type':
-            ad.immo_sell_type = attr.value_label?.toLowerCase();
+            // Map English labels to French enum values
+            const sellTypeMap: Record<string, string> = {
+              'old': 'ancien',
+              'new': 'neuf',
+              'ancien': 'ancien',
+              'neuf': 'neuf',
+            };
+            const sellTypeLabel = attr.value_label?.toLowerCase();
+            ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
             break;
         }
       }

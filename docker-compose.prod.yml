@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
     command: npm run start
 
-  # Bot - Web Scraper
+  # Bot - Web Scraper (with Xvfb for non-headless Playwright)
   bot:
     image: himo-bot:latest
     container_name: himo-bot
@@ -55,11 +55,18 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/himo?schema=public
+      DISPLAY: :99
+      HEADLESS: "false"
+      SCRAPING_INTERVAL: ${SCRAPING_INTERVAL:-0 */1 5-22 * * *}  # Every hour (DataDome allows 1 request/hour)
     depends_on:
       - postgres
     networks:
       - app-network
     restart: unless-stopped
+    # Allocate resources for Xvfb + Chromium
+    mem_limit: 512m
+    mem_reservation: 256m
+    shm_size: 256m
 
   # Database - PostgreSQL + PostGIS
   postgres:

@@ -15,7 +15,7 @@ async function debugScrape() {
   });
 
   console.log('📄 Navigating to LeBonCoin...');
-  await page.goto('https://www.leboncoin.fr/recherche/?category=9', {
+  await page.goto('https://www.leboncoin.fr/recherche?category=9', {
     waitUntil: 'networkidle',
     timeout: 60000,
   });

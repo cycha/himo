@@ -1,22 +1,60 @@
-#  Dockerfile for bot
+#  Dockerfile for bot with Xvfb support
 
-FROM node:alpine
+FROM node:20-bullseye
+
+# Install Xvfb and Chromium dependencies for Playwright
+RUN apt-get update && apt-get install -y \
+    xvfb \
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libatspi2.0-0 \
+    libxshmfence1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pnpm
+RUN npm install -g pnpm
 
 # Copy common folder
 WORKDIR /commons
 COPY ./commons/package*.json ./
-RUN npm install --silent
+RUN pnpm install
 COPY ./commons .
 
 # Create App Directory
 WORKDIR /bot
 
 # Install Dependencies
-COPY ./bot/package*.json ./
+COPY ./bot/package*.json ./bot/pnpm-lock.yaml* ./
 
-RUN npm install --silent
+RUN pnpm install
+
+# Copy API's Prisma schema (bot uses it)
+COPY ./api/prisma ./prisma
+
+# Generate Prisma Client
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
+# Install Playwright browsers
+RUN npx playwright install chromium --with-deps
 
 # Copy app source code
 COPY ./bot .
 
-CMD ["npm","start"]
+# Set display for Xvfb
+ENV DISPLAY=:99
+ENV HEADLESS=false
+
+# Run with Xvfb (starts virtual display then run with tsx - no build needed)
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm start"]

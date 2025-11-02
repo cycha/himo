@@ -1,63 +1,26 @@
-# Dev conf file not production
-version: "3.7"
+# Development overrides - PostgreSQL version
 services:
-  client:
-    image: himo-client
-    container_name: himo-react-client
-    links:
-      - api
-    networks:
-      - app-network
-    build:
-      context: client
-    volumes:
-      - ./client/:/client
-      - /client/node_modules
-    ports:
-      - 80:3000
-    command: yarn start
-
   api:
     build:
+      context: .
       dockerfile: api/Dockerfile
     volumes:
-      - ./api:/api
-      - ./commons:/commons
+      - ./api/src:/app/src
     environment:
       NODE_ENV: development
-      MONGODB_URL: mongodb://mongo/db
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/himo?schema=public
     ports:
-      - 3000:3000
-    #      - 9229:9229 # Used for debugger not used yet
-    command: npm run dev
+      - "3000:3000"
+    command: pnpm dev
 
   bot:
     volumes:
-      - ./bot:/bot
-      - ./commons:/commons
+      - ./bot/src:/app/src
     environment:
       NODE_ENV: development
-      MONGODB_URL: mongodb://mongo/db
-    #      INSTANCE_SCALING_MIN: 0
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/himo?schema=public
+      DISPLAY: :99
+      HEADLESS: "false"
+    # Expose debug port
     ports:
-      - 8889:8889
-    command: npm run start
-
-  mongo:
-    image: mongo
-    expose:
-      - 27017
-    ports:
-      - 27017:27017
-    volumes:
-      - data-volume:/data/db
-    restart: always
-    networks:
-      - app-network
-
-volumes:
-  data-volume:
-  node_modules:
-#      environment:
-#        MONGO_INITDB_ROOT_USERNAME: root
-#        MONGO_INITDB_ROOT_PASSWORD: example
+      - "8889:8889"

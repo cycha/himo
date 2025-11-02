@@ -10,10 +10,10 @@ chromium.use(StealthPlugin());
 
 const DEFAULT_CONFIG: ScraperConfig = {
   maxPages: 30,
-  maxRetries: 10,
-  waitSuccess: 3,
-  waitError: 6,
-  baseUrl: 'https://www.leboncoin.fr/recherche/?category=9',
+  maxRetries: 1,  // Only 1 retry - if blocked once, stop to avoid detection
+  waitSuccess: 5, // Longer wait between pages
+  waitError: 10,  // Much longer wait on errors
+  baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
 };
 
@@ -60,7 +60,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     this.logger.info('🥷 Initializing ULTRA-STEALTH browser...');
 
     const launchOptions: any = {
-      headless: true,
+      headless: process.env.HEADLESS === 'false' ? false : true,
       args: [
         // Essential stealth args
         '--disable-blink-features=AutomationControlled',
@@ -254,8 +254,15 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
       // Check response status
       const status = response.status();
+      this.logger.info(`   HTTP Status: ${status}`);
+      
       if (status !== 200) {
-        this.logger.warn(`⚠️ HTTP ${status} response`);
+        this.logger.warn(`⚠️ HTTP ${status} response - BLOCKED!`);
+        const responseText = await response.text();
+        this.logger.warn(`   Response preview: ${responseText.substring(0, 200)}...`);
+        if (status === 403) {
+          throw new Error(`HTTP 403 Forbidden - Anti-bot protection detected`);
+        }
       }
 
       // Wait for initial render
@@ -409,7 +416,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       title: rawAd.subject,
       description: rawAd.body || '',
       thumb_urls: rawAd.images?.urls || [],
-      url: `https://www.leboncoin.fr/${rawAd.url}`,
+      url: rawAd.url.startsWith('http') ? rawAd.url : `https://www.leboncoin.fr/${rawAd.url}`,
       price: typeof rawAd.price === 'string' ? parseInt(rawAd.price) : rawAd.price,
       provider: 'leboncoin',
       location: {
@@ -437,7 +444,15 @@ export class LeBonCoinScraperStealth extends BaseScraper {
             ad.surface = parseInt(attr.value);
             break;
           case 'immo_sell_type':
-            ad.immo_sell_type = attr.value_label?.toLowerCase();
+            // Map English labels to French enum values
+            const sellTypeMap: Record<string, string> = {
+              'old': 'ancien',
+              'new': 'neuf',
+              'ancien': 'ancien',
+              'neuf': 'neuf',
+            };
+            const sellTypeLabel = attr.value_label?.toLowerCase();
+            ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
             break;
         }
       }
