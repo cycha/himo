@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { userRepository } from '../repositories/user.repository.prisma';
+import { userRepository } from '../repositories/user.repository';
 import { SignupDto, LoginDto, AuthResponseDto, UserResponseDto } from '../dtos/user.dto';
 import { AppError } from '../middleware/error-handler';
 

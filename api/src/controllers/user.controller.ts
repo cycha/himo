@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { userService } from '../services/user.service.prisma';
+import { userService } from '../services/user.service';
 import { SignupDto, LoginDto } from '../dtos/user.dto';
 import { AuthRequest } from '../middleware/auth';
 

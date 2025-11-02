@@ -9,10 +9,10 @@
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "clean": "rm -rf dist",
-    "lbc": "tsx src/scrappers/leboncoin.ts",
+    "lbc": "tsx src/scrapers/leboncoin.ts",
     "test": "jest",
-    "test:scraper": "tsx src/test-scraper.ts",
-    "test:debug": "tsx src/test-debug.ts",
+    "test:scraper": "tsx tests/scraper.test.ts",
+    "test:debug": "tsx tests/debug.test.ts",
     "prisma:generate": "prisma generate --schema=../api/prisma/schema.prisma"
   },
   "author": "Charly Joulie",

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
-import { connect, disconnect } from './lib/prisma';
-import { leboncoinScraper } from './scrappers/leboncoin-scraper-playwright';
-import { Logger } from './utils/logger';
+import { connect, disconnect } from '../src/lib/prisma';
+import { leboncoinScraper } from '../src/scrapers/leboncoin-scraper-playwright';
+import { Logger } from '../src/utils/logger';
 
 // Load environment variables
 dotenv.config();
@@ -23,7 +23,7 @@ async function testScraper() {
     };
 
     // Create test scraper with limited pages
-    const { LeBonCoinScraperStealth } = await import('./scrappers/leboncoin-scraper-stealth');
+    const { LeBonCoinScraperStealth } = await import('../src/scrapers/leboncoin-scraper-stealth');
     const testScraper = new LeBonCoinScraperStealth(customConfig);
 
     const startTime = Date.now();

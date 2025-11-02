@@ -1,4 +1,4 @@
-import { adRepository, AdSearchFilters } from '../repositories/ad.repository.prisma';
+import { adRepository, AdSearchFilters } from '../repositories/ad.repository';
 import { SearchAdDto, AdResponseDto, SearchResultDto } from '../dtos/ad.dto';
 import { RealEstateType, ImmoSellType } from '@prisma/client';
 

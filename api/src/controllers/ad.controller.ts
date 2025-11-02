@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { adService } from '../services/ad.service.prisma';
+import { adService } from '../services/ad.service';
 import { SearchAdDto } from '../dtos/ad.dto';
 
 export class AdController {

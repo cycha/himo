@@ -10,7 +10,7 @@
     "dev": "tsx watch src/server.ts",
     "clean": "rm -rf dist",
     "test": "jest",
-    "seed": "tsx src/scripts/seed-db.prisma.ts",
+    "seed": "tsx src/scripts/seed.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
