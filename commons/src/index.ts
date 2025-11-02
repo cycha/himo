@@ -1,8 +1,2 @@
-// Types
+// Shared types for all projects
 export * from './types';
-
-// Models
-export * from './models';
-
-// Utils
-export * from './utils';

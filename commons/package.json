@@ -1,7 +1,7 @@
 {
   "name": "@himo/commons",
   "version": "2.0.0",
-  "description": "Shared types, schemas, and utilities for Himo",
+  "description": "Shared TypeScript types and interfaces for Himo monorepo",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
