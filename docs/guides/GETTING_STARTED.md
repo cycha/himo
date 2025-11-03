@@ -20,7 +20,7 @@ cp bot/.env.example bot/.env
 Edit `api/.env`:
 ```env
 API_PORT=3000
-MONGODB_URL=mongodb://localhost:27017/himo
+DATABASE_URL=postgresql://localhost:27017/himo
 JWT_SECRET=change-this-to-a-secure-random-string-32-chars-min
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:3001
@@ -29,24 +29,24 @@ CORS_ORIGIN=http://localhost:3001
 Edit `bot/.env`:
 ```env
 NODE_ENV=development
-MONGODB_URL=mongodb://localhost:27017/himo
+DATABASE_URL=postgresql://localhost:27017/himo
 SCRAPING_INTERVAL=*/5 * * * *
 ```
 
-### 3. Start MongoDB
+### 3. Start PostgreSQL
 
 **Option A: Docker (Recommended)**
 ```bash
-docker run -d -p 27017:27017 --name mongodb mongo:latest
+docker run -d -p 27017:27017 --name himo-postgres postgres:16-alpine
 ```
 
 **Option B: Homebrew (macOS)**
 ```bash
-brew services start mongodb-community
+brew services start docker-compose up -d postgresb-community
 ```
 
-**Option C: MongoDB Atlas (Cloud)**
-- Sign up at https://www.mongodb.com/cloud/atlas
+**Option C: PostgreSQL Atlas (Cloud)**
+- Sign up at https://www.docker-compose up -d postgresb.com/cloud/atlas
 - Create a free cluster
 - Get connection string and update `.env` files
 
@@ -96,7 +96,7 @@ curl -X POST http://localhost:3000/api/users/signup \
 
 ### ✅ Commons Module (`@himo/commons`)
 - **TypeScript types** for Ads and Users
-- **Mongoose models** with validation and indexes
+- **Prisma models** with validation and indexes
 - **Database utilities** with connection pooling
 - **Security** with bcrypt password hashing
 
@@ -121,7 +121,7 @@ curl -X POST http://localhost:3000/api/users/signup \
 himo/
 ├── commons/          # Shared package
 │   ├── src/
-│   │   ├── models/       # Mongoose schemas
+│   │   ├── models/       # Prisma schemas
 │   │   ├── types/        # TypeScript interfaces
 │   │   └── utils/        # DB connection
 │   └── dist/             # Compiled JavaScript
@@ -184,17 +184,17 @@ cd ..
 npm install
 ```
 
-### ❌ "Connection refused to MongoDB"
+### ❌ "Connection refused to PostgreSQL"
 
 **Solution:**
 ```bash
-# Check if MongoDB is running
+# Check if PostgreSQL is running
 docker ps  # or
 brew services list
 
-# Start MongoDB
-docker start mongodb  # or
-brew services start mongodb-community
+# Start PostgreSQL
+docker start docker-compose up -d postgresb  # or
+brew services start docker-compose up -d postgresb-community
 ```
 
 ### ❌ TypeScript compilation errors
@@ -245,8 +245,8 @@ npm install --save-dev @types/express --workspace=api
 ### Database Operations
 
 ```bash
-# Connect to MongoDB
-mongosh mongodb://localhost:27017/himo
+# Connect to PostgreSQL
+psql -U postgres postgresql://localhost:27017/himo
 
 # View collections
 show collections
@@ -350,7 +350,7 @@ curl http://localhost:3000/api/users/profile \
 
 ✅ API responds at http://localhost:3000/api/health
 ✅ Bot starts without errors
-✅ MongoDB connection successful
+✅ PostgreSQL connection successful
 ✅ Can create users and login
 ✅ Scraper runs and saves ads
 ✅ TypeScript compilation succeeds

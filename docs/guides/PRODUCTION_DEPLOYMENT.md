@@ -43,7 +43,7 @@ docker-compose -f docker-compose.prod.yml ps
 **Access:**
 - Frontend: http://localhost
 - API: http://localhost/api
-- MongoDB: localhost:27017
+- PostgreSQL: localhost:27017
 
 ### Architecture
 
@@ -58,7 +58,7 @@ docker-compose -f docker-compose.prod.yml ps
     └────┬────────┘
          │
     ┌────▼────────┐
-    │ MongoDB     │  ← Database
+    │ PostgreSQL     │  ← Database
     │  (27017)    │
     └─────────────┘
          │
@@ -88,8 +88,8 @@ docker-compose -f docker-compose.prod.yml ps
   - Health checks
   - Auto-restart
 
-#### MongoDB
-- **Base:** mongo:6-alpine
+#### PostgreSQL
+- **Base:** postgres:16-alpine
 - **Port:** 27017
 - **Persistent:** Volume mounted
 
@@ -177,7 +177,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ```env
 NODE_ENV=production
 PORT=3000
-MONGODB_URI=mongodb://mongo:27017/himo
+DATABASE_URL=postgresql://postgres:5432/himo
 JWT_SECRET=your-super-secret-jwt-key-change-this
 JWT_EXPIRES_IN=7d
 BCRYPT_ROUNDS=12
@@ -283,17 +283,17 @@ docker system df
 
 ## 🔧 Maintenance
 
-### Backup MongoDB
+### Backup PostgreSQL
 
 ```bash
 # Backup
-docker exec himo-mongo mongodump --out=/backup
+docker exec himo-postgres docker-compose up -d postgresump --out=/backup
 
 # Copy to host
-docker cp himo-mongo:/backup ./mongodb-backup
+docker cp himo-postgres:/backup ./docker-compose up -d postgresb-backup
 
 # Restore
-docker exec himo-mongo mongorestore /backup
+docker exec himo-postgres pg_restore /backup
 ```
 
 ### Update Application
@@ -339,14 +339,14 @@ docker-compose -f docker-compose.prod.yml ps
 docker-compose -f docker-compose.prod.yml restart service-name
 ```
 
-### MongoDB Connection Issues
+### PostgreSQL Connection Issues
 
 ```bash
-# Check MongoDB is running
-docker exec himo-mongo mongosh --eval "db.adminCommand('ping')"
+# Check PostgreSQL is running
+docker exec himo-postgres psql -U postgres -c "SELECT 1"
 
 # Check connection string
-docker exec himo-api env | grep MONGODB_URI
+docker exec himo-api env | grep DATABASE_URL
 ```
 
 ### Nginx 502 Bad Gateway
@@ -386,7 +386,7 @@ Before deploying:
 
 - [ ] Environment variables set
 - [ ] JWT_SECRET is strong and unique
-- [ ] MongoDB has authentication (if exposed)
+- [ ] PostgreSQL has authentication (if exposed)
 - [ ] SSL/HTTPS configured
 - [ ] CORS configured properly
 - [ ] Rate limiting enabled

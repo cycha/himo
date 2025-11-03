@@ -24,7 +24,7 @@ This project follows **Clean Architecture** principles with clear separation of 
                          ↓
 ┌─────────────────────────────────────────────────────┐
 │                   Data Layer                         │
-│              (Database - MongoDB)                    │
+│              (Database - PostgreSQL)                    │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -290,7 +290,7 @@ export const adService = new AdService();
    → Executes database query
           ↓
 6. Database
-   → MongoDB returns results
+   → PostgreSQL returns results
           ↓
 7. Response
    ← Service transforms to SearchResultDto

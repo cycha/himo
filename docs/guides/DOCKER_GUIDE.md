@@ -2,12 +2,15 @@
 
 ## Quick Start Options
 
-### Option 1: Local Development with MongoDB Only (Recommended)
-Run MongoDB in Docker, API/Bot locally with hot-reload:
+### Option 1: Local Development with PostgreSQL Only (Recommended)
+Run PostgreSQL in Docker, API/Bot locally with hot-reload:
 
 ```bash
-# Start MongoDB
-docker-compose -f docker-compose.local.yml up -d mongo
+# Start PostgreSQL
+docker-compose up -d postgres
+
+# Run migrations
+cd api && npx prisma migrate deploy
 
 # In Terminal 1 - API
 npm run dev:api
@@ -15,15 +18,15 @@ npm run dev:api
 # In Terminal 2 - Bot (optional)
 npm run dev:bot
 
-# Stop MongoDB when done
-docker-compose -f docker-compose.local.yml down
+# Stop PostgreSQL when done
+docker-compose down
 ```
 
 **Benefits:**
 - ✅ Fast hot-reload with tsx
-- ✅ Easy debugging
-- ✅ See console logs directly
-- ✅ MongoDB web UI at http://localhost:8081 (admin/admin)
+- ✅ Easy debugging with TypeScript
+- ✅ See console logs directly  
+- ✅ Access PostgreSQL on port 5432
 
 ### Option 2: Full Docker Development
 Run everything in Docker with volume mounts:
@@ -56,11 +59,11 @@ docker-compose down
 ## Available Docker Compose Files
 
 ### `docker-compose.local.yml`
-**Purpose:** Local development - MongoDB only
+**Purpose:** Local development - PostgreSQL only
 
 **Services:**
-- MongoDB (port 27017)
-- Mongo Express web UI (port 8081)
+- PostgreSQL (port 27017)
+- pgAdmin web UI (port 8081)
 
 **Usage:**
 ```bash
@@ -71,7 +74,7 @@ docker-compose -f docker-compose.local.yml up -d
 **Purpose:** Base production configuration
 
 **Services:**
-- MongoDB
+- PostgreSQL
 - API (production build)
 - Bot (production build)
 
@@ -87,7 +90,7 @@ docker-compose up -d
 - Volume mounts for hot-reload
 - Dev command with tsx watch
 - Debugger port exposed (9229)
-- Mongo Express included
+- pgAdmin included
 
 **Usage:**
 ```bash
@@ -107,7 +110,7 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 ### Start Services
 ```bash
-# Local MongoDB only
+# Local PostgreSQL only
 docker-compose -f docker-compose.local.yml up -d
 
 # Development (all services)
@@ -128,7 +131,7 @@ docker-compose logs -f
 # Specific service
 docker-compose logs -f api
 docker-compose logs -f bot
-docker-compose logs -f mongo
+docker-compose logs -f postgres
 
 # Last 100 lines
 docker-compose logs --tail=100 -f
@@ -159,7 +162,7 @@ docker-compose up -d --scale bot=3
 
 # Execute command in container
 docker-compose exec api sh
-docker-compose exec mongo mongosh himo
+docker-compose exec postgres psql himo
 ```
 
 ### Check Status
@@ -189,22 +192,22 @@ CORS_ORIGIN=http://localhost:3001
 # Scraping Schedule
 SCRAPING_INTERVAL=*/2 5-22 * * *
 
-# MongoDB (optional, has defaults)
-MONGODB_URL=mongodb://mongo:27017/himo
+# PostgreSQL (optional, has defaults)
+DATABASE_URL=postgresql://postgres:5432/himo
 ```
 
 ## Accessing Services
 
 ### When running locally (Option 1)
 - **API:** http://localhost:3000
-- **MongoDB:** mongodb://localhost:27017
-- **Mongo Express:** http://localhost:8081 (admin/admin)
+- **PostgreSQL:** postgresql://localhost:5432
+- **pgAdmin:** http://localhost:8081 (admin/admin)
 
 ### When running in Docker
 - **API:** http://localhost:3000
-- **MongoDB:** mongodb://localhost:27017 (from host)
-- **MongoDB:** mongodb://mongo:27017 (from containers)
-- **Mongo Express:** http://localhost:8081
+- **PostgreSQL:** postgresql://localhost:5432 (from host)
+- **PostgreSQL:** postgresql://postgres:5432 (from containers)
+- **pgAdmin:** http://localhost:8081
 
 ## Testing
 
@@ -227,15 +230,15 @@ curl -X POST http://localhost:3000/api/ads/search \
   -d '{"priceMax":500000,"type":"appartement"}'
 ```
 
-## MongoDB Management
+## PostgreSQL Management
 
-### Connect with mongosh
+### Connect with psql
 ```bash
 # From host
-mongosh mongodb://localhost:27017/himo
+psql postgresql://localhost:5432/himo
 
 # From Docker
-docker-compose exec mongo mongosh himo
+docker-compose exec postgres psql himo
 ```
 
 ### View Data
@@ -256,27 +259,27 @@ db.users.find().pretty()
 ### Backup Database
 ```bash
 # Backup
-docker-compose exec mongo mongodump --db=himo --out=/data/backup
+docker-compose exec postgres docker-compose up -d postgresump --db=himo --out=/data/backup
 
 # Restore
-docker-compose exec mongo mongorestore --db=himo /data/backup/himo
+docker-compose exec postgres pg_restore --db=himo /data/backup/himo
 ```
 
 ## Troubleshooting
 
-### MongoDB Connection Issues
+### PostgreSQL Connection Issues
 ```bash
-# Check if MongoDB is running
-docker-compose ps mongo
+# Check if PostgreSQL is running
+docker-compose ps postgres
 
-# Check MongoDB logs
-docker-compose logs mongo
+# Check PostgreSQL logs
+docker-compose logs postgres
 
-# Restart MongoDB
-docker-compose restart mongo
+# Restart PostgreSQL
+docker-compose restart postgres
 
 # Check connectivity
-docker-compose exec api ping mongo
+docker-compose exec api ping postgres
 ```
 
 ### API Not Starting
@@ -327,19 +330,19 @@ docker system prune -a --volumes
 
 1. **Never commit `.env` files** - Use `.env.example` as template
 2. **Use health checks** - Ensure services are ready before connecting
-3. **Volume management** - Back up MongoDB data regularly
+3. **Volume management** - Back up PostgreSQL data regularly
 4. **Resource limits** - Prevent services from consuming all resources
 5. **Logging** - Use structured logging for easier debugging
 6. **Security** - Change default passwords and secrets
-7. **Updates** - Keep base images updated (mongo, node)
+7. **Updates** - Keep base images updated (postgres, node)
 
 ## Next Steps
 
-1. ✅ Start MongoDB: `docker-compose -f docker-compose.local.yml up -d`
+1. ✅ Start PostgreSQL: `docker-compose -f docker-compose.local.yml up -d`
 2. ✅ Run API: `npm run dev:api`
 3. ✅ Test endpoints (see GETTING_STARTED.md)
 4. ⏳ Run bot: `npm run dev:bot`
-5. ⏳ View MongoDB: http://localhost:8081
+5. ⏳ View PostgreSQL: http://localhost:8081
 
 ---
 

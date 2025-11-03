@@ -31,7 +31,7 @@ git commit -m "feat(commons): add TypeScript type definitions
 ## Commit 3: Commons Module - Models
 ```bash
 git add commons/src/models/
-git commit -m "feat(commons): migrate Mongoose models to TypeScript
+git commit -m "feat(commons): migrate Prisma models to TypeScript
 
 - Convert Ad schema with improved validation
 - Convert User schema with bcrypt password hashing
@@ -200,7 +200,7 @@ Major changes:
 
 BREAKING CHANGES:
 - Requires Node.js >= 18
-- MongoDB connection string format may differ
+- PostgreSQL connection string format may differ
 - JWT secret must be configured in environment
 - Password hashing changed from password-hash to bcrypt"
 ```
