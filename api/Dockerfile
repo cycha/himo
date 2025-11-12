@@ -17,4 +17,7 @@ RUN npm install --silent
 # Copy app source code
 COPY ./api .
 
-CMD ["npm","dev"]
+# Create startup script
+RUN echo '#!/bin/sh\nnpx prisma generate\nexec npm run dev' > /api/start.sh && chmod +x /api/start.sh
+
+CMD ["/api/start.sh"]

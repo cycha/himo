@@ -121,8 +121,11 @@ export abstract class BaseScraper {
 
         pageNumber++;
 
+        // Wait before next page with random variation (more human-like)
         if (!isDbUpToDate && pageNumber <= this.config.maxPages) {
-          await sleep(this.config.waitSuccess * Math.random());
+          const randomWait = this.config.waitSuccess + Math.random() * this.config.waitSuccess;
+          this.logger.info(`⏳ Waiting ${randomWait.toFixed(1)}s before next page...`);
+          await sleep(randomWait);
         }
       } catch (error) {
         this.logger.error(`Failed to scrape page ${pageNumber}`, error);
@@ -150,8 +153,17 @@ export abstract class BaseScraper {
         const html = await this.fetchPage(url, this.getUserAgent());
         retryArray.push(retry);
         return html;
-      } catch (error) {
-        const waitTime = Math.round(this.config.waitError * Math.random());
+      } catch (error: any) {
+        // Check if it's an anti-bot error - stop immediately
+        if (error.message?.includes('Anti-bot') || error.message?.includes('DataDome')) {
+          this.logger.error('🛑 Anti-bot protection detected - stopping scraping to avoid further blocks');
+          retryArray.push(retry);
+          throw error; // Don't retry on anti-bot errors
+        }
+        
+        // Exponential backoff for other errors
+        const baseWait = this.config.waitError;
+        const waitTime = Math.round(baseWait * Math.pow(2, retry) + (Math.random() * baseWait));
         this.logger.error(`Request failed (retry ${retry}/${this.config.maxRetries}). Waiting ${waitTime}s...`);
         
         if (retry >= this.config.maxRetries) {

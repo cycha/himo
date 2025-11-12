@@ -10,9 +10,9 @@ chromium.use(StealthPlugin());
 
 const DEFAULT_CONFIG: ScraperConfig = {
   maxPages: 30,
-  maxRetries: 1,  // Only 1 retry - if blocked once, stop to avoid detection
-  waitSuccess: 5, // Longer wait between pages
-  waitError: 10,  // Much longer wait on errors
+  maxRetries: 0,  // No retries - if blocked, stop immediately to avoid detection
+  waitSuccess: 8, // Longer wait between pages (8-16 seconds)
+  waitError: 30,  // Much longer wait on errors (30+ seconds)
   baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
 };
@@ -260,8 +260,10 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         this.logger.warn(`⚠️ HTTP ${status} response - BLOCKED!`);
         const responseText = await response.text();
         this.logger.warn(`   Response preview: ${responseText.substring(0, 200)}...`);
-        if (status === 403) {
-          throw new Error(`HTTP 403 Forbidden - Anti-bot protection detected`);
+        if (status === 403 || status === 429) {
+          this.logger.error('🚫 DataDome anti-bot detected! Stopping to avoid further blocks.');
+          this.logger.error('💡 Suggestion: Wait 6-12 hours before next scraping attempt.');
+          throw new Error(`HTTP ${status} - Anti-bot protection detected (DataDome). Stop scraping.`);
         }
       }
 
@@ -412,20 +414,38 @@ export class LeBonCoinScraperStealth extends BaseScraper {
    * Transform raw ad data
    */
   private transformRawAd(rawAd: RawAdData, releaseDate: Date): Partial<BotAdData> {
+    // Ensure title is within 200 char limit (Prisma schema constraint)
+    const title = rawAd.subject?.substring(0, 200) || 'Sans titre';
+    
+    // Ensure URL is within 500 char limit
+    let url = rawAd.url?.startsWith('http') ? rawAd.url : `https://www.leboncoin.fr/${rawAd.url}`;
+    url = url?.substring(0, 500) || '';
+    
+    // Parse price safely
+    let price = 0;
+    if (typeof rawAd.price === 'string') {
+      price = parseInt(rawAd.price.replace(/\D/g, '')) || 0;
+    } else if (typeof rawAd.price === 'number') {
+      price = rawAd.price;
+    }
+    
     const ad: Partial<BotAdData> = {
-      title: rawAd.subject,
-      description: rawAd.body || '',
-      thumb_urls: rawAd.images?.urls || [],
-      url: rawAd.url.startsWith('http') ? rawAd.url : `https://www.leboncoin.fr/${rawAd.url}`,
-      price: typeof rawAd.price === 'string' ? parseInt(rawAd.price) : rawAd.price,
+      title,
+      description: rawAd.body?.substring(0, 10000) || '', // Limit description size
+      thumb_urls: rawAd.images?.urls?.slice(0, 10) || [], // Limit to 10 images
+      url,
+      price,
       provider: 'leboncoin',
       location: {
-        region_name: rawAd.location?.region_name,
-        department_id: rawAd.location?.department_id,
-        department_name: rawAd.location?.department_name,
-        city: rawAd.location?.city,
-        zipcode: rawAd.location?.zipcode || 'unknown',
-        coordinates: rawAd.location?.coordinates,
+        region_name: rawAd.location?.region_name?.substring(0, 100),
+        department_id: rawAd.location?.department_id?.substring(0, 10),
+        department_name: rawAd.location?.department_name?.substring(0, 100),
+        city: rawAd.location?.city?.substring(0, 100),
+        zipcode: rawAd.location?.zipcode?.substring(0, 10) || 'unknown',
+        coordinates: [
+          rawAd.location?.lng || rawAd.location?.coordinates?.[0] || null,
+          rawAd.location?.lat || rawAd.location?.coordinates?.[1] || null
+        ] as [number, number],
       },
       release_date: releaseDate,
     };
@@ -435,24 +455,39 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       for (const attr of rawAd.attributes) {
         switch (attr.key) {
           case 'real_estate_type':
-            ad.real_estate_type = attr.value_label?.toLowerCase();
+            // Map to Prisma enum values
+            const typeMap: Record<string, string> = {
+              'appartement': 'appartement',
+              'apartment': 'appartement',
+              'maison': 'maison',
+              'house': 'maison',
+              'terrain': 'terrain',
+              'land': 'terrain',
+              'parking': 'parking',
+              'local commercial': 'local_commercial',
+              'commercial': 'local_commercial',
+            };
+            const typeLabel = attr.value_label?.toLowerCase() || '';
+            ad.real_estate_type = typeMap[typeLabel] || undefined;
             break;
           case 'rooms':
-            ad.rooms = parseInt(attr.value);
+            const rooms = parseInt(attr.value);
+            ad.rooms = !isNaN(rooms) && rooms > 0 && rooms < 32767 ? rooms : undefined;
             break;
           case 'square':
-            ad.surface = parseInt(attr.value);
+            const surface = parseInt(attr.value);
+            ad.surface = !isNaN(surface) && surface > 0 && surface < 32767 ? surface : undefined;
             break;
           case 'immo_sell_type':
-            // Map English labels to French enum values
+            // Map English/French labels to Prisma enum values
             const sellTypeMap: Record<string, string> = {
               'old': 'ancien',
               'new': 'neuf',
               'ancien': 'ancien',
               'neuf': 'neuf',
             };
-            const sellTypeLabel = attr.value_label?.toLowerCase();
-            ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
+            const sellTypeLabel = attr.value_label?.toLowerCase() || '';
+            ad.immo_sell_type = sellTypeMap[sellTypeLabel] || undefined;
             break;
         }
       }
