@@ -1,0 +1,91 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  prettier:
+    name: Prettier Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check code formatting
+        run: pnpm exec prettier --check "**/*.{ts,tsx,js,jsx,json,md}"
+
+  complexity:
+    name: Code Complexity Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Analyze code complexity
+        run: |
+          echo "Code complexity analysis would run here"
+          echo "Consider adding tools like:"
+          echo "  - complexity-report"
+          echo "  - jscpd (copy-paste detector)"
+          echo "  - SonarQube"
+
+  size-check:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build client
+        run: pnpm --filter client build
+
+      - name: Check bundle size
+        run: |
+          if [ -d "client/dist" ]; then
+            echo "Client bundle sizes:"
+            du -sh client/dist/*
+            total_size=$(du -sk client/dist | cut -f1)
+            echo "Total bundle size: ${total_size}KB"
+            # Add size limit check if needed
+            # if [ "$total_size" -gt 5000 ]; then
+            #   echo "Bundle size exceeds 5MB limit!"
+            #   exit 1
+            # fi
+          fi
