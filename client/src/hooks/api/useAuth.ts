@@ -29,7 +29,15 @@ export const useSignup = (): UseMutationResult<AuthResponse, Error, SignupForm> 
       navigate('/dashboard');
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Signup failed');
+      // Handle validation errors from API
+      if (error.response?.data?.details) {
+        const validationErrors = error.response.data.details;
+        validationErrors.forEach((err: any) => {
+          toast.error(err.msg || err.message);
+        });
+      } else {
+        toast.error(error.response?.data?.message || error.response?.data?.error || 'Signup failed');
+      }
     },
   });
 };
