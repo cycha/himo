@@ -35,11 +35,6 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
     return Number(numStr).toLocaleString('fr-FR');
   };
 
-  // Parse formatted price back to number
-  const parsePrice = (value: string): string => {
-    return value.replace(/\s/g, '');
-  };
-
   const handlePriceMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\s/g, '');
     if (value === '' || /^\d+$/.test(value)) {
@@ -55,7 +50,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
   };
 
   // Debounce timer ref
-  const debounceTimer = React.useRef<NodeJS.Timeout>();
+  const debounceTimer = React.useRef<NodeJS.Timeout | null>(null);
 
   // Cleanup debounce timer on unmount
   React.useEffect(() => {
