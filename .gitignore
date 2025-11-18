@@ -2,6 +2,7 @@
 /.idea/
 /himo.iml
 .vscode/
+.claude/
 *.swp
 *.swo
 *~
