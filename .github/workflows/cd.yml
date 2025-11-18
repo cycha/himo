@@ -67,7 +67,7 @@ jobs:
             type=sha
 
       - name: Build and push API Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./api
           file: ./api/Dockerfile.prod
@@ -77,7 +77,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and push Client Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./client
           file: ./client/Dockerfile.prod
@@ -87,7 +87,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and push Bot Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./bot
           file: ./bot/Dockerfile.prod
