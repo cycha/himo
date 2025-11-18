@@ -1,6 +1,6 @@
 #  Dockerfile for bot with Xvfb support
 
-FROM node:20-bullseye
+FROM node:25-bullseye
 
 # Install Xvfb and Chromium dependencies for Playwright
 RUN apt-get update && apt-get install -y \
