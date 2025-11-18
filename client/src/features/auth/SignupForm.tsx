@@ -10,14 +10,17 @@ const SignupForm: React.FC = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [passwordError, setPasswordError] = React.useState('');
   const signupMutation = useSignup();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      return; // Could add toast here
+      setPasswordError('Passwords do not match');
+      return;
     }
     if (email && password) {
+      setPasswordError('');
       signupMutation.mutate({ email, password });
     }
   };
@@ -57,6 +60,9 @@ const SignupForm: React.FC = () => {
                 required
                 minLength={6}
               />
+              <p className="text-xs text-muted-foreground">
+                Must be at least 6 characters long
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -68,6 +74,9 @@ const SignupForm: React.FC = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
+              {passwordError && (
+                <p className="text-xs text-red-500">{passwordError}</p>
+              )}
             </div>
             <Button
               type="submit"
