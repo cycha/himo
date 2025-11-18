@@ -1,5 +1,12 @@
 packages:
-  - 'api'
-  - 'bot'
-  - 'client'
-  - 'commons'
+  - api
+  - bot
+  - client
+  - commons
+
+ignoredBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - bcrypt
+  - esbuild
+  - prisma
