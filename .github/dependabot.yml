@@ -10,9 +10,6 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "automated"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -27,10 +24,6 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "api"
-      - "automated"
     commit-message:
       prefix: "chore(api)"
 
@@ -44,10 +37,6 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "client"
-      - "automated"
     commit-message:
       prefix: "chore(client)"
 
@@ -61,10 +50,6 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "bot"
-      - "automated"
     commit-message:
       prefix: "chore(bot)"
 
@@ -78,10 +63,6 @@ updates:
     open-pull-requests-limit: 5
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "commons"
-      - "automated"
     commit-message:
       prefix: "chore(commons)"
 
@@ -95,10 +76,6 @@ updates:
     open-pull-requests-limit: 3
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "github-actions"
-      - "automated"
     commit-message:
       prefix: "chore(ci)"
 
@@ -112,10 +89,6 @@ updates:
     open-pull-requests-limit: 3
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "docker"
-      - "automated"
     commit-message:
       prefix: "chore(docker)"
 
@@ -128,10 +101,6 @@ updates:
     open-pull-requests-limit: 3
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "docker"
-      - "automated"
     commit-message:
       prefix: "chore(docker)"
 
@@ -144,9 +113,5 @@ updates:
     open-pull-requests-limit: 3
     reviewers:
       - "cycha"
-    labels:
-      - "dependencies"
-      - "docker"
-      - "automated"
     commit-message:
       prefix: "chore(docker)"
