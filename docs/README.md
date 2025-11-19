@@ -9,7 +9,6 @@ Welcome to the Himo documentation! This folder contains comprehensive guides, ar
 ### 🚀 Getting Started
 - **[Getting Started Guide](guides/GETTING_STARTED.md)** - Installation and setup
 - **[Docker Guide](guides/DOCKER_GUIDE.md)** - Running with Docker
-- **[Raspberry Pi Deployment](guides/RASPBERRY_PI_DEPLOYMENT.md)** - Deploy on Raspberry Pi with public access
 - **[Production Deployment](guides/PRODUCTION_DEPLOYMENT.md)** - Cloud deployment guide
 - **[Commit Guide](guides/COMMIT_GUIDE.md)** - Git workflow and conventions
 
@@ -36,7 +35,6 @@ docs/
 └── guides/                           # How-to guides
     ├── GETTING_STARTED.md           # Quick start guide
     ├── DOCKER_GUIDE.md              # Docker setup
-    ├── RASPBERRY_PI_DEPLOYMENT.md   # Raspberry Pi deployment
     ├── PRODUCTION_DEPLOYMENT.md     # Cloud deployment
     ├── SCRAPING_GUIDE.md            # Playwright scraping
     ├── XVFB_GUIDE.md                # Virtual display setup
@@ -47,8 +45,8 @@ docs/
 
 ## 📊 Documentation Statistics
 
-- **Total Files:** 11
-- **Guides:** 7
+- **Total Files:** 9
+- **Guides:** 6
 - **Architecture Docs:** 2
 
 ---
@@ -62,9 +60,8 @@ docs/
 4. **[Scraping Guide](guides/SCRAPING_GUIDE.md)** - Advanced scraping techniques
 
 ### 🔧 For DevOps / Self-Hosting
-1. **[Raspberry Pi Deployment](guides/RASPBERRY_PI_DEPLOYMENT.md)** - Deploy on Raspberry Pi
-2. **[Docker Guide](guides/DOCKER_GUIDE.md)** - Docker setup
-3. **[Production Deployment](guides/PRODUCTION_DEPLOYMENT.md)** - Cloud deployment
+1. **[Docker Guide](guides/DOCKER_GUIDE.md)** - Docker setup
+2. **[Production Deployment](guides/PRODUCTION_DEPLOYMENT.md)** - Cloud deployment
 
 ### 🎨 For Designers
 1. **[Design System](architecture/DESIGN_SYSTEM.md)** - UI components and patterns
@@ -128,7 +125,6 @@ When adding new documentation:
 - Use `Ctrl/Cmd + F` to search within documents
 - All code examples are copy-pastable
 - Documentation is kept up-to-date with the codebase
-- For Raspberry Pi deployment, see the detailed guide
 
 ---
 
