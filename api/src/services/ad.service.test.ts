@@ -1,6 +1,6 @@
-import { AdServicePrisma } from '../ad.service';
+import { AdServicePrisma } from './ad.service';
 import { RealEstateType, ImmoSellType, Provider } from '@prisma/client';
-import { createTestAd, cleanDatabase } from '../../__tests__/helpers/testDb';
+import { createTestAd, cleanDatabase } from '../__tests__/helpers/testDb';
 
 describe('AdService', () => {
   let adService: AdServicePrisma;

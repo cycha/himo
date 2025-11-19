@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { signupValidation, loginValidation, searchValidation } from '../validation';
+import { signupValidation, loginValidation, searchValidation } from './validation';
 
 describe('Validation Middleware', () => {
   // Helper function to run validation chains

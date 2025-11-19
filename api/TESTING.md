@@ -7,23 +7,23 @@ This document provides information about the test suite for the Himo API.
 The API includes comprehensive test coverage for all major components:
 
 ### Unit Tests
-- **Repositories** (`src/repositories/__tests__/`)
-  - `user.repository.test.ts` - Tests for user CRUD operations, password hashing, and validation
-  - `ad.repository.test.ts` - Tests for ad search, filtering, pagination, and geospatial queries
+- **Repositories** (co-located with source files)
+  - `src/repositories/user.repository.test.ts` - Tests for user CRUD operations, password hashing, and validation
+  - `src/repositories/ad.repository.test.ts` - Tests for ad search, filtering, pagination, and geospatial queries
 
-- **Services** (`src/services/__tests__/`)
-  - `user.service.test.ts` - Tests for signup, login, JWT token generation, and user profile retrieval
-  - `ad.service.test.ts` - Tests for ad search logic, filter building, and DTO mapping
+- **Services** (co-located with source files)
+  - `src/services/user.service.test.ts` - Tests for signup, login, JWT token generation, and user profile retrieval
+  - `src/services/ad.service.test.ts` - Tests for ad search logic, filter building, and DTO mapping
 
-- **Middleware** (`src/middleware/__tests__/`)
-  - `auth.test.ts` - Tests for JWT authentication, token validation, and authorization
-  - `validation.test.ts` - Tests for input validation rules (signup, login, search)
-  - `error-handler.test.ts` - Tests for error handling, Prisma error mapping, and AppError class
+- **Middleware** (co-located with source files)
+  - `src/middleware/auth.test.ts` - Tests for JWT authentication, token validation, and authorization
+  - `src/middleware/validation.test.ts` - Tests for input validation rules (signup, login, search)
+  - `src/middleware/error-handler.test.ts` - Tests for error handling, Prisma error mapping, and AppError class
 
 ### Integration Tests
-- **Routes** (`src/routes/__tests__/`)
-  - `user.routes.test.ts` - End-to-end tests for user signup, login, and profile endpoints
-  - `ad.routes.test.ts` - End-to-end tests for ad search and retrieval endpoints
+- **Routes** (co-located with source files)
+  - `src/routes/user.routes.test.ts` - End-to-end tests for user signup, login, and profile endpoints
+  - `src/routes/ad.routes.test.ts` - End-to-end tests for ad search and retrieval endpoints
 
 ## Prerequisites
 

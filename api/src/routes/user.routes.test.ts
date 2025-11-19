@@ -1,7 +1,7 @@
 import request from 'supertest';
-import { createTestApp } from '../../__tests__/helpers/testApp';
-import { createTestUser, cleanDatabase } from '../../__tests__/helpers/testDb';
-import { generateTestToken } from '../../__tests__/helpers/authHelpers';
+import { createTestApp } from '../__tests__/helpers/testApp';
+import { createTestUser, cleanDatabase } from '../__tests__/helpers/testDb';
+import { generateTestToken } from '../__tests__/helpers/authHelpers';
 
 describe('User Routes Integration Tests', () => {
   const app = createTestApp();

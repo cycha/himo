@@ -1,6 +1,6 @@
-import { UserServicePrisma } from '../user.service';
-import { createTestUser, cleanDatabase } from '../../__tests__/helpers/testDb';
-import { AppError } from '../../middleware/error-handler';
+import { UserServicePrisma } from './user.service';
+import { createTestUser, cleanDatabase } from '../__tests__/helpers/testDb';
+import { AppError } from '../middleware/error-handler';
 import jwt from 'jsonwebtoken';
 
 describe('UserService', () => {

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Result, ValidationError, validationResult } from 'express-validator';
-import { AppError, handleValidationErrors, errorHandler } from '../error-handler';
+import { AppError, handleValidationErrors, errorHandler } from './error-handler';
 
 // Mock express-validator
 jest.mock('express-validator', () => ({

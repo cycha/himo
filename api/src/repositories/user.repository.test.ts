@@ -1,7 +1,7 @@
-import { userRepository, UserRepositoryPrisma } from '../user.repository';
-import { prisma } from '../../lib/prisma';
+import { userRepository, UserRepositoryPrisma } from './user.repository';
+import { prisma } from '../lib/prisma';
 import bcrypt from 'bcrypt';
-import { createTestUser, cleanDatabase } from '../../__tests__/helpers/testDb';
+import { createTestUser, cleanDatabase } from '../__tests__/helpers/testDb';
 
 describe('UserRepository', () => {
   beforeEach(async () => {

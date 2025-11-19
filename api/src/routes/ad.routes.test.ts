@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { createTestApp } from '../../__tests__/helpers/testApp';
-import { createTestAd, cleanDatabase } from '../../__tests__/helpers/testDb';
+import { createTestApp } from '../__tests__/helpers/testApp';
+import { createTestAd, cleanDatabase } from '../__tests__/helpers/testDb';
 import { RealEstateType, ImmoSellType, Provider } from '@prisma/client';
 
 describe('Ad Routes Integration Tests', () => {

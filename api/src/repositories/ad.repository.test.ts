@@ -1,6 +1,6 @@
-import { adRepository, AdRepositoryPrisma } from '../ad.repository';
+import { adRepository, AdRepositoryPrisma } from './ad.repository';
 import { RealEstateType, ImmoSellType, Provider } from '@prisma/client';
-import { createTestAd, cleanDatabase } from '../../__tests__/helpers/testDb';
+import { createTestAd, cleanDatabase } from '../__tests__/helpers/testDb';
 
 describe('AdRepository', () => {
   beforeEach(async () => {
