@@ -80,7 +80,7 @@ export class UserRepositoryPrisma {
       });
       
       return user;
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         return null; // Not found
       }
@@ -97,7 +97,7 @@ export class UserRepositoryPrisma {
         where: { id },
       });
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         return false; // Not found
       }

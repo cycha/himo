@@ -82,14 +82,13 @@ export class UserServicePrisma implements IUserService {
 
   private generateToken(id: string, email: string): string {
     const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
-    
+
     const payload = {
       id,
       email,
     };
 
-    return jwt.sign(payload, secret, { expiresIn });
+    return jwt.sign(payload, secret, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' } as any);
   }
 }
 

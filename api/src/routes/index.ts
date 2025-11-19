@@ -1,8 +1,9 @@
 import { Router } from 'express';
+import type { Router as RouterType } from 'express';
 import adRoutes from './ad.routes';
 import userRoutes from './user.routes';
 
-const router = Router();
+const router: RouterType = Router();
 
 // Health check endpoint
 router.get('/health', (req, res) => {

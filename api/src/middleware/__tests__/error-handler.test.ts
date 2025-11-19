@@ -59,7 +59,7 @@ describe('Error Handler Middleware', () => {
 
   describe('handleValidationErrors', () => {
     it('should call next() when no validation errors', () => {
-      (validationResult as jest.Mock).mockReturnValue({
+      (validationResult as unknown as jest.Mock).mockReturnValue({
         isEmpty: () => true,
         array: () => [],
       });
@@ -80,7 +80,7 @@ describe('Error Handler Middleware', () => {
         { path: 'password', msg: 'Password too short', value: '123' },
       ];
 
-      (validationResult as jest.Mock).mockReturnValue({
+      (validationResult as unknown as jest.Mock).mockReturnValue({
         isEmpty: () => false,
         array: () => errors,
       });
@@ -102,7 +102,7 @@ describe('Error Handler Middleware', () => {
     it('should handle single validation error', () => {
       const errors = [{ path: 'email', msg: 'Invalid email' }];
 
-      (validationResult as jest.Mock).mockReturnValue({
+      (validationResult as unknown as jest.Mock).mockReturnValue({
         isEmpty: () => false,
         array: () => errors,
       });

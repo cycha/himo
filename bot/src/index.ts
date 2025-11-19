@@ -18,9 +18,8 @@ const scrapingJob = cron.schedule(scrapingSchedule, async () => {
     logger.error('Scraping job failed', error);
   }
 }, {
-  scheduled: true,
   timezone: 'Europe/Paris',
-});
+} as any);
 
 // Cleanup task - runs on the 1st of every month at midnight
 const cleanupJob = cron.schedule('0 0 1 * *', async () => {
@@ -30,9 +29,8 @@ const cleanupJob = cron.schedule('0 0 1 * *', async () => {
     logger.error('Cleanup job failed', error);
   }
 }, {
-  scheduled: true,
   timezone: 'Europe/Paris',
-});
+} as any);
 
 logger.info('========================================');
 logger.info('🤖 Himo Bot v2.0.0');
