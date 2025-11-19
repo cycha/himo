@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma';
-import { RealEstateType, ImmoSellType, Provider } from '@prisma/client';
+import { RealEstateType, ImmoSellType, Provider } from '../../types/enums';
 
 /**
  * Creates a test user in the database

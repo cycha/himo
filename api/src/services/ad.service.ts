@@ -1,6 +1,6 @@
 import { adRepository, AdSearchFilters } from '../repositories/ad.repository';
 import { SearchAdDto, AdResponseDto, SearchResultDto } from '../dtos/ad.dto';
-import { RealEstateType, ImmoSellType } from '@prisma/client';
+import { RealEstateType, ImmoSellType } from '../types/enums';
 
 export interface IAdService {
   search(searchDto: SearchAdDto, page?: number): Promise<SearchResultDto>;
