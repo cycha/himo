@@ -3,7 +3,7 @@ name: CD
 on:
   push:
     branches:
-      - main
+      - master
     tags:
       - 'v*.*.*'
   workflow_dispatch:
@@ -43,7 +43,7 @@ jobs:
         run: pnpm build
 
       - name: Deploy to VPS via SCP
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -54,7 +54,7 @@ jobs:
           rm: true
 
       - name: Build and start containers on VPS
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
