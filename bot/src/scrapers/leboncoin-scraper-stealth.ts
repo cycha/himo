@@ -139,6 +139,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     });
 
     // Advanced anti-detection scripts
+    // @ts-ignore - These are browser APIs, not available in Node context
     await this.page.addInitScript(() => {
       // 1. Hide webdriver property
       Object.defineProperty(navigator, 'webdriver', {
@@ -146,10 +147,10 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       });
 
       // 2. Override permissions
-      const originalQuery = window.navigator.permissions.query;
-      window.navigator.permissions.query = (parameters: any) =>
+      const originalQuery = (window as any).navigator.permissions.query;
+      (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
-          ? Promise.resolve({ state: 'denied' } as PermissionStatus)
+          ? Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
 
       // 3. Add chrome object

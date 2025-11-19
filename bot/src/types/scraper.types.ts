@@ -36,6 +36,9 @@ export interface RawAdData {
     department_name?: string;
     city?: string;
     zipcode?: string;
+    lng?: number;
+    lat?: number;
+    coordinates?: [number, number];
   };
   attributes: Array<{
     key: string;
