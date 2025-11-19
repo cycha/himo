@@ -42,92 +42,50 @@ jobs:
       - name: Build all packages
         run: pnpm build
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
+      - name: Deploy to VPS via SCP
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: appleboy/scp-action@v0.1.4
         with:
-          registry: ${{ secrets.DOCKER_REGISTRY }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          source: "."
+          target: "/home/deploy/himo"
+          rm: true
 
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v5
+      - name: Build and start containers on VPS
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          images: |
-            ${{ secrets.DOCKER_REGISTRY }}/himo
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "Starting deployment to VPS..."
 
-      - name: Build and push API Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./api
-          file: ./api/Dockerfile.prod
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ secrets.DOCKER_REGISTRY }}/himo-api:${{ steps.meta.outputs.version }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            cd /home/deploy/himo
 
-      - name: Build and push Client Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./client
-          file: ./client/Dockerfile.prod
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ secrets.DOCKER_REGISTRY }}/himo-client:${{ steps.meta.outputs.version }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            # Create .env file if it doesn't exist
+            if [ ! -f .env ]; then
+              echo "Creating .env file from example..."
+              cp .env.example .env
+              echo "⚠️  WARNING: Please update .env with your production values"
+              echo "Edit: nano /home/deploy/himo/.env"
+            fi
 
-      - name: Build and push Bot Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./bot
-          file: ./bot/Dockerfile.prod
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ secrets.DOCKER_REGISTRY }}/himo-bot:${{ steps.meta.outputs.version }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            # Build and start containers
+            echo "Building and starting Docker containers..."
+            docker-compose -f docker-compose.prod.yml down || true
+            docker-compose -f docker-compose.prod.yml build --no-cache
+            docker-compose -f docker-compose.prod.yml up -d
 
-      - name: Deploy to server
-        if: github.event_name != 'pull_request'
-        run: |
-          echo "Deployment step - configure based on your infrastructure"
-          echo "Examples:"
-          echo "  - SSH to server and run docker-compose pull && docker-compose up -d"
-          echo "  - Use kubectl to deploy to Kubernetes"
-          echo "  - Trigger deployment via API"
-          echo "  - Deploy to cloud provider (AWS, GCP, Azure, etc.)"
-        # Uncomment and configure based on your deployment method:
-        #
-        # SSH Deployment Example:
-        # - name: Deploy via SSH
-        #   uses: appleboy/ssh-action@v1.0.0
-        #   with:
-        #     host: ${{ secrets.SSH_HOST }}
-        #     username: ${{ secrets.SSH_USERNAME }}
-        #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-        #     script: |
-        #       cd /path/to/app
-        #       docker-compose pull
-        #       docker-compose up -d
-        #
-        # Kubernetes Deployment Example:
-        # - name: Deploy to Kubernetes
-        #   uses: azure/k8s-deploy@v4
-        #   with:
-        #     manifests: |
-        #       k8s/deployment.yml
-        #     images: |
-        #       ${{ secrets.DOCKER_REGISTRY }}/himo-api:${{ steps.meta.outputs.version }}
-        #     kubectl-version: 'latest'
+            # Run database migrations (if needed)
+            echo "Running database migrations..."
+            docker-compose -f docker-compose.prod.yml exec -T api pnpm run prisma:migrate || true
+
+            echo "✅ Deployment completed successfully!"
+            docker-compose -f docker-compose.prod.yml ps
 
   notify:
     name: Notify deployment status

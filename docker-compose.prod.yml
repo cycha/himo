@@ -1,98 +1,70 @@
-# Production Docker Compose Configuration
-# Updated for Vite + npm + modern setup
-version: "3.8"
+version: '3.8'
 
 services:
-  # Frontend - React App with Nginx
-  client:
-    image: himo-client:latest
-    container_name: himo-client
-    build:
-      context: ./client
-      dockerfile: Dockerfile.prod
-    ports:
-      - "80:80"
-    depends_on:
-      - api
-    networks:
-      - app-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Backend - Node.js API
   api:
-    image: himo-api:latest
-    container_name: himo-api
     build:
       context: ./api
       dockerfile: Dockerfile.prod
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/himo?schema=public
-      PORT: 3000
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRES_IN: 7d
+    container_name: himo-api
     ports:
       - "3000:3000"
-    depends_on:
-      - postgres
-    networks:
-      - app-network
-    restart: unless-stopped
-    command: npm run start
-
-  # Bot - Web Scraper (with Xvfb for non-headless Playwright)
-  bot:
-    image: himo-bot:latest
-    container_name: himo-bot
-    build:
-      context: ./bot
-      dockerfile: Dockerfile
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/himo?schema=public
-      DISPLAY: :99
-      HEADLESS: "false"
-      SCRAPING_INTERVAL: ${SCRAPING_INTERVAL:-0 */1 5-22 * * *}  # Every hour (DataDome allows 1 request/hour)
-    depends_on:
-      - postgres
-    networks:
-      - app-network
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
     restart: unless-stopped
-    # Allocate resources for Xvfb + Chromium
-    mem_limit: 512m
-    mem_reservation: 256m
-    shm_size: 256m
-
-  # Database - PostgreSQL + PostGIS
-  postgres:
-    image: postgis/postgis:16-3.4-alpine
-    container_name: himo-postgres
-    ports:
-      - "5432:5432"
+    networks:
+      - himo-network
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: himo
-    networks:
-      - app-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      - ./api/.env.production:/app/.env
 
-networks:
-  app-network:
-    driver: bridge
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.prod
+    container_name: himo-client
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      VITE_API_URL: ${VITE_API_URL}
+    restart: unless-stopped
+    networks:
+      - himo-network
+    depends_on:
+      - api
+
+  bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile.prod
+    container_name: himo-bot
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    restart: unless-stopped
+    networks:
+      - himo-network
+    depends_on:
+      - api
+
+  db:
+    image: postgres:16-alpine
+    container_name: himo-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - himo-network
 
 volumes:
-  postgres-data:
-    driver: local
+  postgres_data:
+
+networks:
+  himo-network:
+    driver: bridge
