@@ -139,8 +139,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     });
 
     // Advanced anti-detection scripts
-    // @ts-ignore - Browser APIs not available in Node context
-    const antiDetectionScript = () => {
+    const antiDetectionScript: any = () => {
       // 1. Hide webdriver property
       Object.defineProperty(navigator, 'webdriver', {
         get: () => undefined,

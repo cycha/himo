@@ -69,7 +69,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
     });
 
     // Override navigator properties to hide automation
-    await this.page.addInitScript(() => {
+    const antiDetectionScript: any = () => {
       // Override the navigator.webdriver property
       Object.defineProperty(navigator, 'webdriver', {
         get: () => false,
@@ -91,12 +91,13 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       };
 
       // Override permissions
-      const originalQuery = window.navigator.permissions.query;
-      window.navigator.permissions.query = (parameters: any) =>
+      const originalQuery = (window as any).navigator.permissions.query;
+      (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
-          ? Promise.resolve({ state: 'denied' } as PermissionStatus)
+          ? Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
-    });
+    };
+    await this.page.addInitScript(antiDetectionScript);
 
     this.logger.info('✅ Browser initialized with stealth mode');
   }
