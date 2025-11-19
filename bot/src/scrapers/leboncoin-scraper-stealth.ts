@@ -139,8 +139,8 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     });
 
     // Advanced anti-detection scripts
-    // @ts-ignore - These are browser APIs, not available in Node context
-    await this.page.addInitScript(() => {
+    // @ts-ignore - Browser APIs not available in Node context
+    const antiDetectionScript = () => {
       // 1. Hide webdriver property
       Object.defineProperty(navigator, 'webdriver', {
         get: () => undefined,
@@ -221,7 +221,8 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       Object.defineProperty(navigator, 'maxTouchPoints', {
         get: () => 0,
       });
-    });
+    };
+    await this.page.addInitScript(antiDetectionScript);
 
     this.logger.info('✅ Ultra-stealth browser initialized');
     this.logger.info(`   User-Agent: ${userAgent.substring(0, 50)}...`);
