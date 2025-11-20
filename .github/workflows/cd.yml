@@ -83,12 +83,13 @@ jobs:
             docker compose -f docker-compose.prod.yml down || true
 
             # Build services sequentially to avoid memory issues in CI
+            # Use cache to reduce memory usage on VPS with limited RAM
             echo "Building api service..."
-            docker compose -f docker-compose.prod.yml build --no-cache api
+            docker compose -f docker-compose.prod.yml build api
             echo "Building client service..."
-            docker compose -f docker-compose.prod.yml build --no-cache client
+            docker compose -f docker-compose.prod.yml build client
             echo "Building bot service..."
-            docker compose -f docker-compose.prod.yml build --no-cache bot
+            docker compose -f docker-compose.prod.yml build bot
 
             docker compose -f docker-compose.prod.yml up -d
 
