@@ -5,21 +5,18 @@ FROM node:alpine
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy common folder
-WORKDIR /commons
-COPY commons/package*.json commons/pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
-COPY commons .
+# Copy root package files and lockfile
+COPY package*.json pnpm-lock.yaml ./
 
-# Create App Directory
-WORKDIR /api
+# Copy workspace package files (needed for monorepo)
+COPY commons/package*.json ./commons/
+COPY api/package*.json ./api/
 
-# Install Dependencies
-COPY api/package*.json api/pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+# Install all dependencies
+RUN pnpm install
 
 # Copy app source code
-COPY api .
+COPY api ./api
 
 # Start node js server
-CMD ["pnpm","start"]
+CMD ["pnpm", "--filter", "api", "start"]
