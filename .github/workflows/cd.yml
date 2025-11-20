@@ -41,6 +41,7 @@ jobs:
         run: pnpm --filter api run prisma:generate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy' }}
+          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Build all packages
         run: pnpm build
