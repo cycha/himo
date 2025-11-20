@@ -49,6 +49,7 @@ jobs:
         run: pnpm --filter api run prisma:generate
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Run ESLint
         run: pnpm lint
@@ -91,6 +92,7 @@ jobs:
         run: pnpm --filter api run prisma:generate
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Run TypeScript type check
         run: pnpm type-check
@@ -133,6 +135,7 @@ jobs:
         run: pnpm --filter api run prisma:generate
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Clean previous builds
         run: pnpm clean
@@ -204,6 +207,7 @@ jobs:
         run: pnpm --filter api run prisma:generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/himo_test
+          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Run tests
         run: pnpm test || echo "Tests not yet configured - skipping"

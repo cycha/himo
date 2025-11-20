@@ -77,6 +77,7 @@ jobs:
         run: pnpm --filter api run prisma:generate
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Build client
         run: pnpm --filter client build
