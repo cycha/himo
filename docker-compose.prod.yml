@@ -1,8 +1,7 @@
 services:
   api:
-    build:
-      context: .
-      dockerfile: api/Dockerfile.prod
+    image: ghcr.io/cycha/himo-api:latest
+    pull_policy: always
     container_name: himo-api
     ports:
       - "3000:3000"
@@ -17,12 +16,12 @@ services:
       - ./api/.env.production:/app/.env
 
   client:
-    build:
-      context: .
-      dockerfile: client/Dockerfile.prod
+    image: ghcr.io/cycha/himo-client:latest
+    pull_policy: always
     container_name: himo-client
     ports:
-      - "3001:3001"
+      - "80:80"
+      - "443:443"
     environment:
       NODE_ENV: production
       VITE_API_URL: ${VITE_API_URL}
@@ -31,11 +30,13 @@ services:
       - himo-network
     depends_on:
       - api
+    volumes:
+      - /etc/letsencrypt/live/himo.myddns.me:/etc/letsencrypt/live/himo.myddns.me:ro
+      - /etc/letsencrypt/archive/himo.myddns.me:/etc/letsencrypt/archive/himo.myddns.me:ro
 
   bot:
-    build:
-      context: .
-      dockerfile: bot/Dockerfile.prod
+    image: ghcr.io/cycha/himo-bot:latest
+    pull_policy: always
     container_name: himo-bot
     environment:
       NODE_ENV: production
