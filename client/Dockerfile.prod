@@ -22,7 +22,7 @@ COPY commons ./commons
 COPY client ./client
 
 # Install all dependencies
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 # Build client from its directory
 WORKDIR /app/client

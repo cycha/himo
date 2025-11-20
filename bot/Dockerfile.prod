@@ -30,23 +30,19 @@ RUN npm install -g pnpm
 WORKDIR /app
 COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy all workspace package.json files first (monorepo structure)
+# Copy only necessary workspace package.json files (bot + commons + api for Prisma)
 COPY commons/package*.json ./commons/
-COPY client/package*.json ./client/
 COPY api/package*.json ./api/
 COPY bot/package*.json ./bot/
 
 # Copy workspace source code (needed for proper monorepo resolution)
 COPY commons ./commons
-COPY client ./client
 COPY api ./api
+COPY api/prisma ./api/prisma
 COPY bot ./bot
 
-# Install all dependencies
-RUN pnpm install
-
-# Copy API's Prisma schema (bot uses it)
-COPY api/prisma ./api/prisma
+# Install dependencies for bot, commons and api only
+RUN pnpm install --frozen-lockfile
 
 # Generate Prisma Client
 WORKDIR /app/bot

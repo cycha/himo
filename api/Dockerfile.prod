@@ -8,17 +8,16 @@ RUN npm install -g pnpm
 # Copy root package files, lockfile, and workspace config
 COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy all workspace package.json files first (monorepo structure)
+# Copy only necessary workspace package.json files (API + commons)
 COPY commons/package*.json ./commons/
-COPY client/package*.json ./client/
 COPY api/package*.json ./api/
 
 # Copy workspace source code (needed for proper monorepo resolution)
 COPY commons ./commons
 COPY api ./api
 
-# Install all dependencies
-RUN pnpm install
+# Install dependencies for api and commons only
+RUN pnpm install --frozen-lockfile
 
 # Start node js server from api directory
 WORKDIR /app/api
