@@ -26,9 +26,9 @@ RUN apt-get update && apt-get install -y \
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy root package files and lockfile
+# Copy root package files, lockfile, and workspace config
 WORKDIR /app
-COPY package*.json pnpm-lock.yaml ./
+COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Copy all workspace package.json files first (monorepo structure)
 COPY commons/package*.json ./commons/

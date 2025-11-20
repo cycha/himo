@@ -5,8 +5,8 @@ FROM node:alpine
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy root package files and lockfile
-COPY package*.json pnpm-lock.yaml ./
+# Copy root package files, lockfile, and workspace config
+COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Copy all workspace package.json files first (monorepo structure)
 COPY commons/package*.json ./commons/
