@@ -30,8 +30,8 @@ RUN npm install -g pnpm
 WORKDIR /app
 COPY package*.json pnpm-lock.yaml ./
 
-# Copy workspace package files (needed for monorepo)
-COPY commons/package*.json ./commons/
+# Copy all workspace packages (needed for monorepo)
+COPY commons ./commons
 COPY api/package*.json ./api/
 COPY bot/package*.json ./bot/
 

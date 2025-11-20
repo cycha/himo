@@ -12,14 +12,14 @@ RUN npm install -g pnpm
 # Copy root package files and lockfile
 COPY package*.json pnpm-lock.yaml ./
 
-# Copy workspace package files (needed for monorepo)
-COPY commons/package*.json ./commons/
+# Copy all workspace package files (needed for monorepo)
+COPY commons ./commons
 COPY client/package*.json ./client/
 
 # Install all dependencies
 RUN pnpm install
 
-# Copy source code
+# Copy client source code
 COPY client ./client
 
 # Build client workspace
