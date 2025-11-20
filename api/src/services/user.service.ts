@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { userRepository } from '../repositories/user.repository';
 import { SignupDto, LoginDto, AuthResponseDto, UserResponseDto } from '../dtos/user.dto';
 import { AppError } from '../middleware/error-handler';
@@ -82,14 +82,13 @@ export class UserServicePrisma implements IUserService {
 
   private generateToken(id: string, email: string): string {
     const secret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-    const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
-    
+
     const payload = {
       id,
       email,
     };
 
-    return jwt.sign(payload, secret, { expiresIn });
+    return jwt.sign(payload, secret, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' } as SignOptions);
   }
 }
 

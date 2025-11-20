@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc --build",
     "build:watch": "tsc --build --watch",
-    "clean": "tsc --build --clean",
+    "clean": "tsc --build --clean && rm -rf api/dist bot/dist client/dist commons/dist",
     "dev:api": "pnpm --filter api dev",
     "dev:bot": "pnpm --filter bot dev",
     "dev:client": "pnpm --filter client dev",
@@ -14,7 +14,7 @@
     "start:bot": "pnpm --filter bot start",
     "start:client": "pnpm --filter client start",
     "seed": "pnpm --filter api seed",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx,.js,.jsx",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit"
   },

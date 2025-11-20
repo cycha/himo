@@ -84,7 +84,7 @@ export class AdRepositoryPrisma {
         where: { id },
         data: adData,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         return null; // Not found
       }
@@ -101,7 +101,7 @@ export class AdRepositoryPrisma {
         where: { id },
       });
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         return false; // Not found
       }

@@ -100,7 +100,7 @@ export class LeBonCoinScraper extends BaseScraper {
           case 'square':
             ad.surface = parseInt(attr.value);
             break;
-          case 'immo_sell_type':
+          case 'immo_sell_type': {
             // Map English labels to French enum values
             const sellTypeMap: Record<string, string> = {
               'old': 'ancien',
@@ -111,6 +111,7 @@ export class LeBonCoinScraper extends BaseScraper {
             const sellTypeLabel = attr.value_label?.toLowerCase();
             ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
             break;
+          }
         }
       }
     }

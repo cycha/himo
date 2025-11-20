@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck - This file uses browser APIs (navigator, window) which are not available in Node context
 import { chromium, Browser, Page } from 'playwright';
 import { BaseScraper, BotAdData } from './base-scraper';
-import { ScraperConfig, ParseResult, RawAdData } from '../types/scraper.types';
+import { ScraperConfig, ParseResult, RawAdData, ScraperResult } from '../types/scraper.types';
 import { sleep } from '../utils/utils';
 
 const DEFAULT_CONFIG: ScraperConfig = {
@@ -87,14 +88,18 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       });
 
       // Add fake chrome object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).chrome = {
         runtime: {},
       };
 
       // Override permissions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const originalQuery = (window as any).navigator.permissions.query;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ? Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
     };
@@ -106,7 +111,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
   /**
    * Fetch page using Playwright (headless browser)
    */
-  async fetchPage(url: string, userAgent: string): Promise<string> {
+  async fetchPage(url: string, _userAgent: string): Promise<string> {
     await this.initBrowser();
 
     if (!this.page) {
@@ -144,7 +149,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       try {
         await this.page.waitForSelector('[data-qa-id="aditem_container"]', { timeout: 5000 });
         this.logger.info('✅ Ads loaded successfully');
-      } catch (e) {
+      } catch {
         this.logger.warn('⚠️ Ad containers not found after wait, checking HTML anyway...');
       }
 
@@ -276,7 +281,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
           case 'square':
             ad.surface = parseInt(attr.value);
             break;
-          case 'immo_sell_type':
+          case 'immo_sell_type': {
             // Map English labels to French enum values
             const sellTypeMap: Record<string, string> = {
               'old': 'ancien',
@@ -287,6 +292,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
             const sellTypeLabel = attr.value_label?.toLowerCase();
             ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
             break;
+          }
         }
       }
     }
@@ -312,7 +318,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
   /**
    * Override scrape to ensure browser cleanup
    */
-  async scrape(customUrl?: string): Promise<any> {
+  async scrape(customUrl?: string): Promise<ScraperResult> {
     try {
       return await super.scrape(customUrl);
     } finally {
