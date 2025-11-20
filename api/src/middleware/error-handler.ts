@@ -30,6 +30,16 @@ export const handleValidationErrors = (
   next();
 };
 
+// Type guard for Prisma errors
+interface PrismaError extends Error {
+  code?: string;
+  meta?: unknown;
+}
+
+function isPrismaError(err: Error): err is PrismaError {
+  return 'code' in err && typeof (err as PrismaError).code === 'string';
+}
+
 export const errorHandler = (
   err: Error | AppError,
   req: Request,
@@ -45,7 +55,7 @@ export const errorHandler = (
   }
 
   // Prisma unique constraint error
-  if (err.name === 'PrismaClientKnownRequestError' && (err as any).code === 'P2002') {
+  if (err.name === 'PrismaClientKnownRequestError' && isPrismaError(err) && err.code === 'P2002') {
     res.status(409).json({
       error: 'Duplicate entry',
       message: 'A record with this value already exists',

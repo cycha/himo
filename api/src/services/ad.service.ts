@@ -1,6 +1,7 @@
 import { adRepository, AdSearchFilters } from '../repositories/ad.repository';
 import { SearchAdDto, AdResponseDto, SearchResultDto } from '../dtos/ad.dto';
 import { RealEstateType, ImmoSellType } from '../types/enums';
+import { Ad } from '@prisma/client';
 
 export interface IAdService {
   search(searchDto: SearchAdDto, page?: number): Promise<SearchResultDto>;
@@ -93,7 +94,7 @@ export class AdServicePrisma implements IAdService {
     return filters;
   }
 
-  private mapToResponseDto(ad: any): AdResponseDto {
+  private mapToResponseDto(ad: Ad): AdResponseDto {
     return {
       _id: ad.id,
       title: ad.title,

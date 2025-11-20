@@ -4,7 +4,7 @@ import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Browser, Page } from 'playwright';
 import { BaseScraper, BotAdData } from './base-scraper';
-import { ScraperConfig, ParseResult, RawAdData } from '../types/scraper.types';
+import { ScraperConfig, ParseResult, RawAdData, ScraperResult } from '../types/scraper.types';
 import { sleep } from '../utils/utils';
 import * as fs from 'fs';
 
@@ -62,6 +62,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
     this.logger.info('🥷 Initializing ULTRA-STEALTH browser...');
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const launchOptions: any = {
       headless: process.env.HEADLESS === 'false' ? false : true,
       args: [
@@ -149,13 +150,17 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       });
 
       // 2. Override permissions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const originalQuery = (window as any).navigator.permissions.query;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ? Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
 
       // 3. Add chrome object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).chrome = {
         runtime: {},
         loadTimes: function() {},
@@ -188,6 +193,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       });
 
       // 8. Mock battery API
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (navigator as any).getBattery = () => Promise.resolve({
         charging: true,
         chargingTime: 0,
@@ -522,7 +528,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   /**
    * Override scrape to ensure cleanup
    */
-  async scrape(customUrl?: string): Promise<any> {
+  async scrape(customUrl?: string): Promise<ScraperResult> {
     try {
       return await super.scrape(customUrl);
     } finally {

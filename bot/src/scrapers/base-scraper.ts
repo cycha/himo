@@ -1,5 +1,5 @@
 import { prisma } from '../lib/prisma';
-import { Provider, Prisma } from '@prisma/client';
+import { Provider, Prisma, RealEstateType, ImmoSellType } from '@prisma/client';
 import { ScraperConfig, ScraperResult, ParseResult } from '../types/scraper.types';
 import { Logger } from '../utils/logger';
 import { sleep, calculateStatistics } from '../utils/utils';
@@ -66,10 +66,10 @@ export abstract class BaseScraper {
         description: ad.description || '',
         thumbUrls: ad.thumb_urls || [],
         url: ad.url!,
-        realEstateType: ad.real_estate_type as any,
+        realEstateType: ad.real_estate_type as RealEstateType | undefined,
         rooms: ad.rooms,
         surface: ad.surface,
-        immoSellType: ad.immo_sell_type as any,
+        immoSellType: ad.immo_sell_type as ImmoSellType | undefined,
         price: ad.price!,
         provider: ad.provider as Provider,
         releaseDate: ad.release_date!,
@@ -89,7 +89,7 @@ export abstract class BaseScraper {
 
       this.logger.info(`✅ ${result.count} ads saved successfully`);
       return result.count;
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error('Error saving ads:', error);
       throw error;
     }
@@ -153,9 +153,10 @@ export abstract class BaseScraper {
         const html = await this.fetchPage(url, this.getUserAgent());
         retryArray.push(retry);
         return html;
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Check if it's an anti-bot error - stop immediately
-        if (error.message?.includes('Anti-bot') || error.message?.includes('DataDome')) {
+        const errorMessage = error instanceof Error ? error.message : '';
+        if (errorMessage.includes('Anti-bot') || errorMessage.includes('DataDome')) {
           this.logger.error('🛑 Anti-bot protection detected - stopping scraping to avoid further blocks');
           retryArray.push(retry);
           throw error; // Don't retry on anti-bot errors

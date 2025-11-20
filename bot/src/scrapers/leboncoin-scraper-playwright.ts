@@ -2,7 +2,7 @@
 // @ts-nocheck - This file uses browser APIs (navigator, window) which are not available in Node context
 import { chromium, Browser, Page } from 'playwright';
 import { BaseScraper, BotAdData } from './base-scraper';
-import { ScraperConfig, ParseResult, RawAdData } from '../types/scraper.types';
+import { ScraperConfig, ParseResult, RawAdData, ScraperResult } from '../types/scraper.types';
 import { sleep } from '../utils/utils';
 
 const DEFAULT_CONFIG: ScraperConfig = {
@@ -88,14 +88,18 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       });
 
       // Add fake chrome object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).chrome = {
         runtime: {},
       };
 
       // Override permissions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const originalQuery = (window as any).navigator.permissions.query;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ? Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
     };
@@ -314,7 +318,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
   /**
    * Override scrape to ensure browser cleanup
    */
-  async scrape(customUrl?: string): Promise<any> {
+  async scrape(customUrl?: string): Promise<ScraperResult> {
     try {
       return await super.scrape(customUrl);
     } finally {
