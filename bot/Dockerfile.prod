@@ -28,19 +28,19 @@ RUN npm install -g pnpm
 
 # Copy common folder
 WORKDIR /commons
-COPY ../commons/package*.json ./
+COPY commons/package*.json ./
 RUN pnpm install
-COPY ../commons .
+COPY commons .
 
 # Create App Directory
 WORKDIR /bot
 
 # Install Dependencies
-COPY package*.json pnpm-lock.yaml* ./
+COPY bot/package*.json bot/pnpm-lock.yaml* ./
 RUN pnpm install
 
 # Copy API's Prisma schema (bot uses it)
-COPY ../api/prisma ./prisma
+COPY api/prisma ./prisma
 
 # Generate Prisma Client
 RUN npx prisma generate --schema=./prisma/schema.prisma
@@ -49,7 +49,7 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 RUN npx playwright install chromium --with-deps
 
 # Copy app source code
-COPY . .
+COPY bot .
 
 # Build TypeScript
 RUN npm run build
