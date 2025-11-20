@@ -27,7 +27,7 @@ class MockLeBonCoinScraper extends LeBonCoinScraperStealth {
   /**
    * Override fetchPage to return mock HTML
    */
-  protected async fetchPage(url: string, userAgent: string): Promise<string> {
+  async fetchPage(url: string, userAgent: string): Promise<string> {
     logger.info(`📦 Using mock data instead of fetching: ${url}`);
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 100));
