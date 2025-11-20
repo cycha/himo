@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck - This file uses browser APIs (navigator, window) which are not available in Node context
 import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
@@ -5,6 +6,7 @@ import { Browser, Page } from 'playwright';
 import { BaseScraper, BotAdData } from './base-scraper';
 import { ScraperConfig, ParseResult, RawAdData } from '../types/scraper.types';
 import { sleep } from '../utils/utils';
+import * as fs from 'fs';
 
 // Add stealth plugin to playwright
 chromium.use(StealthPlugin());
@@ -231,7 +233,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   /**
    * Fetch page with advanced human simulation
    */
-  async fetchPage(url: string, userAgent: string): Promise<string> {
+  async fetchPage(url: string, _userAgent: string): Promise<string> {
     await this.initBrowser();
 
     if (!this.page) {
@@ -312,7 +314,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       try {
         await this.page.waitForSelector('[data-qa-id="aditem_container"]', { timeout: 5000 });
         this.logger.info('✅ Ad containers detected');
-      } catch (e) {
+      } catch {
         this.logger.warn('⚠️ Ad containers not found, getting HTML anyway...');
       }
 
@@ -362,7 +364,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
           
           // Debug: Save HTML for inspection
           if (html.length < 100000) {
-            const fs = require('fs');
+            // fs is imported at the top of the file
             fs.writeFileSync('failed-scrape.html', html);
             this.logger.warn('💾 Saved failed HTML to failed-scrape.html for debugging');
           }
@@ -456,7 +458,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     if (rawAd.attributes) {
       for (const attr of rawAd.attributes) {
         switch (attr.key) {
-          case 'real_estate_type':
+          case 'real_estate_type': {
             // Map to Prisma enum values
             const typeMap: Record<string, string> = {
               'appartement': 'appartement',
@@ -472,15 +474,18 @@ export class LeBonCoinScraperStealth extends BaseScraper {
             const typeLabel = attr.value_label?.toLowerCase() || '';
             ad.real_estate_type = typeMap[typeLabel] || undefined;
             break;
-          case 'rooms':
+          }
+          case 'rooms': {
             const rooms = parseInt(attr.value);
             ad.rooms = !isNaN(rooms) && rooms > 0 && rooms < 32767 ? rooms : undefined;
             break;
-          case 'square':
+          }
+          case 'square': {
             const surface = parseInt(attr.value);
             ad.surface = !isNaN(surface) && surface > 0 && surface < 32767 ? surface : undefined;
             break;
-          case 'immo_sell_type':
+          }
+          case 'immo_sell_type': {
             // Map English/French labels to Prisma enum values
             const sellTypeMap: Record<string, string> = {
               'old': 'ancien',
@@ -491,6 +496,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
             const sellTypeLabel = attr.value_label?.toLowerCase() || '';
             ad.immo_sell_type = sellTypeMap[sellTypeLabel] || undefined;
             break;
+          }
         }
       }
     }

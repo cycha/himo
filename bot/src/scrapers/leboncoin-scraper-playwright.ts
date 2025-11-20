@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck - This file uses browser APIs (navigator, window) which are not available in Node context
 import { chromium, Browser, Page } from 'playwright';
 import { BaseScraper, BotAdData } from './base-scraper';
@@ -106,7 +107,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
   /**
    * Fetch page using Playwright (headless browser)
    */
-  async fetchPage(url: string, userAgent: string): Promise<string> {
+  async fetchPage(url: string, _userAgent: string): Promise<string> {
     await this.initBrowser();
 
     if (!this.page) {
@@ -144,7 +145,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       try {
         await this.page.waitForSelector('[data-qa-id="aditem_container"]', { timeout: 5000 });
         this.logger.info('✅ Ads loaded successfully');
-      } catch (e) {
+      } catch {
         this.logger.warn('⚠️ Ad containers not found after wait, checking HTML anyway...');
       }
 
@@ -276,7 +277,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
           case 'square':
             ad.surface = parseInt(attr.value);
             break;
-          case 'immo_sell_type':
+          case 'immo_sell_type': {
             // Map English labels to French enum values
             const sellTypeMap: Record<string, string> = {
               'old': 'ancien',
@@ -287,6 +288,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
             const sellTypeLabel = attr.value_label?.toLowerCase();
             ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
             break;
+          }
         }
       }
     }
