@@ -81,7 +81,15 @@ jobs:
             # Build and start containers
             echo "Building and starting Docker containers..."
             docker compose -f docker-compose.prod.yml down || true
-            docker compose -f docker-compose.prod.yml build --no-cache
+
+            # Build services sequentially to avoid memory issues in CI
+            echo "Building api service..."
+            docker compose -f docker-compose.prod.yml build --no-cache api
+            echo "Building client service..."
+            docker compose -f docker-compose.prod.yml build --no-cache client
+            echo "Building bot service..."
+            docker compose -f docker-compose.prod.yml build --no-cache bot
+
             docker compose -f docker-compose.prod.yml up -d
 
             # Run database migrations (if needed)
