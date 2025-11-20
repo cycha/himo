@@ -24,8 +24,9 @@ COPY client ./client
 # Install all dependencies
 RUN pnpm install
 
-# Build client workspace
-RUN pnpm --filter client build
+# Build client from its directory
+WORKDIR /app/client
+RUN pnpm run build
 
 # Stage 2: Serve with Nginx
 FROM nginx:stable-alpine

@@ -20,5 +20,6 @@ COPY api ./api
 # Install all dependencies
 RUN pnpm install
 
-# Start node js server
-CMD ["pnpm", "--filter", "api", "start"]
+# Start node js server from api directory
+WORKDIR /app/api
+CMD ["pnpm", "start"]

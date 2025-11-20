@@ -49,20 +49,18 @@ RUN pnpm install
 COPY api/prisma ./api/prisma
 
 # Generate Prisma Client
-RUN pnpm --filter bot run prisma:generate
+WORKDIR /app/bot
+RUN pnpm run prisma:generate
 
 # Install Playwright browsers
 RUN npx playwright install chromium --with-deps
 
-# Copy app source code
-COPY bot ./bot
-
 # Build TypeScript
-RUN pnpm --filter bot build
+RUN pnpm run build
 
 # Set display for Xvfb
 ENV DISPLAY=:99
 ENV HEADLESS=false
 
 # Run with Xvfb (starts virtual display then run)
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm --filter bot start"]
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm start"]
