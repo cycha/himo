@@ -27,13 +27,13 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
       const decoded = jwt.verify(token, secret) as { id: string; email: string };
       req.user = decoded;
       next();
-    } catch (error) {
+    } catch (_error) {
       res.status(401).json({
         error: 'Invalid token',
         message: 'The provided token is invalid or expired',
       });
     }
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({
       error: 'Authentication error',
       message: 'An error occurred during authentication',
