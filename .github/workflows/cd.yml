@@ -80,16 +80,16 @@ jobs:
 
             # Build and start containers
             echo "Building and starting Docker containers..."
-            docker-compose -f docker-compose.prod.yml down || true
-            docker-compose -f docker-compose.prod.yml build --no-cache
-            docker-compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml down || true
+            docker compose -f docker-compose.prod.yml build --no-cache
+            docker compose -f docker-compose.prod.yml up -d
 
             # Run database migrations (if needed)
             echo "Running database migrations..."
-            docker-compose -f docker-compose.prod.yml exec -T api pnpm run prisma:migrate || true
+            docker compose -f docker-compose.prod.yml exec -T api pnpm run prisma:migrate || true
 
             echo "✅ Deployment completed successfully!"
-            docker-compose -f docker-compose.prod.yml ps
+            docker compose -f docker-compose.prod.yml ps
 
   notify:
     name: Notify deployment status
