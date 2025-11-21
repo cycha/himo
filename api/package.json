@@ -4,7 +4,7 @@
   "description": "REST API for Himo real estate aggregator",
   "main": "dist/server.js",
   "scripts": {
-    "postinstall": "prisma generate || true",
+    "postinstall": "test -d ./prisma && prisma generate || true",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "start": "node dist/server.js",

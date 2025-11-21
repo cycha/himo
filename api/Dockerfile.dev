@@ -1,25 +1,35 @@
 FROM node:25-alpine
 
+# Install build tools for native modules (bcrypt, etc)
+RUN apk add --no-cache python3 make g++
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Set working directory
 WORKDIR /app
 
-# Copy package files for all workspaces
-COPY package*.json ./
-COPY api/package*.json ./api/
-COPY commons/package*.json ./commons/
+# Copy root config files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs tsconfig.json ./
 
-# Install dependencies
-RUN npm install
+# Copy workspace package.json files (API + commons)
+COPY commons/package.json ./commons/
+COPY api/package.json ./api/
 
-# Copy source code
-COPY api/ ./api/
-COPY commons/ ./commons/
-COPY tsconfig.json ./
+# Copy workspace source code for proper monorepo resolution
+COPY commons ./commons
+COPY api ./api
 
-# Build TypeScript
-RUN npm run build
+# Install dependencies for api workspace only
+RUN pnpm install --frozen-lockfile --filter api
 
-WORKDIR /app/api
+# Rebuild bcrypt for Linux environment
+RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || true
+
+# Generate Prisma Client
+RUN pnpm --filter api exec prisma generate
 
 EXPOSE 3000 9229
 
-CMD ["npm", "run", "dev"]
+# Run dev with nodemon (via pnpm script)
+CMD ["pnpm", "--filter", "api", "run", "dev"]

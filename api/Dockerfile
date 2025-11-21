@@ -1,23 +1,36 @@
-# Dockerfile for Dev Node Express Backend
-FROM node:alpine
+# Development Dockerfile for Express API with TypeScript
+FROM node:25-alpine
 
-# Copy common folder
-WORKDIR /commons
-COPY ./commons/package*.json ./
-RUN npm install --silent
-COPY ./commons .
+# Install build tools for native modules (bcrypt, etc)
+RUN apk add --no-cache python3 make g++
 
-# Create App Directory
-WORKDIR /api
+# Install pnpm
+RUN npm install -g pnpm
 
-# Install Dependencies
-COPY ./api/package*.json ./
-RUN npm install --silent
+# Set working directory
+WORKDIR /app
 
-# Copy app source code
-COPY ./api .
+# Copy root config files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs tsconfig.json ./
 
-# Create startup script
-RUN echo '#!/bin/sh\nnpx prisma generate\nexec npm run dev' > /api/start.sh && chmod +x /api/start.sh
+# Copy workspace package.json files (API + commons)
+COPY commons/package.json ./commons/
+COPY api/package.json ./api/
 
-CMD ["/api/start.sh"]
+# Copy workspace source code for proper monorepo resolution
+COPY commons ./commons
+COPY api ./api
+
+# Install dependencies for api workspace only
+RUN pnpm install --frozen-lockfile --filter api
+
+# Rebuild bcrypt for Linux environment
+RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || true
+
+# Generate Prisma Client
+RUN pnpm --filter api exec prisma generate
+
+EXPOSE 3000 9229
+
+# Run dev with nodemon (via npm script)
+CMD ["pnpm", "--filter", "api", "run", "dev"]

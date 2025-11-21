@@ -1,9 +1,12 @@
-#  Dockerfile for bot with Xvfb support
+# Development Dockerfile for bot with Xvfb support
 
 FROM node:25-bullseye
 
-# Install Xvfb and Chromium dependencies for Playwright
+# Install build tools and Xvfb + Chromium dependencies for Playwright
 RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
     xvfb \
     libnss3 \
     libnspr4 \
@@ -23,38 +26,40 @@ RUN apt-get update && apt-get install -y \
     libxshmfence1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm (pinned to match lockfile)
+RUN npm install -g pnpm@10.22.0
 
-# Copy common folder
-WORKDIR /commons
-COPY ./commons/package*.json ./
-RUN pnpm install
-COPY ./commons .
+# Copy root config files
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs tsconfig.json ./
 
-# Create App Directory
-WORKDIR /bot
+# Copy workspace package.json files (bot + commons + api for Prisma)
+COPY commons/package.json ./commons/
+COPY api/package.json ./api/
+COPY bot/package.json ./bot/
 
-# Install Dependencies
-COPY ./bot/package*.json ./bot/pnpm-lock.yaml* ./
+# Copy workspace source code (needed for proper monorepo resolution)
+COPY commons ./commons
+COPY api ./api
+COPY api/prisma ./api/prisma
+COPY bot ./bot
 
-RUN pnpm install
+# Install dependencies for both api and bot workspaces
+RUN pnpm install --frozen-lockfile --filter api --filter bot
 
-# Copy API's Prisma schema (bot uses it)
-COPY ./api/prisma ./prisma
+# Generate Prisma Client from API schema
+RUN pnpm --filter api exec prisma generate
 
-# Generate Prisma Client
-RUN npx prisma generate --schema=./prisma/schema.prisma
+# Install Playwright browsers from bot workspace
+WORKDIR /app/bot
+RUN pnpm exec playwright install chromium --with-deps || echo "Playwright installation attempted"
 
-# Install Playwright browsers
-RUN npx playwright install chromium --with-deps
-
-# Copy app source code
-COPY ./bot .
+# Build TypeScript (optional for dev - can run as tsx)
+RUN pnpm run build || true
 
 # Set display for Xvfb
 ENV DISPLAY=:99
 ENV HEADLESS=false
 
-# Run with Xvfb (starts virtual display then run with tsx - no build needed)
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm start"]
+# Run with Xvfb (cleanup any stale locks, start virtual display, then run app)
+CMD ["sh", "-c", "rm -f /tmp/.X99-lock && rm -f /tmp/.X11-unix/X99 && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm start || { pkill -f Xvfb; exit 1; }"]
