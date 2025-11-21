@@ -1,24 +1,32 @@
-# Prod build environment for react + node express app
+# Prod build environment for Express API with TypeScript
 
 FROM node:alpine
 
 # Install pnpm
 RUN npm install -g pnpm
 
+# Set working directory
+WORKDIR /app
+
 # Copy root package files, lockfile, and workspace config
-COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy only necessary workspace package.json files (API + commons)
-COPY commons/package*.json ./commons/
-COPY api/package*.json ./api/
+# Copy workspace package.json files (API + commons)
+COPY commons/package.json ./commons/
+COPY api/package.json ./api/
 
-# Copy workspace source code (needed for proper monorepo resolution)
+# Copy workspace source code for proper monorepo resolution
 COPY commons ./commons
 COPY api ./api
 
 # Install dependencies for api workspace only (reduces memory usage)
 RUN pnpm install --frozen-lockfile --filter api
 
-# Start node js server from api directory
-WORKDIR /app/api
-CMD ["pnpm", "start"]
+# Build API TypeScript
+RUN pnpm --filter api build
+
+# Remove dev dependencies to reduce image size
+RUN pnpm prune --prod --filter api
+
+# Start API server
+CMD ["node", "api/dist/server.js"]
