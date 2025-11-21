@@ -29,6 +29,84 @@ jobs:
       - name: Check code formatting
         run: pnpm exec prettier --check "**/*.{ts,tsx,js,jsx,json,md}"
 
+  eslint:
+    name: ESLint Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm lint
+
+  type-check:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm --filter api run prisma:generate
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
+
+      - name: Run TypeScript type check
+        run: pnpm type-check
+
+  duplicate-code:
+    name: Copy-Paste Detection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install jscpd
+        run: npm install -g jscpd
+
+      - name: Detect duplicate code
+        run: |
+          jscpd . --min-lines 10 --min-tokens 50 \
+            --format "typescript,javascript" \
+            --ignore "**/*.test.ts,**/*.spec.ts,**/node_modules/**,**/dist/**,**/build/**" \
+            --reporters "console" \
+            --threshold 5 || echo "Duplicates found but continuing..."
+
   complexity:
     name: Code Complexity Analysis
     runs-on: ubuntu-latest
@@ -42,13 +120,102 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Analyze code complexity
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install complexity analysis tools
+        run: npm install -g complexity-report
+
+      - name: Analyze API complexity
         run: |
-          echo "Code complexity analysis would run here"
-          echo "Consider adding tools like:"
-          echo "  - complexity-report"
-          echo "  - jscpd (copy-paste detector)"
-          echo "  - SonarQube"
+          echo "=== Analyzing API complexity ==="
+          complexity-report api/src --format markdown --threshold 10 || echo "High complexity detected in API"
+
+      - name: Analyze Client complexity
+        run: |
+          echo "=== Analyzing Client complexity ==="
+          complexity-report client/src --format markdown --threshold 10 || echo "High complexity detected in Client"
+
+      - name: Analyze Bot complexity
+        run: |
+          echo "=== Analyzing Bot complexity ==="
+          complexity-report bot/src --format markdown --threshold 10 || echo "High complexity detected in Bot"
+
+      - name: Check for high complexity with madge
+        run: |
+          npm install -g madge
+          echo "=== Checking module dependencies complexity ==="
+          echo "API dependencies:"
+          madge --summary api/src
+          echo "Client dependencies:"
+          madge --summary client/src
+          echo "Bot dependencies:"
+          madge --summary bot/src
+
+  circular-dependencies:
+    name: Circular Dependency Detection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install madge
+        run: npm install -g madge
+
+      - name: Check for circular dependencies in API
+        run: |
+          echo "Checking API for circular dependencies..."
+          madge --circular --extensions ts api/src || echo "Circular dependencies found in API"
+
+      - name: Check for circular dependencies in Client
+        run: |
+          echo "Checking Client for circular dependencies..."
+          madge --circular --extensions ts,tsx client/src || echo "Circular dependencies found in Client"
+
+      - name: Check for circular dependencies in Bot
+        run: |
+          echo "Checking Bot for circular dependencies..."
+          madge --circular --extensions ts bot/src || echo "Circular dependencies found in Bot"
+
+  codeql:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-and-quality
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
 
   size-check:
     name: Bundle Size Check
