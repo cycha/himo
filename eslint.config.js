@@ -9,12 +9,14 @@ module.exports = [
       '**/dist/**',
       '**/node_modules/**',
       '**/build/**',
-      '**/*.js',
       '**/*.test.ts',
       '**/*.spec.ts',
       '**/__tests__/**',
       '**/tests/**',
       'client/**',
+      // Ignore build artifacts and generated files
+      '**/*.js.map',
+      '**/coverage/**',
     ],
   },
   // Base configuration for all TypeScript files
@@ -94,6 +96,29 @@ module.exports = [
     rules: {
       // Allow browser globals in scraper code that injects JavaScript
       'no-undef': 'off',
+    },
+  },
+  // Configuration for JavaScript config files
+  {
+    files: ['**/*.js', '**/*.cjs', '**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'commonjs',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+        global: 'readonly',
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-console': 'off',
     },
   },
 ];
