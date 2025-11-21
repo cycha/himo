@@ -25,6 +25,12 @@ COPY api ./api
 # Install dependencies for api workspace only (reduces memory usage)
 RUN pnpm install --frozen-lockfile --filter api
 
+# Rebuild bcrypt for Linux environment
+RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild
+
+# Generate Prisma Client
+RUN pnpm --filter api exec prisma generate
+
 # Build API TypeScript
 RUN pnpm --filter api build
 
