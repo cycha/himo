@@ -16,7 +16,8 @@
     "seed": "pnpm --filter api seed",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx,.js,.jsx",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "pnpm --filter api test"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

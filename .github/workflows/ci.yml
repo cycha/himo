@@ -205,7 +205,7 @@ jobs:
           PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Run tests
-        run: pnpm test || echo "Tests not yet configured - skipping"
+        run: pnpm test
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/himo_test
 
