@@ -107,6 +107,56 @@ jobs:
             --reporters "console" \
             --threshold 5 || echo "Duplicates found but continuing..."
 
+  complexity:
+    name: Code Complexity Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install complexity analysis tools
+        run: npm install -g complexity-report
+
+      - name: Analyze API complexity
+        run: |
+          echo "=== Analyzing API complexity ==="
+          complexity-report api/src --format markdown --threshold 10 || echo "High complexity detected in API"
+
+      - name: Analyze Client complexity
+        run: |
+          echo "=== Analyzing Client complexity ==="
+          complexity-report client/src --format markdown --threshold 10 || echo "High complexity detected in Client"
+
+      - name: Analyze Bot complexity
+        run: |
+          echo "=== Analyzing Bot complexity ==="
+          complexity-report bot/src --format markdown --threshold 10 || echo "High complexity detected in Bot"
+
+      - name: Check for high complexity with madge
+        run: |
+          npm install -g madge
+          echo "=== Checking module dependencies complexity ==="
+          echo "API dependencies:"
+          madge --summary api/src
+          echo "Client dependencies:"
+          madge --summary client/src
+          echo "Bot dependencies:"
+          madge --summary bot/src
+
   circular-dependencies:
     name: Circular Dependency Detection
     runs-on: ubuntu-latest
