@@ -38,16 +38,14 @@ const getInitialLanguage = (): string => {
   return 'en';
 };
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: getInitialLanguage(),
-    fallbackLng: 'en',
-    defaultNS: 'common',
-    interpolation: {
-      escapeValue: false,
-    },
-  });
+i18n.use(initReactI18next).init({
+  resources,
+  lng: getInitialLanguage(),
+  fallbackLng: 'en',
+  defaultNS: 'common',
+  interpolation: {
+    escapeValue: false,
+  },
+});
 
 export default i18n;

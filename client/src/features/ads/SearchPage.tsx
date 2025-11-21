@@ -46,9 +46,7 @@ const SearchPage: React.FC = () => {
             <div className="flex flex-col items-center justify-center text-center">
               <Search className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">{t('search.startSearchTitle')}</h3>
-              <p className="text-muted-foreground">
-                {t('search.startSearchDescription')}
-              </p>
+              <p className="text-muted-foreground">{t('search.startSearchDescription')}</p>
             </div>
           </CardContent>
         </Card>
@@ -57,7 +55,11 @@ const SearchPage: React.FC = () => {
       {hasSearched && (
         <Card>
           <CardHeader>
-            <CardTitle>{!isLoading && data ? t('search.resultsCount', { count: data.count }) : t('search.searchResults')}</CardTitle>
+            <CardTitle>
+              {!isLoading && data
+                ? t('search.resultsCount', { count: data.count })
+                : t('search.searchResults')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <AdList ads={data?.data || []} loading={isLoading} />
