@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { useSignup } from '../../hooks/api/useAuth';
@@ -29,9 +35,7 @@ const SignupForm: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Create Your Account
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Create Your Account</CardTitle>
           <CardDescription className="text-center">
             Sign up to start finding your dream property
           </CardDescription>
@@ -60,9 +64,7 @@ const SignupForm: React.FC = () => {
                 required
                 minLength={6}
               />
-              <p className="text-xs text-muted-foreground">
-                Must be at least 6 characters long
-              </p>
+              <p className="text-xs text-muted-foreground">Must be at least 6 characters long</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -74,9 +76,7 @@ const SignupForm: React.FC = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              {passwordError && (
-                <p className="text-xs text-red-500">{passwordError}</p>
-              )}
+              {passwordError && <p className="text-xs text-red-500">{passwordError}</p>}
             </div>
             <Button
               type="submit"

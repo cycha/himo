@@ -1,5 +1,11 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { MapPin, Calendar, Home, Ruler } from 'lucide-react';
 import type { Ad } from '../../types';
 
@@ -31,9 +37,9 @@ const AdCard: React.FC<AdCardProps> = ({ ad }) => {
         <div className="flex-1">
           <CardHeader>
             <CardTitle className="text-lg">
-              <a 
-                href={ad.url} 
-                target="_blank" 
+              <a
+                href={ad.url}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
               >

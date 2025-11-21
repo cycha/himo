@@ -73,13 +73,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
         `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&type=municipality&limit=5`
       );
       const data = await response.json();
-      
+
       const suggestions = data.features.map((feature: any) => ({
         name: feature.properties.city,
         postcode: feature.properties.postcode,
         context: feature.properties.context,
       }));
-      
+
       setCitySuggestions(suggestions);
       setShowSuggestions(true);
     } catch (error) {
@@ -91,12 +91,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
     setCity(value);
     setCityError('');
     setValidatedCity('');
-    
+
     // Debounce API calls
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
-    
+
     debounceTimer.current = setTimeout(() => {
       fetchCitySuggestions(value);
     }, 300);
@@ -126,7 +126,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
         `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(city)}&type=municipality&limit=1`
       );
       const data = await response.json();
-      
+
       if (data.features && data.features.length > 0) {
         const exactMatch = data.features[0].properties.city.toLowerCase() === city.toLowerCase();
         if (exactMatch) {
@@ -135,7 +135,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
           return true;
         }
       }
-      
+
       setCityError('City not found. Please select from suggestions.');
       return false;
     } catch (error) {
@@ -146,7 +146,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate city if provided
     const isCityValid = await validateCity();
     if (!isCityValid) {
@@ -169,18 +169,14 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="space-y-2">
           <Label htmlFor="type">Property Type</Label>
-          <Select 
-            id="type" 
-            value={type} 
-            onChange={(e) => setType(e.target.value)}
-          >
+          <Select id="type" value={type} onChange={(e) => setType(e.target.value)}>
             <option value="">All Types</option>
             <option value="appartement">Appartement</option>
             <option value="maison">Maison</option>
             <option value="terrain">Terrain</option>
           </Select>
         </div>
-        
+
         <div className="space-y-2 relative">
           <Label htmlFor="city">City</Label>
           <div className="relative">
@@ -196,7 +192,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
               className={`pl-10 ${cityError ? 'border-red-500' : validatedCity ? 'border-green-500' : ''}`}
             />
           </div>
-          
+
           {/* City suggestions dropdown */}
           {showSuggestions && citySuggestions.length > 0 && (
             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
@@ -210,13 +206,15 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
                   <MapPin className="h-4 w-4 mt-1 text-gray-400 flex-shrink-0" />
                   <div>
                     <div className="font-medium">{suggestion.name}</div>
-                    <div className="text-sm text-gray-500">{suggestion.postcode} - {suggestion.context}</div>
+                    <div className="text-sm text-gray-500">
+                      {suggestion.postcode} - {suggestion.context}
+                    </div>
                   </div>
                 </button>
               ))}
             </div>
           )}
-          
+
           {/* Error message */}
           {cityError && (
             <div className="flex items-center gap-1 text-red-500 text-sm">
@@ -224,7 +222,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
               <span>{cityError}</span>
             </div>
           )}
-          
+
           {/* Success indicator */}
           {validatedCity && !cityError && (
             <div className="flex items-center gap-1 text-green-600 text-sm">
@@ -233,7 +231,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
             </div>
           )}
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="priceMin">Min Price (€)</Label>
           <Input
@@ -246,7 +244,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="priceMax">Max Price (€)</Label>
           <Input
@@ -259,7 +257,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="surfaceMin">Min Surface (m²)</Label>
           <Input
@@ -272,13 +270,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
           />
         </div>
       </div>
-      
-      <Button 
-        type="submit" 
-        className="w-full"
-        size="lg"
-        disabled={loading}
-      >
+
+      <Button type="submit" className="w-full" size="lg" disabled={loading}>
         <Search className="h-4 w-4 mr-2" />
         {loading ? 'Searching...' : 'Search'}
       </Button>

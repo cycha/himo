@@ -46,7 +46,12 @@ export const useSignup = (): UseMutationResult<AuthResponse, Error, SignupForm> 
           toast.error(err.msg || err.message);
         });
       } else {
-        toast.error(error.response?.data?.message || error.response?.data?.error || error.message || 'Signup failed');
+        toast.error(
+          error.response?.data?.message ||
+            error.response?.data?.error ||
+            error.message ||
+            'Signup failed'
+        );
       }
     },
   });

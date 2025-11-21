@@ -3,6 +3,7 @@
 ## Quick Start Options
 
 ### Option 1: Local Development with PostgreSQL Only (Recommended)
+
 Run PostgreSQL in Docker, API/Bot locally with hot-reload:
 
 ```bash
@@ -23,12 +24,14 @@ docker-compose down
 ```
 
 **Benefits:**
+
 - ✅ Fast hot-reload with tsx
 - ✅ Easy debugging with TypeScript
-- ✅ See console logs directly  
+- ✅ See console logs directly
 - ✅ Access PostgreSQL on port 5432
 
 ### Option 2: Full Docker Development
+
 Run everything in Docker with volume mounts:
 
 ```bash
@@ -43,6 +46,7 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 ```
 
 ### Option 3: Production Docker
+
 Run optimized production builds:
 
 ```bash
@@ -59,48 +63,59 @@ docker-compose down
 ## Available Docker Compose Files
 
 ### `docker-compose.local.yml`
+
 **Purpose:** Local development - PostgreSQL only
 
 **Services:**
+
 - PostgreSQL (port 27017)
 - pgAdmin web UI (port 8081)
 
 **Usage:**
+
 ```bash
 docker-compose -f docker-compose.local.yml up -d
 ```
 
 ### `docker-compose.yml`
+
 **Purpose:** Base production configuration
 
 **Services:**
+
 - PostgreSQL
 - API (production build)
 - Bot (production build)
 
 **Usage:**
+
 ```bash
 docker-compose up -d
 ```
 
 ### `docker-compose.dev.yml`
+
 **Purpose:** Development override for docker-compose.yml
 
 **Features:**
+
 - Volume mounts for hot-reload
 - Dev command with tsx watch
 - Debugger port exposed (9229)
 - pgAdmin included
 
 **Usage:**
+
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
 ### `docker-compose.prod.yml`
+
 **Purpose:** Production optimizations
 
 **Features:**
+
 - Multi-stage builds
 - Optimized images
 - Resource limits
@@ -109,6 +124,7 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ## Docker Commands Reference
 
 ### Start Services
+
 ```bash
 # Local PostgreSQL only
 docker-compose -f docker-compose.local.yml up -d
@@ -124,6 +140,7 @@ docker-compose up -d --build
 ```
 
 ### View Logs
+
 ```bash
 # All services
 docker-compose logs -f
@@ -138,6 +155,7 @@ docker-compose logs --tail=100 -f
 ```
 
 ### Stop Services
+
 ```bash
 # Stop (keeps containers)
 docker-compose stop
@@ -150,6 +168,7 @@ docker-compose down -v
 ```
 
 ### Manage Services
+
 ```bash
 # Restart a service
 docker-compose restart api
@@ -166,6 +185,7 @@ docker-compose exec postgres psql himo
 ```
 
 ### Check Status
+
 ```bash
 # List running containers
 docker-compose ps
@@ -199,11 +219,13 @@ DATABASE_URL=postgresql://postgres:5432/himo
 ## Accessing Services
 
 ### When running locally (Option 1)
+
 - **API:** http://localhost:3000
 - **PostgreSQL:** postgresql://localhost:5432
 - **pgAdmin:** http://localhost:8081 (admin/admin)
 
 ### When running in Docker
+
 - **API:** http://localhost:3000
 - **PostgreSQL:** postgresql://localhost:5432 (from host)
 - **PostgreSQL:** postgresql://postgres:5432 (from containers)
@@ -212,11 +234,13 @@ DATABASE_URL=postgresql://postgres:5432/himo
 ## Testing
 
 ### API Health Check
+
 ```bash
 curl http://localhost:3000/api/health
 ```
 
 ### Create User
+
 ```bash
 curl -X POST http://localhost:3000/api/users/signup \
   -H "Content-Type: application/json" \
@@ -224,6 +248,7 @@ curl -X POST http://localhost:3000/api/users/signup \
 ```
 
 ### Search Ads
+
 ```bash
 curl -X POST http://localhost:3000/api/ads/search \
   -H "Content-Type: application/json" \
@@ -233,6 +258,7 @@ curl -X POST http://localhost:3000/api/ads/search \
 ## PostgreSQL Management
 
 ### Connect with psql
+
 ```bash
 # From host
 psql postgresql://localhost:5432/himo
@@ -242,6 +268,7 @@ docker-compose exec postgres psql himo
 ```
 
 ### View Data
+
 ```javascript
 // List collections
 show collections
@@ -257,6 +284,7 @@ db.users.find().pretty()
 ```
 
 ### Backup Database
+
 ```bash
 # Backup
 docker-compose exec postgres docker-compose up -d postgresump --db=himo --out=/data/backup
@@ -268,6 +296,7 @@ docker-compose exec postgres pg_restore --db=himo /data/backup/himo
 ## Troubleshooting
 
 ### PostgreSQL Connection Issues
+
 ```bash
 # Check if PostgreSQL is running
 docker-compose ps postgres
@@ -283,6 +312,7 @@ docker-compose exec api ping postgres
 ```
 
 ### API Not Starting
+
 ```bash
 # Check logs
 docker-compose logs api
@@ -296,6 +326,7 @@ docker-compose up -d api
 ```
 
 ### Volume Permission Issues
+
 ```bash
 # On Linux, fix permissions
 sudo chown -R $USER:$USER .
@@ -305,6 +336,7 @@ docker-compose build --no-cache
 ```
 
 ### Clean Everything
+
 ```bash
 # Remove containers, volumes, images
 docker-compose down -v --rmi all
@@ -316,11 +348,13 @@ docker system prune -a --volumes
 ## Performance Tips
 
 ### Development
+
 - Use `docker-compose.local.yml` for fastest development
 - Volume mounts can be slow on macOS - use Option 1
 - Use `tsx watch` for instant hot-reload
 
 ### Production
+
 - Use multi-stage builds
 - Set resource limits
 - Enable healthchecks

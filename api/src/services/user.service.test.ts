@@ -164,7 +164,7 @@ describe('UserService', () => {
       const result1 = await userService.login(loginDto);
 
       // Wait a bit to ensure different issued-at time
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const result2 = await userService.login(loginDto);
 

@@ -13,16 +13,16 @@ chromium.use(StealthPlugin());
 
 const DEFAULT_CONFIG: ScraperConfig = {
   maxPages: 30,
-  maxRetries: 0,  // No retries - if blocked, stop immediately to avoid detection
+  maxRetries: 0, // No retries - if blocked, stop immediately to avoid detection
   waitSuccess: 8, // Longer wait between pages (8-16 seconds)
-  waitError: 30,  // Much longer wait on errors (30+ seconds)
+  waitError: 30, // Much longer wait on errors (30+ seconds)
   baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
 };
 
 /**
  * ULTRA-STEALTH LeBonCoin Scraper
- * 
+ *
  * Advanced anti-detection techniques:
  * - playwright-extra with stealth plugin (best-in-class)
  * - Real browser fingerprinting
@@ -73,7 +73,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         '--no-sandbox',
         '--disable-web-security',
         '--disable-features=IsolateOrigins,site-per-process',
-        
+
         // Additional stealth
         '--disable-infobars',
         '--window-position=0,0',
@@ -87,7 +87,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         '--no-default-browser-check',
         '--disable-translate',
         '--disable-extensions',
-        
+
         // Language and locale
         '--lang=fr-FR',
         '--accept-lang=fr-FR,fr',
@@ -111,9 +111,9 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     // Create stealth page
     const userAgent = this.getRandomUserAgent();
     this.page = await this.browser.newPage({
-      viewport: { 
-        width: 1920 + Math.floor(Math.random() * 100), 
-        height: 1080 + Math.floor(Math.random() * 100) 
+      viewport: {
+        width: 1920 + Math.floor(Math.random() * 100),
+        height: 1080 + Math.floor(Math.random() * 100),
       },
       userAgent,
       locale: 'fr-FR',
@@ -129,11 +129,12 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
     // Set extra HTTP headers
     await this.page.setExtraHTTPHeaders({
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
       'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
       'Accept-Encoding': 'gzip, deflate, br',
-      'DNT': '1',
-      'Connection': 'keep-alive',
+      DNT: '1',
+      Connection: 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
       'Sec-Fetch-Dest': 'document',
       'Sec-Fetch-Mode': 'navigate',
@@ -155,24 +156,32 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? Promise.resolve({ state: 'denied' } as any)
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
 
       // 3. Add chrome object
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).chrome = {
         runtime: {},
-        loadTimes: function() {},
-        csi: function() {},
+        loadTimes: function () {},
+        csi: function () {},
         app: {},
       };
 
       // 4. Override plugins
       Object.defineProperty(navigator, 'plugins', {
         get: () => [
-          { name: 'Chrome PDF Plugin', description: 'Portable Document Format', filename: 'internal-pdf-viewer' },
-          { name: 'Chrome PDF Viewer', description: '', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' },
+          {
+            name: 'Chrome PDF Plugin',
+            description: 'Portable Document Format',
+            filename: 'internal-pdf-viewer',
+          },
+          {
+            name: 'Chrome PDF Viewer',
+            description: '',
+            filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai',
+          },
           { name: 'Native Client', description: '', filename: 'internal-nacl-plugin' },
         ],
       });
@@ -194,16 +203,17 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
       // 8. Mock battery API
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).getBattery = () => Promise.resolve({
-        charging: true,
-        chargingTime: 0,
-        dischargingTime: Infinity,
-        level: 1,
-        onchargingchange: null,
-        onchargingtimechange: null,
-        ondischargingtimechange: null,
-        onlevelchange: null,
-      });
+      (navigator as any).getBattery = () =>
+        Promise.resolve({
+          charging: true,
+          chargingTime: 0,
+          dischargingTime: Infinity,
+          level: 1,
+          onchargingchange: null,
+          onchargingtimechange: null,
+          ondischargingtimechange: null,
+          onlevelchange: null,
+        });
 
       // 9. Add realistic connection
       Object.defineProperty(navigator, 'connection', {
@@ -265,7 +275,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       // Check response status
       const status = response.status();
       this.logger.info(`   HTTP Status: ${status}`);
-      
+
       if (status !== 200) {
         this.logger.warn(`⚠️ HTTP ${status} response - BLOCKED!`);
         const responseText = await response.text();
@@ -273,7 +283,9 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         if (status === 403 || status === 429) {
           this.logger.error('🚫 DataDome anti-bot detected! Stopping to avoid further blocks.');
           this.logger.error('💡 Suggestion: Wait 6-12 hours before next scraping attempt.');
-          throw new Error(`HTTP ${status} - Anti-bot protection detected (DataDome). Stop scraping.`);
+          throw new Error(
+            `HTTP ${status} - Anti-bot protection detected (DataDome). Stop scraping.`
+          );
         }
       }
 
@@ -302,13 +314,16 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
       // Scroll like a human (multiple small scrolls)
       for (let i = 0; i < 3; i++) {
-        await this.page.evaluate((scroll) => {
-          window.scrollBy({
-            top: scroll,
-            left: 0,
-            behavior: 'smooth'
-          });
-        }, Math.floor(Math.random() * 300 + 100));
+        await this.page.evaluate(
+          (scroll) => {
+            window.scrollBy({
+              top: scroll,
+              left: 0,
+              behavior: 'smooth',
+            });
+          },
+          Math.floor(Math.random() * 300 + 100)
+        );
         await sleep(Math.random() * 1 + 0.5);
       }
 
@@ -370,7 +385,11 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   /**
    * Alternative method to extract ads from HTML
    */
-  private parseAdsAlternativeMethod(html: string, latestDate: Date, latestTitle: string): ParseResult {
+  private parseAdsAlternativeMethod(
+    html: string,
+    latestDate: Date,
+    latestTitle: string
+  ): ParseResult {
     this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
 
     const altRegex = /"ads":(\[[\s\S]+?\])(?=,"ads_alu"|,"parameters"|$)/;
@@ -409,7 +428,10 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     for (const rawAd of rawAds) {
       const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
 
-      if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
+      if (
+        releaseDate < latestDate ||
+        (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)
+      ) {
         this.logger.info('🛑 Reached latest ad in DB, stopping...');
         isUpToDate = true;
         break;
@@ -486,7 +508,10 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   /**
    * Parse attributes and add them to the ad
    */
-  private parseAdAttributes(ad: Partial<BotAdData>, attributes?: Array<{ key: string; value: string; value_label?: string }>): void {
+  private parseAdAttributes(
+    ad: Partial<BotAdData>,
+    attributes?: Array<{ key: string; value: string; value_label?: string }>
+  ): void {
     if (!attributes) return;
 
     for (const attr of attributes) {
@@ -512,15 +537,15 @@ export class LeBonCoinScraperStealth extends BaseScraper {
    */
   private mapRealEstateType(label?: string): string | undefined {
     const typeMap: Record<string, string> = {
-      'appartement': 'appartement',
-      'apartment': 'appartement',
-      'maison': 'maison',
-      'house': 'maison',
-      'terrain': 'terrain',
-      'land': 'terrain',
-      'parking': 'parking',
+      appartement: 'appartement',
+      apartment: 'appartement',
+      maison: 'maison',
+      house: 'maison',
+      terrain: 'terrain',
+      land: 'terrain',
+      parking: 'parking',
       'local commercial': 'local_commercial',
-      'commercial': 'local_commercial',
+      commercial: 'local_commercial',
     };
     const typeLabel = label?.toLowerCase() || '';
     return typeMap[typeLabel] || undefined;
@@ -531,10 +556,10 @@ export class LeBonCoinScraperStealth extends BaseScraper {
    */
   private mapImmoSellType(label?: string): string | undefined {
     const sellTypeMap: Record<string, string> = {
-      'old': 'ancien',
-      'new': 'neuf',
-      'ancien': 'ancien',
-      'neuf': 'neuf',
+      old: 'ancien',
+      new: 'neuf',
+      ancien: 'ancien',
+      neuf: 'neuf',
     };
     const sellTypeLabel = label?.toLowerCase() || '';
     return sellTypeMap[sellTypeLabel] || undefined;

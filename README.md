@@ -55,20 +55,24 @@ npm run dev:client
 ## 📚 Documentation
 
 ### 🎯 Essential Reading
+
 - **[Project Summary](docs/PROJECT_SUMMARY.md)** - Complete overview, tech stack, statistics
 - **[Documentation Index](docs/README.md)** - Full documentation catalog
 
 ### 🏗️ Architecture (For Developers)
+
 - **[Backend Architecture](docs/architecture/ARCHITECTURE.md)** - Clean Architecture, SOLID, Repository pattern
 - **[Frontend Architecture](docs/architecture/FRONTEND_ARCHITECTURE.md)** - React patterns, hooks, feature structure
 - **[Design System](docs/architecture/DESIGN_SYSTEM.md)** - shadcn/ui + Tailwind CSS guide
 
 ### 📖 Guides
+
 - **[Getting Started](docs/guides/GETTING_STARTED.md)** - Installation and setup
 - **[Docker Guide](docs/guides/DOCKER_GUIDE.md)** - Running with Docker
 - **[Commit Guide](docs/guides/COMMIT_GUIDE.md)** - Git workflow
 
 ### 🔄 Migration Stories
+
 - **[Vite Migration](docs/migration/VITE_MIGRATION.md)** - CRA → Vite (90% faster!)
 - **[TypeScript Migration](docs/migration/MIGRATION_GUIDE.md)** - JS → TS
 
@@ -77,6 +81,7 @@ npm run dev:client
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 19** - Latest React with new features
 - **TypeScript 5** - Full type safety
 - **Vite 7** - Lightning-fast build tool
@@ -86,6 +91,7 @@ npm run dev:client
 - **React Router 6** - Client-side routing
 
 ### Backend
+
 - **Node.js + Express** - Web server
 - **TypeScript 5** - Type-safe backend
 - **PostgreSQL + Prisma** - Database with PostGIS
@@ -93,6 +99,7 @@ npm run dev:client
 - **Clean Architecture** - SOLID principles
 
 ### DevOps
+
 - **Docker** - Containerization
 - **Docker Compose** - Multi-container orchestration
 
@@ -100,13 +107,13 @@ npm run dev:client
 
 ## 📊 Project Statistics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Dependencies** | 1,484 | 221 | ↓ 85% |
-| **Bundle Size** | 877 KB | 371 KB | ↓ 58% |
-| **Dev Server** | 30-60s | 2-3s | ↓ 90% |
-| **Build Time** | 45-90s | 1.5s | ↓ 98% |
-| **Vulnerabilities** | 211 | 0 | ↓ 100% |
+| Metric              | Before | After  | Improvement |
+| ------------------- | ------ | ------ | ----------- |
+| **Dependencies**    | 1,484  | 221    | ↓ 85%       |
+| **Bundle Size**     | 877 KB | 371 KB | ↓ 58%       |
+| **Dev Server**      | 30-60s | 2-3s   | ↓ 90%       |
+| **Build Time**      | 45-90s | 1.5s   | ↓ 98%       |
+| **Vulnerabilities** | 211    | 0      | ↓ 100%      |
 
 ---
 
@@ -144,6 +151,7 @@ himo/
 ## 🎯 Features
 
 ### User Features
+
 - 🔐 User authentication (signup/login with JWT)
 - 🔍 Advanced property search with filters
 - 🏠 Real estate listings from multiple sources
@@ -151,6 +159,7 @@ himo/
 - 🌙 Dark mode ready
 
 ### Technical Features
+
 - ⚡ Lightning-fast Vite dev server (<50ms HMR)
 - 🎨 100% shadcn/ui design system
 - 🔒 Secure authentication (JWT + bcrypt)
@@ -176,14 +185,17 @@ himo/
 ## 🚢 Deployment
 
 ### Docker (Recommended)
+
 ```bash
 docker-compose up
 ```
 
 ### Manual Deployment
+
 See [Getting Started Guide](docs/guides/GETTING_STARTED.md) for detailed instructions.
 
 ### Recommended Platforms
+
 - **Frontend:** Vercel, Netlify, AWS S3
 - **Backend:** Railway, Render, AWS EC2
 - **Database:** Supabase, Railway PostgreSQL, AWS RDS
@@ -193,11 +205,13 @@ See [Getting Started Guide](docs/guides/GETTING_STARTED.md) for detailed instruc
 ## 📈 Performance
 
 ### Build Performance
+
 - **Development:** Hot reload in <50ms
 - **Production Build:** 1.5 seconds
 - **Bundle Size:** 371 KB (gzip: 117 KB)
 
 ### Lighthouse Scores (Target)
+
 - **Performance:** 95+
 - **Accessibility:** 100
 - **Best Practices:** 100
@@ -208,12 +222,14 @@ See [Getting Started Guide](docs/guides/GETTING_STARTED.md) for detailed instruc
 ## 🧪 Testing
 
 ### Manual Testing
+
 1. ✅ User signup and login
 2. ✅ Property search with filters
 3. ✅ Dashboard access
 4. ✅ Responsive design
 
 ### Future: Automated Testing
+
 - [ ] Unit tests (Jest + React Testing Library)
 - [ ] E2E tests (Playwright)
 - [ ] API tests (Supertest)
@@ -273,6 +289,7 @@ This project is for portfolio purposes.
 ## 📞 Support
 
 For questions or issues:
+
 1. Check the [Documentation](docs/README.md)
 2. Review [Architecture guides](docs/architecture/)
 3. Open an issue on GitHub

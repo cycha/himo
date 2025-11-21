@@ -55,18 +55,20 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
     // Create new page with stealth settings
     this.page = await this.browser.newPage({
       viewport: { width: 1920, height: 1080 },
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       locale: 'fr-FR',
       timezoneId: 'Europe/Paris',
     });
 
     // Set extra HTTP headers
     await this.page.setExtraHTTPHeaders({
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
       'Accept-Encoding': 'gzip, deflate, br',
-      'DNT': '1',
-      'Connection': 'keep-alive',
+      DNT: '1',
+      Connection: 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
     });
 
@@ -99,8 +101,8 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? Promise.resolve({ state: 'denied' } as any)
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
     };
     await this.page.addInitScript(antiDetectionScript);
@@ -154,10 +156,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       }
 
       // Random mouse movement to appear human
-      await this.page.mouse.move(
-        Math.floor(Math.random() * 1000),
-        Math.floor(Math.random() * 800)
-      );
+      await this.page.mouse.move(Math.floor(Math.random() * 1000), Math.floor(Math.random() * 800));
 
       // Scroll page slightly (human behavior)
       await this.page.evaluate(() => {
@@ -203,7 +202,11 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
   /**
    * Alternative method to extract ads from HTML
    */
-  private parseAdsAlternativeMethod(html: string, latestDate: Date, latestTitle: string): ParseResult {
+  private parseAdsAlternativeMethod(
+    html: string,
+    latestDate: Date,
+    latestTitle: string
+  ): ParseResult {
     this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
 
     const altRegex = /"ads":(\[.+?\])(?:,"|$)/;
@@ -231,7 +234,10 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
     for (const rawAd of rawAds) {
       const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
 
-      if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
+      if (
+        releaseDate < latestDate ||
+        (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)
+      ) {
         this.logger.info('🛑 Reached latest ad in DB, stopping...');
         isUpToDate = true;
         break;
@@ -273,7 +279,10 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
   /**
    * Parse attributes and add them to the ad
    */
-  private parseAdAttributes(ad: Partial<BotAdData>, attributes?: Array<{ key: string; value: string; value_label?: string }>): void {
+  private parseAdAttributes(
+    ad: Partial<BotAdData>,
+    attributes?: Array<{ key: string; value: string; value_label?: string }>
+  ): void {
     if (!attributes) return;
 
     for (const attr of attributes) {
@@ -289,10 +298,10 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
           break;
         case 'immo_sell_type': {
           const sellTypeMap: Record<string, string> = {
-            'old': 'ancien',
-            'new': 'neuf',
-            'ancien': 'ancien',
-            'neuf': 'neuf',
+            old: 'ancien',
+            new: 'neuf',
+            ancien: 'ancien',
+            neuf: 'neuf',
           };
           const sellTypeLabel = attr.value_label?.toLowerCase();
           ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;

@@ -88,7 +88,9 @@ export class UserServicePrisma implements IUserService {
       email,
     };
 
-    return jwt.sign(payload, secret, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' } as SignOptions);
+    return jwt.sign(payload, secret, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    } as SignOptions);
   }
 }
 

@@ -7,16 +7,19 @@ Welcome to the Himo documentation! This folder contains comprehensive guides, ar
 ## 📖 Table of Contents
 
 ### 🚀 Getting Started
+
 - **[Getting Started Guide](guides/GETTING_STARTED.md)** - Installation and setup
 - **[Docker Guide](guides/DOCKER_GUIDE.md)** - Running with Docker
 - **[Production Deployment](guides/PRODUCTION_DEPLOYMENT.md)** - Cloud deployment guide
 - **[Commit Guide](guides/COMMIT_GUIDE.md)** - Git workflow and conventions
 
 ### 🤖 Scraping & Automation
+
 - **[Scraping Guide](guides/SCRAPING_GUIDE.md)** - Advanced web scraping with Playwright
 - **[Xvfb Guide](guides/XVFB_GUIDE.md)** - Virtual display for non-headless scraping
 
 ### 🏗️ Architecture
+
 - **[System Architecture](architecture/ARCHITECTURE.md)** - Clean Architecture, SOLID principles, Repository pattern
 - **[Design System](architecture/DESIGN_SYSTEM.md)** - shadcn/ui + Tailwind CSS guide
 
@@ -54,16 +57,19 @@ docs/
 ## 🎯 For Different Audiences
 
 ### 👨‍💻 For Developers
+
 1. **[Getting Started](guides/GETTING_STARTED.md)** - Set up the project locally
 2. **[System Architecture](architecture/ARCHITECTURE.md)** - Understand the architecture
 3. **[Design System](architecture/DESIGN_SYSTEM.md)** - Learn the UI patterns
 4. **[Scraping Guide](guides/SCRAPING_GUIDE.md)** - Advanced scraping techniques
 
 ### 🔧 For DevOps / Self-Hosting
+
 1. **[Docker Guide](guides/DOCKER_GUIDE.md)** - Docker setup
 2. **[Production Deployment](guides/PRODUCTION_DEPLOYMENT.md)** - Cloud deployment
 
 ### 🎨 For Designers
+
 1. **[Design System](architecture/DESIGN_SYSTEM.md)** - UI components and patterns
 2. **[Getting Started](guides/GETTING_STARTED.md)** - Run the project locally
 
@@ -72,18 +78,21 @@ docs/
 ## 🌟 Highlights
 
 ### Backend Excellence
+
 - ✅ **Clean Architecture** with Repository pattern
 - ✅ **SOLID Principles** throughout
 - ✅ **Dependency Injection** for testability
 - ✅ **DTOs** for type-safe data transfer
 
 ### Frontend Modern Stack
+
 - ✅ **React 19** with TypeScript 5
 - ✅ **Vite** for lightning-fast builds
 - ✅ **shadcn/ui** - 2025's best design system
 - ✅ **Feature-based** architecture
 
 ### Performance
+
 - ✅ **85% fewer dependencies** (1,484 → 221)
 - ✅ **58% smaller bundle** (877 KB → 371 KB)
 - ✅ **90% faster dev server** (30-60s → 2-3s)

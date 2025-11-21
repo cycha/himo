@@ -1,5 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
-import type { AuthResponse, SearchFilters, SearchResponse, LoginForm, SignupForm, User } from '../types';
+import type {
+  AuthResponse,
+  SearchFilters,
+  SearchResponse,
+  LoginForm,
+  SignupForm,
+  User,
+} from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 

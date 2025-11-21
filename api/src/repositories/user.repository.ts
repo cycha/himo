@@ -45,7 +45,7 @@ export class UserRepositoryPrisma {
    */
   async create(userData: { email: string; password: string }): Promise<User> {
     const hashedPassword = await bcrypt.hash(userData.password, BCRYPT_ROUNDS);
-    
+
     return prisma.user.create({
       data: {
         email: userData.email.toLowerCase(),
@@ -57,14 +57,17 @@ export class UserRepositoryPrisma {
   /**
    * Update user
    */
-  async update(id: string, userData: Partial<Pick<User, 'email' | 'password'>>): Promise<UserWithoutPassword | null> {
+  async update(
+    id: string,
+    userData: Partial<Pick<User, 'email' | 'password'>>
+  ): Promise<UserWithoutPassword | null> {
     try {
       const updateData: Prisma.UserUpdateInput = {};
-      
+
       if (userData.email) {
         updateData.email = userData.email.toLowerCase();
       }
-      
+
       if (userData.password) {
         updateData.password = await bcrypt.hash(userData.password, BCRYPT_ROUNDS);
       }
@@ -78,7 +81,7 @@ export class UserRepositoryPrisma {
           createdAt: true,
         },
       });
-      
+
       return user;
     } catch (error: unknown) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {

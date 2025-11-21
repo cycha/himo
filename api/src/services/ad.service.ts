@@ -13,7 +13,7 @@ export class AdServicePrisma implements IAdService {
 
   async search(searchDto: SearchAdDto, page: number = 0): Promise<SearchResultDto> {
     const filters = this.buildSearchFilters(searchDto);
-    
+
     const [ads, totalCount] = await Promise.all([
       this.repository.findWithFilters(filters, page),
       this.repository.count(filters),
@@ -21,7 +21,7 @@ export class AdServicePrisma implements IAdService {
 
     return {
       success: true,
-      data: ads.map(ad => this.mapToResponseDto(ad)),
+      data: ads.map((ad) => this.mapToResponseDto(ad)),
       page,
       count: ads.length,
       totalPages: Math.ceil(totalCount / 35),

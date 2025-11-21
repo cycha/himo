@@ -1,5 +1,11 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { User, Calendar, LogOut, Home } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -58,9 +64,7 @@ const DashboardPage: React.FC = () => {
             <Home className="h-5 w-5" />
             Welcome to Himo! 🏠
           </CardTitle>
-          <CardDescription>
-            Your real estate search platform
-          </CardDescription>
+          <CardDescription>Your real estate search platform</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <p>Search for real estate ads and find your dream property.</p>

@@ -37,8 +37,10 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'email')).toBe(true);
-      expect(errors.find(e => e.path === 'email')?.msg).toBe('Please provide a valid email address');
+      expect(errors.some((e) => e.path === 'email')).toBe(true);
+      expect(errors.find((e) => e.path === 'email')?.msg).toBe(
+        'Please provide a valid email address'
+      );
     });
 
     it('should fail with missing email', async () => {
@@ -50,7 +52,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'email')).toBe(true);
+      expect(errors.some((e) => e.path === 'email')).toBe(true);
     });
 
     it('should fail with password less than 6 characters', async () => {
@@ -63,8 +65,10 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'password')).toBe(true);
-      expect(errors.find(e => e.path === 'password')?.msg).toBe('Password must be at least 6 characters long');
+      expect(errors.some((e) => e.path === 'password')).toBe(true);
+      expect(errors.find((e) => e.path === 'password')?.msg).toBe(
+        'Password must be at least 6 characters long'
+      );
     });
 
     it('should fail with missing password', async () => {
@@ -76,7 +80,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'password')).toBe(true);
+      expect(errors.some((e) => e.path === 'password')).toBe(true);
     });
 
     it('should normalize email to lowercase', async () => {
@@ -129,7 +133,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'email')).toBe(true);
+      expect(errors.some((e) => e.path === 'email')).toBe(true);
     });
 
     it('should fail with missing email', async () => {
@@ -141,7 +145,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'email')).toBe(true);
+      expect(errors.some((e) => e.path === 'email')).toBe(true);
     });
 
     it('should fail with empty password', async () => {
@@ -154,8 +158,8 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'password')).toBe(true);
-      expect(errors.find(e => e.path === 'password')?.msg).toBe('Password is required');
+      expect(errors.some((e) => e.path === 'password')).toBe(true);
+      expect(errors.find((e) => e.path === 'password')?.msg).toBe('Password is required');
     });
 
     it('should fail with missing password', async () => {
@@ -167,7 +171,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'password')).toBe(true);
+      expect(errors.some((e) => e.path === 'password')).toBe(true);
     });
 
     it('should normalize email to lowercase', async () => {
@@ -248,8 +252,8 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'priceMin')).toBe(true);
-      expect(errors.find(e => e.path === 'priceMin')?.msg).toBe('Minimum price must be positive');
+      expect(errors.some((e) => e.path === 'priceMin')).toBe(true);
+      expect(errors.find((e) => e.path === 'priceMin')?.msg).toBe('Minimum price must be positive');
     });
 
     it('should fail with negative priceMax', async () => {
@@ -261,7 +265,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'priceMax')).toBe(true);
+      expect(errors.some((e) => e.path === 'priceMax')).toBe(true);
     });
 
     it('should fail with non-numeric priceMin', async () => {
@@ -273,8 +277,8 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'priceMin')).toBe(true);
-      expect(errors.find(e => e.path === 'priceMin')?.msg).toBe('Minimum price must be a number');
+      expect(errors.some((e) => e.path === 'priceMin')).toBe(true);
+      expect(errors.find((e) => e.path === 'priceMin')?.msg).toBe('Minimum price must be a number');
     });
 
     it('should fail with non-numeric priceMax', async () => {
@@ -286,7 +290,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'priceMax')).toBe(true);
+      expect(errors.some((e) => e.path === 'priceMax')).toBe(true);
     });
 
     it('should fail with negative surfaceMin', async () => {
@@ -298,7 +302,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'surfaceMin')).toBe(true);
+      expect(errors.some((e) => e.path === 'surfaceMin')).toBe(true);
     });
 
     it('should fail with negative surfaceMax', async () => {
@@ -310,7 +314,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'surfaceMax')).toBe(true);
+      expect(errors.some((e) => e.path === 'surfaceMax')).toBe(true);
     });
 
     it('should fail with non-numeric surfaceMin', async () => {
@@ -322,7 +326,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'surfaceMin')).toBe(true);
+      expect(errors.some((e) => e.path === 'surfaceMin')).toBe(true);
     });
 
     it('should fail with non-numeric surfaceMax', async () => {
@@ -334,7 +338,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'surfaceMax')).toBe(true);
+      expect(errors.some((e) => e.path === 'surfaceMax')).toBe(true);
     });
 
     it('should fail with negative page number', async () => {
@@ -346,8 +350,8 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'page')).toBe(true);
-      expect(errors.find(e => e.path === 'page')?.msg).toBe('Page must be a positive integer');
+      expect(errors.some((e) => e.path === 'page')).toBe(true);
+      expect(errors.find((e) => e.path === 'page')?.msg).toBe('Page must be a positive integer');
     });
 
     it('should fail with decimal page number', async () => {
@@ -359,7 +363,7 @@ describe('Validation Middleware', () => {
 
       expect(result.isEmpty()).toBe(false);
       const errors = result.array();
-      expect(errors.some(e => e.path === 'page')).toBe(true);
+      expect(errors.some((e) => e.path === 'page')).toBe(true);
     });
 
     it('should accept zero as page number', async () => {
@@ -394,7 +398,7 @@ describe('Validation Middleware', () => {
 
     it('should accept decimal values for prices', async () => {
       const body = {
-        priceMin: 100000.50,
+        priceMin: 100000.5,
         priceMax: 500000.99,
       };
 

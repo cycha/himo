@@ -105,12 +105,10 @@ describe('User Routes Integration Tests', () => {
   describe('POST /api/users/login', () => {
     beforeEach(async () => {
       // Create a user via signup to ensure password is properly hashed
-      await request(app)
-        .post('/api/users/signup')
-        .send({
-          email: 'test@example.com',
-          password: 'password123',
-        });
+      await request(app).post('/api/users/signup').send({
+        email: 'test@example.com',
+        password: 'password123',
+      });
     });
 
     it('should login with correct credentials', async () => {
@@ -194,12 +192,10 @@ describe('User Routes Integration Tests', () => {
     let token: string;
 
     beforeEach(async () => {
-      const signupResponse = await request(app)
-        .post('/api/users/signup')
-        .send({
-          email: 'test@example.com',
-          password: 'password123',
-        });
+      const signupResponse = await request(app).post('/api/users/signup').send({
+        email: 'test@example.com',
+        password: 'password123',
+      });
 
       userId = signupResponse.body.data.id;
       token = signupResponse.body.data.token;
@@ -227,9 +223,7 @@ describe('User Routes Integration Tests', () => {
     });
 
     it('should return 401 without authorization header', async () => {
-      const response = await request(app)
-        .get('/api/users/profile')
-        .expect(401);
+      const response = await request(app).get('/api/users/profile').expect(401);
 
       expect(response.body.error).toBe('Authentication required');
     });

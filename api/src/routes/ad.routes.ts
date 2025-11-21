@@ -11,17 +11,10 @@ const router: RouterType = Router();
  * @access  Public
  * @note    GET is primary (RESTful), POST for backward compatibility
  */
-router.route('/search')
-  .get(
-    searchValidation,
-    handleValidationErrors,
-    adController.search.bind(adController)
-  )
-  .post(
-    searchValidation,
-    handleValidationErrors,
-    adController.search.bind(adController)
-  );
+router
+  .route('/search')
+  .get(searchValidation, handleValidationErrors, adController.search.bind(adController))
+  .post(searchValidation, handleValidationErrors, adController.search.bind(adController));
 
 /**
  * @route   GET /api/ads/:id

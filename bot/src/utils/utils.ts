@@ -22,17 +22,18 @@ export const shuffleArray = <T>(array: T[]): T[] => {
   return shuffled;
 };
 
-export const calculateStatistics = (retryArray: number[]): {
+export const calculateStatistics = (
+  retryArray: number[]
+): {
   failurePercentage: number;
   averageRetriesPerRequest: number;
 } => {
   const failedRequests = retryArray.filter((retry) => retry > 0).length;
   const failurePercentage = Math.floor((failedRequests / retryArray.length) * 100);
-  
+
   const totalRetries = retryArray.reduce((sum, retry) => sum + retry, 0);
-  const averageRetriesPerRequest = failedRequests > 0 
-    ? Math.floor(totalRetries / failedRequests) 
-    : 0;
+  const averageRetriesPerRequest =
+    failedRequests > 0 ? Math.floor(totalRetries / failedRequests) : 0;
 
   return { failurePercentage, averageRetriesPerRequest };
 };

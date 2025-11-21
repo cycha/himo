@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Search } from 'lucide-react';
 import { useAdsSearch } from '../../hooks/api/useAds';
 import SearchFilters from './SearchFilters';
@@ -25,9 +31,7 @@ const SearchPage: React.FC = () => {
             <Search className="h-6 w-6" />
             Search Real Estate
           </CardTitle>
-          <CardDescription>
-            Find your dream property in France
-          </CardDescription>
+          <CardDescription>Find your dream property in France</CardDescription>
         </CardHeader>
         <CardContent>
           <SearchFilters onSearch={handleSearch} loading={isLoading} />
@@ -51,9 +55,7 @@ const SearchPage: React.FC = () => {
       {hasSearched && (
         <Card>
           <CardHeader>
-            <CardTitle>
-              {!isLoading && data ? `${data.count} Results` : 'Search Results'}
-            </CardTitle>
+            <CardTitle>{!isLoading && data ? `${data.count} Results` : 'Search Results'}</CardTitle>
           </CardHeader>
           <CardContent>
             <AdList ads={data?.data || []} loading={isLoading} />

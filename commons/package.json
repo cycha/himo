@@ -22,7 +22,12 @@
     "@types/node": "^24.10.1",
     "typescript": "^5.3.2"
   },
-  "keywords": ["prisma", "postgresql", "schemas", "shared"],
+  "keywords": [
+    "prisma",
+    "postgresql",
+    "schemas",
+    "shared"
+  ],
   "author": "Charly Joulie",
   "license": "MIT"
 }

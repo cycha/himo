@@ -58,6 +58,7 @@ api/src/
 ## Layer Responsibilities
 
 ### 1. Controllers (Presentation Layer)
+
 **Responsibility:** Handle HTTP requests and responses
 
 ```typescript
@@ -77,6 +78,7 @@ export class AdController {
 ```
 
 **Rules:**
+
 - ✅ Handle HTTP requests/responses
 - ✅ Validate input (with middleware)
 - ✅ Call service methods
@@ -85,6 +87,7 @@ export class AdController {
 - ❌ No database access
 
 ### 2. Services (Business Logic Layer)
+
 **Responsibility:** Implement business rules and orchestrate operations
 
 ```typescript
@@ -107,6 +110,7 @@ export class AdService implements IAdService {
 ```
 
 **Rules:**
+
 - ✅ Business logic
 - ✅ Data transformation
 - ✅ Orchestrate repository calls
@@ -115,6 +119,7 @@ export class AdService implements IAdService {
 - ❌ No direct database access
 
 ### 3. Repositories (Data Access Layer)
+
 **Responsibility:** Abstract database operations
 
 ```typescript
@@ -135,6 +140,7 @@ export class AdRepository {
 ```
 
 **Rules:**
+
 - ✅ Database queries
 - ✅ CRUD operations
 - ✅ Query optimization
@@ -142,6 +148,7 @@ export class AdRepository {
 - ❌ No HTTP concerns
 
 ### 4. DTOs (Data Transfer Objects)
+
 **Responsibility:** Define data contracts between layers
 
 ```typescript
@@ -161,6 +168,7 @@ export interface SearchResultDto {
 ```
 
 **Rules:**
+
 - ✅ Type definitions
 - ✅ Data contracts
 - ✅ Validation schemas
@@ -169,13 +177,17 @@ export interface SearchResultDto {
 ## SOLID Principles Applied
 
 ### S - Single Responsibility Principle
+
 Each class has one responsibility:
+
 - **Controllers**: HTTP handling
 - **Services**: Business logic
 - **Repositories**: Data access
 
 ### O - Open/Closed Principle
+
 Classes are open for extension, closed for modification:
+
 ```typescript
 export interface IAdService {
   search(dto: SearchAdDto): Promise<SearchResultDto>;
@@ -187,14 +199,18 @@ export class AdService implements IAdService {
 ```
 
 ### L - Liskov Substitution Principle
+
 Interfaces can be substituted with implementations:
+
 ```typescript
 // Can inject any implementation of IAdService
 constructor(private readonly service: IAdService) {}
 ```
 
 ### I - Interface Segregation Principle
+
 Specific interfaces instead of one general interface:
+
 ```typescript
 export interface IAdService {
   search(dto: SearchAdDto): Promise<SearchResultDto>;
@@ -208,7 +224,9 @@ export interface IUserService {
 ```
 
 ### D - Dependency Inversion Principle
+
 Depend on abstractions, not concretions:
+
 ```typescript
 // Service depends on repository interface
 export class AdService {
@@ -219,7 +237,9 @@ export class AdService {
 ## Design Patterns Used
 
 ### 1. Repository Pattern
+
 Abstracts data access logic:
+
 ```typescript
 // Instead of:
 const ads = await Ad.find(query).exec();
@@ -229,11 +249,13 @@ const ads = await adRepository.findWithFilters(query, page);
 ```
 
 **Benefits:**
+
 - ✅ Testability (easy to mock)
 - ✅ Maintainability (single place to change queries)
 - ✅ Flexibility (easy to switch databases)
 
 ### 2. Dependency Injection
+
 ```typescript
 export class AdService {
   constructor(private readonly repository = adRepository) {}
@@ -244,6 +266,7 @@ const service = new AdService(mockRepository);
 ```
 
 ### 3. DTO Pattern
+
 ```typescript
 // Request DTO
 interface SearchAdDto {
@@ -259,6 +282,7 @@ interface SearchResultDto {
 ```
 
 ### 4. Singleton Pattern
+
 ```typescript
 export const adRepository = new AdRepository();
 export const adService = new AdService();
@@ -300,6 +324,7 @@ export const adService = new AdService();
 ## Testing Strategy
 
 ### Unit Tests
+
 Test each layer independently:
 
 ```typescript
@@ -310,25 +335,24 @@ describe('AdService', () => {
       findWithFilters: jest.fn().mockResolvedValue(mockAds),
       count: jest.fn().mockResolvedValue(10),
     };
-    
+
     const service = new AdService(mockRepo);
     const result = await service.search({ priceMax: 300000 });
-    
+
     expect(result.data).toHaveLength(5);
   });
 });
 ```
 
 ### Integration Tests
+
 Test multiple layers:
 
 ```typescript
 describe('Ad Search API', () => {
   it('should return ads under 300k', async () => {
-    const response = await request(app)
-      .post('/api/ads/search')
-      .send({ priceMax: 300000 });
-    
+    const response = await request(app).post('/api/ads/search').send({ priceMax: 300000 });
+
     expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
   });
@@ -338,26 +362,31 @@ describe('Ad Search API', () => {
 ## Benefits of This Architecture
 
 ### 1. Testability
+
 - Easy to mock dependencies
 - Unit test each layer independently
 - No database needed for service tests
 
 ### 2. Maintainability
+
 - Clear separation of concerns
 - Easy to find and fix bugs
 - Changes isolated to specific layers
 
 ### 3. Scalability
+
 - Easy to add new features
 - Can replace layers independently
 - Can switch databases without changing business logic
 
 ### 4. Team Collaboration
+
 - Multiple developers can work on different layers
 - Clear contracts between layers
 - Reduced merge conflicts
 
 ### 5. Code Reusability
+
 - Services can be used by different controllers
 - Repositories can be shared across services
 - DTOs define clear interfaces
@@ -365,6 +394,7 @@ describe('Ad Search API', () => {
 ## Migration Path (Before → After)
 
 ### Before (Tightly Coupled)
+
 ```typescript
 // Controller directly accessing database
 async search(req, res) {
@@ -376,6 +406,7 @@ async search(req, res) {
 ```
 
 ### After (Clean Architecture)
+
 ```typescript
 // Controller → Service → Repository → Database
 class AdController {
@@ -402,6 +433,7 @@ class AdRepository {
 ## Best Practices
 
 ### 1. Always Use DTOs
+
 ```typescript
 // ❌ Don't pass request directly
 service.search(req.body);
@@ -412,6 +444,7 @@ service.search(searchDto);
 ```
 
 ### 2. Keep Controllers Thin
+
 ```typescript
 // ❌ Don't put logic in controllers
 async search(req, res) {
@@ -429,6 +462,7 @@ async search(req, res) {
 ```
 
 ### 3. Use Interfaces
+
 ```typescript
 // ✅ Define interfaces for services
 export interface IAdService {
@@ -442,6 +476,7 @@ export class AdService implements IAdService {
 ```
 
 ### 4. Handle Errors Properly
+
 ```typescript
 // ✅ Let errors bubble up to error handler
 async search(req, res, next) {
@@ -457,6 +492,7 @@ async search(req, res, next) {
 ## Conclusion
 
 This architecture provides:
+
 - ✅ **Clean separation of concerns**
 - ✅ **Easy testing and mocking**
 - ✅ **SOLID principles**

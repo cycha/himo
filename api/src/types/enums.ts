@@ -11,14 +11,14 @@ export const RealEstateType = {
   local_commercial: 'local_commercial',
 } as const;
 
-export type RealEstateType = typeof RealEstateType[keyof typeof RealEstateType];
+export type RealEstateType = (typeof RealEstateType)[keyof typeof RealEstateType];
 
 export const ImmoSellType = {
   neuf: 'neuf',
   ancien: 'ancien',
 } as const;
 
-export type ImmoSellType = typeof ImmoSellType[keyof typeof ImmoSellType];
+export type ImmoSellType = (typeof ImmoSellType)[keyof typeof ImmoSellType];
 
 export const Provider = {
   leboncoin: 'leboncoin',
@@ -27,4 +27,4 @@ export const Provider = {
   bienici: 'bienici',
 } as const;
 
-export type Provider = typeof Provider[keyof typeof Provider];
+export type Provider = (typeof Provider)[keyof typeof Provider];

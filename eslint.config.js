@@ -60,7 +60,7 @@ module.exports = [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': 'off',
-      'complexity': ['error', 15],
+      complexity: ['error', 15],
       'max-depth': ['error', 4],
       'max-nested-callbacks': ['error', 3],
       'max-params': ['warn', 5],
@@ -71,7 +71,7 @@ module.exports = [
       'no-unneeded-ternary': 'warn',
       'no-useless-return': 'error',
       'prefer-const': 'error',
-      'yoda': 'error',
+      yoda: 'error',
     },
   },
   // Special configuration for enum files (allow const + type pattern)
