@@ -1,41 +1,99 @@
-const eslint = require("@eslint/eslintrc");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
-const tsParser = require("@typescript-eslint/parser");
-
-const compat = new eslint.FlatCompat({
-  baseDirectory: __dirname,
-});
+const js = require('@eslint/js');
+const tseslint = require('@typescript-eslint/eslint-plugin');
+const tsparser = require('@typescript-eslint/parser');
 
 module.exports = [
+  // Global ignores
   {
-    ignores: ["**/dist/**", "**/node_modules/**", "**/build/**", "**/*.js", "**/client/**"],
+    ignores: [
+      '**/dist/**',
+      '**/node_modules/**',
+      '**/build/**',
+      '**/*.js',
+      '**/*.test.ts',
+      '**/*.spec.ts',
+      '**/__tests__/**',
+      '**/tests/**',
+      'client/**',
+    ],
   },
-  ...compat.extends(
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ),
+  // Base configuration for all TypeScript files
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
-      parser: tsParser,
+      parser: tsparser,
       parserOptions: {
         ecmaVersion: 2020,
-        sourceType: "module",
-        project: "./tsconfig.json",
+        sourceType: 'module',
       },
       globals: {
-        node: true,
-        es2020: true,
+        console: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+        global: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+        setImmediate: 'readonly',
+        clearImmediate: 'readonly',
       },
     },
     plugins: {
-      "@typescript-eslint": tsPlugin,
+      '@typescript-eslint': tseslint,
     },
     rules: {
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-      "no-console": "off",
+      // ESLint recommended rules
+      ...js.configs.recommended.rules,
+      // TypeScript ESLint recommended rules
+      ...tseslint.configs.recommended.rules,
+      // Disable base rule in favor of TypeScript-specific version
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-redeclare': 'error',
+      // Custom rules
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-console': 'off',
+      'complexity': ['error', 15],
+      'max-depth': ['error', 4],
+      'max-nested-callbacks': ['error', 3],
+      'max-params': ['warn', 5],
+      'max-lines-per-function': ['warn', { max: 150, skipBlankLines: true, skipComments: true }],
+      'no-duplicate-imports': 'error',
+      'no-else-return': 'warn',
+      'no-lonely-if': 'warn',
+      'no-unneeded-ternary': 'warn',
+      'no-useless-return': 'error',
+      'prefer-const': 'error',
+      'yoda': 'error',
+    },
+  },
+  // Special configuration for enum files (allow const + type pattern)
+  {
+    files: ['**/types/enums.ts'],
+    rules: {
+      '@typescript-eslint/no-redeclare': 'off',
+    },
+  },
+  // Special configuration for browser scraper files (Playwright/Puppeteer code)
+  {
+    files: ['bot/src/scrapers/**/*.ts'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        navigator: 'readonly',
+        document: 'readonly',
+      },
+    },
+    rules: {
+      // Allow browser globals in scraper code that injects JavaScript
+      'no-undef': 'off',
     },
   },
 ];
