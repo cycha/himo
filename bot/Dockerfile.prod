@@ -41,20 +41,19 @@ COPY api ./api
 COPY api/prisma ./api/prisma
 COPY bot ./bot
 
-# Install dependencies for bot workspace only (reduces memory usage)
-# Note: postinstall hook will attempt to generate Prisma Client
-RUN pnpm install --frozen-lockfile --filter bot || true
+# Install dependencies for bot workspace (postinstall hook will generate Prisma Client)
+RUN pnpm install --frozen-lockfile --filter bot
+RUN pnpm --filter bot exec prisma generate --schema=../api/prisma/schema.prisma 2>/dev/null || true
 
-# Install Playwright browsers from bot workspace
-WORKDIR /app/bot
+# Install Playwright browsers
 RUN npx playwright install chromium --with-deps
 
-# Build TypeScript (will use generated Prisma types or skip if generation failed)
+# Build TypeScript
 RUN pnpm run build || true
 
 # Set display for Xvfb
 ENV DISPLAY=:99
 ENV HEADLESS=false
 
-# Run with Xvfb (starts virtual display then run)
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm start"]
+# Run with Xvfb (cleanup any stale locks, start virtual display, then run app)
+CMD ["sh", "-c", "rm -f /tmp/.X99-lock && rm -f /tmp/.X11-unix/X99 && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm start || { pkill -f Xvfb; exit 1; }"]

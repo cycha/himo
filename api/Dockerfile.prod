@@ -1,6 +1,9 @@
 # Prod build environment for Express API with TypeScript
 
-FROM node:alpine
+FROM node:25-alpine
+
+# Install build tools for native modules (bcrypt, etc)
+RUN apk add --no-cache python3 make g++
 
 # Install pnpm (pinned to match lockfile)
 RUN npm install -g pnpm@10.22.0
