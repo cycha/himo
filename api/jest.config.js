@@ -19,6 +19,7 @@ module.exports = {
   resetMocks: true,
   restoreMocks: true,
   testTimeout: 10000,
+  maxWorkers: 1,
   transform: {
     '^.+\\.ts$': [
       'ts-jest',
