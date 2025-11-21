@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -13,6 +14,7 @@ import AdList from './AdList';
 import type { SearchFilters as SearchFiltersType } from '../../types';
 
 const SearchPage: React.FC = () => {
+  const { t } = useTranslation('ads');
   const [filters, setFilters] = useState<SearchFiltersType>({ page: 0 });
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -29,9 +31,9 @@ const SearchPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Search className="h-6 w-6" />
-            Search Real Estate
+            {t('search.title')}
           </CardTitle>
-          <CardDescription>Find your dream property in France</CardDescription>
+          <CardDescription>{t('search.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <SearchFilters onSearch={handleSearch} loading={isLoading} />
@@ -43,10 +45,8 @@ const SearchPage: React.FC = () => {
           <CardContent className="py-12">
             <div className="flex flex-col items-center justify-center text-center">
               <Search className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Start Your Search</h3>
-              <p className="text-muted-foreground">
-                Click the search button to find real estate ads
-              </p>
+              <h3 className="text-lg font-semibold mb-2">{t('search.startSearchTitle')}</h3>
+              <p className="text-muted-foreground">{t('search.startSearchDescription')}</p>
             </div>
           </CardContent>
         </Card>
@@ -55,7 +55,11 @@ const SearchPage: React.FC = () => {
       {hasSearched && (
         <Card>
           <CardHeader>
-            <CardTitle>{!isLoading && data ? `${data.count} Results` : 'Search Results'}</CardTitle>
+            <CardTitle>
+              {!isLoading && data
+                ? t('search.resultsCount', { count: data.count })
+                : t('search.searchResults')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <AdList ads={data?.data || []} loading={isLoading} />
