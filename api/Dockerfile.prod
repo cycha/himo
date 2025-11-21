@@ -2,14 +2,14 @@
 
 FROM node:alpine
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm (pinned to match lockfile)
+RUN npm install -g pnpm@10.22.0
 
 # Set working directory
 WORKDIR /app
 
-# Copy root package files, lockfile, and workspace config
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy root config files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs tsconfig.json ./
 
 # Copy workspace package.json files (API + commons)
 COPY commons/package.json ./commons/
@@ -24,9 +24,6 @@ RUN pnpm install --frozen-lockfile --filter api
 
 # Build API TypeScript
 RUN pnpm --filter api build
-
-# Remove dev dependencies to reduce image size
-RUN pnpm prune --prod --filter api
 
 # Start API server
 CMD ["node", "api/dist/server.js"]
