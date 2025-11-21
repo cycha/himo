@@ -41,8 +41,8 @@ COPY api ./api
 COPY api/prisma ./api/prisma
 COPY bot ./bot
 
-# Install dependencies for bot, commons and api only
-RUN pnpm install --frozen-lockfile
+# Install dependencies for bot workspace only (reduces memory usage)
+RUN pnpm install --frozen-lockfile --filter bot
 
 # Generate Prisma Client
 WORKDIR /app/bot

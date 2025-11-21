@@ -21,8 +21,8 @@ COPY client/package*.json ./client/
 COPY commons ./commons
 COPY client ./client
 
-# Install all dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies for client workspace only (reduces memory usage)
+RUN pnpm install --frozen-lockfile --filter client
 
 # Build client from its directory
 WORKDIR /app/client

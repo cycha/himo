@@ -16,8 +16,8 @@ COPY api/package*.json ./api/
 COPY commons ./commons
 COPY api ./api
 
-# Install dependencies for api and commons only
-RUN pnpm install --frozen-lockfile
+# Install dependencies for api workspace only (reduces memory usage)
+RUN pnpm install --frozen-lockfile --filter api
 
 # Start node js server from api directory
 WORKDIR /app/api
