@@ -70,9 +70,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Clean build artifacts
-        run: pnpm clean
-
       - name: Generate Prisma Client
         run: pnpm --filter api run prisma:generate
         env:
@@ -80,7 +77,9 @@ jobs:
           PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
       - name: Run TypeScript type check
-        run: pnpm type-check
+        run: |
+          rm -rf api/dist bot/dist commons/dist api/*.tsbuildinfo bot/*.tsbuildinfo commons/*.tsbuildinfo
+          pnpm type-check
 
   duplicate-code:
     name: Copy-Paste Detection
