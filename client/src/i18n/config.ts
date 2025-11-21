@@ -26,11 +26,23 @@ const resources = {
   },
 };
 
+// Get initial language from localStorage safely
+const getInitialLanguage = (): string => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('language') || 'en';
+    }
+  } catch (error) {
+    console.warn('Failed to access localStorage:', error);
+  }
+  return 'en';
+};
+
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: localStorage.getItem('language') || 'en',
+    lng: getInitialLanguage(),
     fallbackLng: 'en',
     defaultNS: 'common',
     interpolation: {

@@ -9,7 +9,15 @@ const LanguageSwitcher: React.FC = () => {
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'fr' : 'en';
     i18n.changeLanguage(newLang);
-    localStorage.setItem('language', newLang);
+
+    // Persist language preference safely
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('language', newLang);
+      }
+    } catch (error) {
+      console.warn('Failed to save language preference:', error);
+    }
   };
 
   return (
