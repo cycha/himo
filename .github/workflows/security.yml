@@ -3,11 +3,11 @@ name: Security
 on:
   push:
     branches:
-      - main
+      - master
       - develop
   pull_request:
     branches:
-      - main
+      - master
       - develop
   schedule:
     # Run security scan weekly on Mondays at 9 AM
@@ -118,7 +118,7 @@ jobs:
       - name: Build ${{ matrix.service }} Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ matrix.service }}
+          context: .
           file: ./${{ matrix.service }}/Dockerfile.prod
           push: false
           load: true

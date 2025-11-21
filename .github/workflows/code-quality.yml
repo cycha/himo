@@ -3,7 +3,7 @@ name: Code Quality
 on:
   pull_request:
     branches:
-      - main
+      - master
       - develop
 
 jobs:
@@ -84,10 +84,10 @@ jobs:
 
       - name: Check bundle size
         run: |
-          if [ -d "client/dist" ]; then
+          if [ -d "client/build" ]; then
             echo "Client bundle sizes:"
-            du -sh client/dist/*
-            total_size=$(du -sk client/dist | cut -f1)
+            du -sh client/build/*
+            total_size=$(du -sk client/build | cut -f1)
             echo "Total bundle size: ${total_size}KB"
             # Add size limit check if needed
             # if [ "$total_size" -gt 5000 ]; then
