@@ -1,5 +1,4 @@
-import { Router } from 'express';
-import type { Router as RouterType } from 'express';
+import { Router, type Router as RouterType } from 'express';
 import adRoutes from './ad.routes';
 import userRoutes from './user.routes';
 

@@ -1,5 +1,4 @@
-import { Router } from 'express';
-import type { Router as RouterType } from 'express';
+import { Router, type Router as RouterType } from 'express';
 import { adController } from '../controllers/ad.controller';
 import { searchValidation } from '../middleware/validation';
 import { handleValidationErrors } from '../middleware/error-handler';

@@ -203,27 +203,8 @@ export class AdRepositoryPrisma {
       where.rooms = { gte: filters.rooms };
     }
 
-    // Price range
-    if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
-      where.price = {};
-      if (filters.priceMin !== undefined) {
-        where.price.gte = filters.priceMin;
-      }
-      if (filters.priceMax !== undefined) {
-        where.price.lte = filters.priceMax;
-      }
-    }
-
-    // Surface range
-    if (filters.surfaceMin !== undefined || filters.surfaceMax !== undefined) {
-      where.surface = {};
-      if (filters.surfaceMin !== undefined) {
-        where.surface.gte = filters.surfaceMin;
-      }
-      if (filters.surfaceMax !== undefined) {
-        where.surface.lte = filters.surfaceMax;
-      }
-    }
+    this.applyPriceRange(where, filters);
+    this.applySurfaceRange(where, filters);
 
     // Full-text search
     if (filters.search) {
@@ -234,6 +215,36 @@ export class AdRepositoryPrisma {
     }
 
     return where;
+  }
+
+  /**
+   * Apply price range filter to where clause
+   */
+  private applyPriceRange(where: Prisma.AdWhereInput, filters: AdSearchFilters): void {
+    if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
+      where.price = {};
+      if (filters.priceMin !== undefined) {
+        where.price.gte = filters.priceMin;
+      }
+      if (filters.priceMax !== undefined) {
+        where.price.lte = filters.priceMax;
+      }
+    }
+  }
+
+  /**
+   * Apply surface range filter to where clause
+   */
+  private applySurfaceRange(where: Prisma.AdWhereInput, filters: AdSearchFilters): void {
+    if (filters.surfaceMin !== undefined || filters.surfaceMax !== undefined) {
+      where.surface = {};
+      if (filters.surfaceMin !== undefined) {
+        where.surface.gte = filters.surfaceMin;
+      }
+      if (filters.surfaceMax !== undefined) {
+        where.surface.lte = filters.surfaceMax;
+      }
+    }
   }
 }
 

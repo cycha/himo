@@ -87,36 +87,40 @@ export class LeBonCoinScraper extends BaseScraper {
       release_date: releaseDate,
     };
 
-    // Parse attributes
-    if (rawAd.attributes) {
-      for (const attr of rawAd.attributes) {
-        switch (attr.key) {
-          case 'real_estate_type':
-            ad.real_estate_type = attr.value_label?.toLowerCase();
-            break;
-          case 'rooms':
-            ad.rooms = parseInt(attr.value);
-            break;
-          case 'square':
-            ad.surface = parseInt(attr.value);
-            break;
-          case 'immo_sell_type': {
-            // Map English labels to French enum values
-            const sellTypeMap: Record<string, string> = {
-              'old': 'ancien',
-              'new': 'neuf',
-              'ancien': 'ancien',
-              'neuf': 'neuf',
-            };
-            const sellTypeLabel = attr.value_label?.toLowerCase();
-            ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
-            break;
-          }
+    this.parseAdAttributes(ad, rawAd.attributes);
+    return ad;
+  }
+
+  /**
+   * Parse attributes and add them to the ad
+   */
+  private parseAdAttributes(ad: Partial<BotAdData>, attributes?: Array<{ key: string; value: string; value_label?: string }>): void {
+    if (!attributes) return;
+
+    for (const attr of attributes) {
+      switch (attr.key) {
+        case 'real_estate_type':
+          ad.real_estate_type = attr.value_label?.toLowerCase();
+          break;
+        case 'rooms':
+          ad.rooms = parseInt(attr.value);
+          break;
+        case 'square':
+          ad.surface = parseInt(attr.value);
+          break;
+        case 'immo_sell_type': {
+          const sellTypeMap: Record<string, string> = {
+            'old': 'ancien',
+            'new': 'neuf',
+            'ancien': 'ancien',
+            'neuf': 'neuf',
+          };
+          const sellTypeLabel = attr.value_label?.toLowerCase();
+          ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
+          break;
         }
       }
     }
-
-    return ad;
   }
 }
 

@@ -183,64 +183,62 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
    * Parse ads from HTML (same as before)
    */
   async parseAds(html: string, latestDate: Date, latestTitle: string): Promise<ParseResult> {
-    const ads: Partial<BotAdData>[] = [];
-    let isUpToDate = false;
-
     try {
       // Method 1: Extract ads array from embedded JSON
       const regex = /"ads":(\[.+?\]),"ads_alu"/;
       const match = html.match(regex);
 
       if (!match || !match[1]) {
-        this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
-        
-        // Method 2: Try alternative extraction
-        const altRegex = /"ads":(\[.+?\])(?:,"|$)/;
-        const altMatch = html.match(altRegex);
-        
-        if (!altMatch || !altMatch[1]) {
-          this.logger.warn('⚠️ No ads found with alternative method either');
-          return { ads: [], isUpToDate: true };
-        }
-        
-        const rawAds: RawAdData[] = JSON.parse(altMatch[1]);
-        this.logger.info(`✅ Found ${rawAds.length} raw ads (alternative method)`);
-        
-        for (const rawAd of rawAds) {
-          const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
-          
-          if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
-            this.logger.info('🛑 Reached latest ad in DB, stopping...');
-            isUpToDate = true;
-            break;
-          }
-          
-          const parsedAd = this.transformRawAd(rawAd, releaseDate);
-          ads.push(parsedAd);
-        }
-        
-        return { ads, isUpToDate };
+        return this.parseAdsAlternativeMethod(html, latestDate, latestTitle);
       }
 
       const rawAds: RawAdData[] = JSON.parse(match[1]);
-      this.logger.info(`✅ Found ${rawAds.length} raw ads`);
-
-      for (const rawAd of rawAds) {
-        const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
-
-        // Check if we've reached ads we already have
-        if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
-          this.logger.info('🛑 Reached latest ad in DB, stopping...');
-          isUpToDate = true;
-          break;
-        }
-
-        const parsedAd = this.transformRawAd(rawAd, releaseDate);
-        ads.push(parsedAd);
-      }
+      return this.processRawAds(rawAds, latestDate, latestTitle);
     } catch (error) {
       this.logger.error('❌ Error parsing ads from HTML:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Alternative method to extract ads from HTML
+   */
+  private parseAdsAlternativeMethod(html: string, latestDate: Date, latestTitle: string): ParseResult {
+    this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
+
+    const altRegex = /"ads":(\[.+?\])(?:,"|$)/;
+    const altMatch = html.match(altRegex);
+
+    if (!altMatch || !altMatch[1]) {
+      this.logger.warn('⚠️ No ads found with alternative method either');
+      return { ads: [], isUpToDate: true };
+    }
+
+    const rawAds: RawAdData[] = JSON.parse(altMatch[1]);
+    this.logger.info(`✅ Found ${rawAds.length} raw ads (alternative method)`);
+    return this.processRawAds(rawAds, latestDate, latestTitle);
+  }
+
+  /**
+   * Process raw ads and check for up-to-date status
+   */
+  private processRawAds(rawAds: RawAdData[], latestDate: Date, latestTitle: string): ParseResult {
+    const ads: Partial<BotAdData>[] = [];
+    let isUpToDate = false;
+
+    this.logger.info(`✅ Found ${rawAds.length} raw ads`);
+
+    for (const rawAd of rawAds) {
+      const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
+
+      if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
+        this.logger.info('🛑 Reached latest ad in DB, stopping...');
+        isUpToDate = true;
+        break;
+      }
+
+      const parsedAd = this.transformRawAd(rawAd, releaseDate);
+      ads.push(parsedAd);
     }
 
     return { ads, isUpToDate };
@@ -268,36 +266,40 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       release_date: releaseDate,
     };
 
-    // Parse attributes
-    if (rawAd.attributes) {
-      for (const attr of rawAd.attributes) {
-        switch (attr.key) {
-          case 'real_estate_type':
-            ad.real_estate_type = attr.value_label?.toLowerCase();
-            break;
-          case 'rooms':
-            ad.rooms = parseInt(attr.value);
-            break;
-          case 'square':
-            ad.surface = parseInt(attr.value);
-            break;
-          case 'immo_sell_type': {
-            // Map English labels to French enum values
-            const sellTypeMap: Record<string, string> = {
-              'old': 'ancien',
-              'new': 'neuf',
-              'ancien': 'ancien',
-              'neuf': 'neuf',
-            };
-            const sellTypeLabel = attr.value_label?.toLowerCase();
-            ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
-            break;
-          }
+    this.parseAdAttributes(ad, rawAd.attributes);
+    return ad;
+  }
+
+  /**
+   * Parse attributes and add them to the ad
+   */
+  private parseAdAttributes(ad: Partial<BotAdData>, attributes?: Array<{ key: string; value: string; value_label?: string }>): void {
+    if (!attributes) return;
+
+    for (const attr of attributes) {
+      switch (attr.key) {
+        case 'real_estate_type':
+          ad.real_estate_type = attr.value_label?.toLowerCase();
+          break;
+        case 'rooms':
+          ad.rooms = parseInt(attr.value);
+          break;
+        case 'square':
+          ad.surface = parseInt(attr.value);
+          break;
+        case 'immo_sell_type': {
+          const sellTypeMap: Record<string, string> = {
+            'old': 'ancien',
+            'new': 'neuf',
+            'ancien': 'ancien',
+            'neuf': 'neuf',
+          };
+          const sellTypeLabel = attr.value_label?.toLowerCase();
+          ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
+          break;
         }
       }
     }
-
-    return ad;
   }
 
   /**
