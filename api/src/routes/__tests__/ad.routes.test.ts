@@ -55,10 +55,7 @@ describe('Ad Routes Integration Tests', () => {
     });
 
     it('should return all ads without filters', async () => {
-      const response = await request(app)
-        .post('/api/ads/search')
-        .send({})
-        .expect(200);
+      const response = await request(app).post('/api/ads/search').send({}).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveLength(3);
@@ -214,10 +211,7 @@ describe('Ad Routes Integration Tests', () => {
     });
 
     it('should return 400 for invalid page number', async () => {
-      const response = await request(app)
-        .post('/api/ads/search')
-        .send({ page: -1 })
-        .expect(400);
+      const response = await request(app).post('/api/ads/search').send({ page: -1 }).expect(400);
 
       expect(response.body.error).toBe('Validation failed');
     });
@@ -285,15 +279,9 @@ describe('Ad Routes Integration Tests', () => {
       }
       await Promise.all(promises);
 
-      const page0 = await request(app)
-        .post('/api/ads/search')
-        .send({ page: 0 })
-        .expect(200);
+      const page0 = await request(app).post('/api/ads/search').send({ page: 0 }).expect(200);
 
-      const page1 = await request(app)
-        .post('/api/ads/search')
-        .send({ page: 1 })
-        .expect(200);
+      const page1 = await request(app).post('/api/ads/search').send({ page: 1 }).expect(200);
 
       expect(page0.body.page).toBe(0);
       expect(page0.body.data).toHaveLength(35); // Default page size
@@ -315,9 +303,7 @@ describe('Ad Routes Integration Tests', () => {
     });
 
     it('should return ad by ID', async () => {
-      const response = await request(app)
-        .get(`/api/ads/${adId}`)
-        .expect(200);
+      const response = await request(app).get(`/api/ads/${adId}`).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.data._id).toBe(adId);
@@ -326,17 +312,13 @@ describe('Ad Routes Integration Tests', () => {
     });
 
     it('should return 404 for non-existent ID', async () => {
-      const response = await request(app)
-        .get('/api/ads/non-existent-id')
-        .expect(404);
+      const response = await request(app).get('/api/ads/non-existent-id').expect(404);
 
       expect(response.body.error).toBe('Ad not found');
     });
 
     it('should include all required fields', async () => {
-      const response = await request(app)
-        .get(`/api/ads/${adId}`)
-        .expect(200);
+      const response = await request(app).get(`/api/ads/${adId}`).expect(200);
 
       const ad = response.body.data;
       expect(ad._id).toBeDefined();
@@ -360,9 +342,7 @@ describe('Ad Routes Integration Tests', () => {
         immoSellType: ImmoSellType.ancien,
       });
 
-      const response = await request(app)
-        .get(`/api/ads/${adWithOptionals.id}`)
-        .expect(200);
+      const response = await request(app).get(`/api/ads/${adWithOptionals.id}`).expect(200);
 
       const ad = response.body.data;
       expect(ad.real_estate_type).toBe(RealEstateType.appartement);
@@ -374,9 +354,7 @@ describe('Ad Routes Integration Tests', () => {
 
   describe('GET /api/health', () => {
     it('should return health status', async () => {
-      const response = await request(app)
-        .get('/api/health')
-        .expect(200);
+      const response = await request(app).get('/api/health').expect(200);
 
       expect(response.body.status).toBe('ok');
     });

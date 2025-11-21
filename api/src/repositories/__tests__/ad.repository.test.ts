@@ -283,7 +283,7 @@ describe('AdRepository', () => {
       });
 
       expect(ads).toHaveLength(2);
-      ads.forEach(ad => {
+      ads.forEach((ad) => {
         expect(ad.surface).toBeGreaterThanOrEqual(100);
       });
     });
@@ -581,7 +581,7 @@ describe('AdRepository', () => {
       const ads = await adRepository.findNearby(48.8566, 2.3522, 10);
 
       expect(ads.length).toBeGreaterThan(0);
-      ads.forEach(ad => {
+      ads.forEach((ad) => {
         expect(ad.latitude).not.toBeNull();
         expect(ad.longitude).not.toBeNull();
       });

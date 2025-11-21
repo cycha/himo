@@ -17,10 +17,16 @@
     "outDir": "./dist",
     "rootDir": "."
   },
-  "references": [
-    { "path": "./commons" },
-    { "path": "./api" },
-    { "path": "./bot" }
-  ],
-  "exclude": ["node_modules", "dist", "**/node_modules", "**/dist", "client", "**/*.test.ts", "**/*.spec.ts", "**/__tests__/**", "**/tests/**"]
+  "references": [{ "path": "./commons" }, { "path": "./api" }, { "path": "./bot" }],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/node_modules",
+    "**/dist",
+    "client",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**",
+    "**/tests/**"
+  ]
 }

@@ -18,16 +18,18 @@ Complete guide for running the Himo bot with Xvfb (X Virtual Frame Buffer) for n
 ## 🎯 Why Xvfb?
 
 ### The Problem
+
 LeBonCoin (and many modern websites) detect headless browsers and block them:
 
-| Scraping Method | Success Rate | LeBonCoin Response |
-|----------------|--------------|-------------------|
-| **Headless Chrome** | 0% | Blocked (1.5 KB minimal page) |
-| **Headless + Stealth** | 0% | Still blocked |
-| **Non-Headless (visible)** | 95%+ | ✅ Full page (1.8 MB) |
-| **Non-Headless + Xvfb** | 95%+ | ✅ Works on servers! |
+| Scraping Method            | Success Rate | LeBonCoin Response            |
+| -------------------------- | ------------ | ----------------------------- |
+| **Headless Chrome**        | 0%           | Blocked (1.5 KB minimal page) |
+| **Headless + Stealth**     | 0%           | Still blocked                 |
+| **Non-Headless (visible)** | 95%+         | ✅ Full page (1.8 MB)         |
+| **Non-Headless + Xvfb**    | 95%+         | ✅ Works on servers!          |
 
 ### The Solution
+
 **Xvfb creates a virtual display** so Chrome thinks it's running with a real monitor, even on a headless server.
 
 ```
@@ -43,12 +45,14 @@ Server (no display) → Xvfb (fake display) → Chrome → ✅ Works!
 ## ⚙️ How It Works
 
 ### 1. **Xvfb Starts Virtual Display**
+
 ```bash
 Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp &
 # Creates display :99 with 1920x1080 resolution, 24-bit color
 ```
 
 ### 2. **Application Uses Virtual Display**
+
 ```bash
 export DISPLAY=:99
 node bot/dist/index.js
@@ -56,11 +60,12 @@ node bot/dist/index.js
 ```
 
 ### 3. **LeBonCoin Sees Real Browser**
+
 ```javascript
 // What LeBonCoin checks:
-window.outerWidth  // 1920 ✅ (from Xvfb)
-window.outerHeight // 1080 ✅ (from Xvfb)
-navigator.webdriver // undefined ✅ (hidden by stealth)
+window.outerWidth; // 1920 ✅ (from Xvfb)
+window.outerHeight; // 1080 ✅ (from Xvfb)
+navigator.webdriver; // undefined ✅ (hidden by stealth)
 // Result: Looks like real browser! Serves full page.
 ```
 
@@ -92,9 +97,9 @@ CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && nod
 bot:
   environment:
     DISPLAY: :99
-    HEADLESS: "false"
-  mem_limit: 512m     # Xvfb + Chrome needs ~250-300MB
-  shm_size: 256m      # Shared memory for Chrome
+    HEADLESS: 'false'
+  mem_limit: 512m # Xvfb + Chrome needs ~250-300MB
+  shm_size: 256m # Shared memory for Chrome
 ```
 
 ### Running with Docker
@@ -191,12 +196,12 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ### Resource Requirements
 
-| Resource | Headless | With Xvfb | Recommendation |
-|----------|----------|-----------|----------------|
-| **RAM** | 150 MB | 250-300 MB | 512 MB (safe) |
-| **CPU** | 10-15% | 15-25% | 1 vCPU |
-| **Disk** | 500 MB | 800 MB | 2 GB |
-| **VPS Cost** | $5/mo | $5/mo | Same! |
+| Resource     | Headless | With Xvfb  | Recommendation |
+| ------------ | -------- | ---------- | -------------- |
+| **RAM**      | 150 MB   | 250-300 MB | 512 MB (safe)  |
+| **CPU**      | 10-15%   | 15-25%     | 1 vCPU         |
+| **Disk**     | 500 MB   | 800 MB     | 2 GB           |
+| **VPS Cost** | $5/mo    | $5/mo      | Same!          |
 
 **Recommendation:** DigitalOcean/Linode $5-10/mo droplet works perfectly.
 
@@ -217,13 +222,13 @@ SCRAPING_INTERVAL=*/30 5-22 * * *  # Every 30 min, 5am-10pm
 
 ```yaml
 environment:
-  DISPLAY: :99              # Virtual display
-  HEADLESS: "false"         # Non-headless Chrome
-  
+  DISPLAY: :99 # Virtual display
+  HEADLESS: 'false' # Non-headless Chrome
+
 # Resource limits
-mem_limit: 512m             # Total memory limit
-mem_reservation: 256m       # Guaranteed memory
-shm_size: 256m              # Shared memory for Chrome
+mem_limit: 512m # Total memory limit
+mem_reservation: 256m # Guaranteed memory
+shm_size: 256m # Shared memory for Chrome
 ```
 
 ### Xvfb Options
@@ -248,6 +253,7 @@ Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp
 **Cause:** Xvfb not running
 
 **Solution:**
+
 ```bash
 # Check if Xvfb is running
 ps aux | grep Xvfb
@@ -264,6 +270,7 @@ export DISPLAY=:99
 **Cause:** Old Xvfb process still active
 
 **Solution:**
+
 ```bash
 # Kill old process
 pkill Xvfb
@@ -275,11 +282,13 @@ Xvfb :99 -screen 0 1920x1080x24 &
 ### Issue: Still getting 1.5 KB pages
 
 **Possible causes:**
+
 1. HEADLESS env var not set to "false"
 2. Xvfb not started before bot
 3. DISPLAY not set correctly
 
 **Debug:**
+
 ```bash
 # Check environment
 docker-compose exec bot env | grep -E "(DISPLAY|HEADLESS)"
@@ -301,10 +310,11 @@ docker-compose logs bot | grep "Fetched"
 **Cause:** Chrome + Xvfb use more RAM than headless
 
 **Solution:**
+
 ```yaml
 # Adjust memory limits in docker-compose.yml
-mem_limit: 768m    # Increase if needed
-shm_size: 512m     # Increase shared memory
+mem_limit: 768m # Increase if needed
+shm_size: 512m # Increase shared memory
 ```
 
 ### Issue: Bot crashes after 10-15 minutes
@@ -312,6 +322,7 @@ shm_size: 512m     # Increase shared memory
 **Cause:** Memory leak or resource exhaustion
 
 **Solution:**
+
 ```typescript
 // Ensure browser cleanup in scraper
 async close(): Promise<void> {
@@ -364,7 +375,7 @@ Xvfb + Non-Headless:
 - Memory: 280 MB
 - CPU: 20%
 
-Worth it? YES! 
+Worth it? YES!
 - 2% success → 92% success = 46x improvement
 - Extra 130 MB RAM = Worth it!
 ```
@@ -399,12 +410,14 @@ docker-compose exec postgres psql -U postgres -d himo -c "SELECT COUNT(*) FROM a
 ### Success Indicators
 
 ✅ **Working correctly:**
+
 - Xvfb process running
 - Bot logs show "Fetched X.X MB"
 - Ads being saved to database
 - No "Cannot open display" errors
 
 ❌ **Not working:**
+
 - Logs show "Fetched 1.5 KB" or "1723 bytes"
 - "Cannot open display" errors
 - No ads saved
@@ -423,12 +436,14 @@ docker-compose exec postgres psql -U postgres -d himo -c "SELECT COUNT(*) FROM a
 ## 🎯 Summary
 
 **Xvfb enables web scraping on headless servers by:**
+
 1. ✅ Creating a virtual display
 2. ✅ Making Chrome think it has a monitor
 3. ✅ Bypassing headless browser detection
 4. ✅ All for FREE (just ~100MB extra RAM)
 
 **For Himo:**
+
 - ✅ Integrated in Docker automatically
 - ✅ No manual setup needed
 - ✅ Just `docker-compose up` and it works

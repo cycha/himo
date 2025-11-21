@@ -55,18 +55,20 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
     // Create new page with stealth settings
     this.page = await this.browser.newPage({
       viewport: { width: 1920, height: 1080 },
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       locale: 'fr-FR',
       timezoneId: 'Europe/Paris',
     });
 
     // Set extra HTTP headers
     await this.page.setExtraHTTPHeaders({
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
       'Accept-Encoding': 'gzip, deflate, br',
-      'DNT': '1',
-      'Connection': 'keep-alive',
+      DNT: '1',
+      Connection: 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
     });
 
@@ -99,8 +101,8 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? Promise.resolve({ state: 'denied' } as any)
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
     };
     await this.page.addInitScript(antiDetectionScript);
@@ -154,10 +156,7 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       }
 
       // Random mouse movement to appear human
-      await this.page.mouse.move(
-        Math.floor(Math.random() * 1000),
-        Math.floor(Math.random() * 800)
-      );
+      await this.page.mouse.move(Math.floor(Math.random() * 1000), Math.floor(Math.random() * 800));
 
       // Scroll page slightly (human behavior)
       await this.page.evaluate(() => {
@@ -183,64 +182,69 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
    * Parse ads from HTML (same as before)
    */
   async parseAds(html: string, latestDate: Date, latestTitle: string): Promise<ParseResult> {
-    const ads: Partial<BotAdData>[] = [];
-    let isUpToDate = false;
-
     try {
       // Method 1: Extract ads array from embedded JSON
       const regex = /"ads":(\[.+?\]),"ads_alu"/;
       const match = html.match(regex);
 
       if (!match || !match[1]) {
-        this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
-        
-        // Method 2: Try alternative extraction
-        const altRegex = /"ads":(\[.+?\])(?:,"|$)/;
-        const altMatch = html.match(altRegex);
-        
-        if (!altMatch || !altMatch[1]) {
-          this.logger.warn('⚠️ No ads found with alternative method either');
-          return { ads: [], isUpToDate: true };
-        }
-        
-        const rawAds: RawAdData[] = JSON.parse(altMatch[1]);
-        this.logger.info(`✅ Found ${rawAds.length} raw ads (alternative method)`);
-        
-        for (const rawAd of rawAds) {
-          const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
-          
-          if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
-            this.logger.info('🛑 Reached latest ad in DB, stopping...');
-            isUpToDate = true;
-            break;
-          }
-          
-          const parsedAd = this.transformRawAd(rawAd, releaseDate);
-          ads.push(parsedAd);
-        }
-        
-        return { ads, isUpToDate };
+        return this.parseAdsAlternativeMethod(html, latestDate, latestTitle);
       }
 
       const rawAds: RawAdData[] = JSON.parse(match[1]);
-      this.logger.info(`✅ Found ${rawAds.length} raw ads`);
-
-      for (const rawAd of rawAds) {
-        const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
-
-        // Check if we've reached ads we already have
-        if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
-          this.logger.info('🛑 Reached latest ad in DB, stopping...');
-          isUpToDate = true;
-          break;
-        }
-
-        const parsedAd = this.transformRawAd(rawAd, releaseDate);
-        ads.push(parsedAd);
-      }
+      return this.processRawAds(rawAds, latestDate, latestTitle);
     } catch (error) {
       this.logger.error('❌ Error parsing ads from HTML:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Alternative method to extract ads from HTML
+   */
+  private parseAdsAlternativeMethod(
+    html: string,
+    latestDate: Date,
+    latestTitle: string
+  ): ParseResult {
+    this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
+
+    const altRegex = /"ads":(\[.+?\])(?:,"|$)/;
+    const altMatch = html.match(altRegex);
+
+    if (!altMatch || !altMatch[1]) {
+      this.logger.warn('⚠️ No ads found with alternative method either');
+      return { ads: [], isUpToDate: true };
+    }
+
+    const rawAds: RawAdData[] = JSON.parse(altMatch[1]);
+    this.logger.info(`✅ Found ${rawAds.length} raw ads (alternative method)`);
+    return this.processRawAds(rawAds, latestDate, latestTitle);
+  }
+
+  /**
+   * Process raw ads and check for up-to-date status
+   */
+  private processRawAds(rawAds: RawAdData[], latestDate: Date, latestTitle: string): ParseResult {
+    const ads: Partial<BotAdData>[] = [];
+    let isUpToDate = false;
+
+    this.logger.info(`✅ Found ${rawAds.length} raw ads`);
+
+    for (const rawAd of rawAds) {
+      const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
+
+      if (
+        releaseDate < latestDate ||
+        (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)
+      ) {
+        this.logger.info('🛑 Reached latest ad in DB, stopping...');
+        isUpToDate = true;
+        break;
+      }
+
+      const parsedAd = this.transformRawAd(rawAd, releaseDate);
+      ads.push(parsedAd);
     }
 
     return { ads, isUpToDate };
@@ -268,36 +272,43 @@ export class LeBonCoinScraperPlaywright extends BaseScraper {
       release_date: releaseDate,
     };
 
-    // Parse attributes
-    if (rawAd.attributes) {
-      for (const attr of rawAd.attributes) {
-        switch (attr.key) {
-          case 'real_estate_type':
-            ad.real_estate_type = attr.value_label?.toLowerCase();
-            break;
-          case 'rooms':
-            ad.rooms = parseInt(attr.value);
-            break;
-          case 'square':
-            ad.surface = parseInt(attr.value);
-            break;
-          case 'immo_sell_type': {
-            // Map English labels to French enum values
-            const sellTypeMap: Record<string, string> = {
-              'old': 'ancien',
-              'new': 'neuf',
-              'ancien': 'ancien',
-              'neuf': 'neuf',
-            };
-            const sellTypeLabel = attr.value_label?.toLowerCase();
-            ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
-            break;
-          }
+    this.parseAdAttributes(ad, rawAd.attributes);
+    return ad;
+  }
+
+  /**
+   * Parse attributes and add them to the ad
+   */
+  private parseAdAttributes(
+    ad: Partial<BotAdData>,
+    attributes?: Array<{ key: string; value: string; value_label?: string }>
+  ): void {
+    if (!attributes) return;
+
+    for (const attr of attributes) {
+      switch (attr.key) {
+        case 'real_estate_type':
+          ad.real_estate_type = attr.value_label?.toLowerCase();
+          break;
+        case 'rooms':
+          ad.rooms = parseInt(attr.value);
+          break;
+        case 'square':
+          ad.surface = parseInt(attr.value);
+          break;
+        case 'immo_sell_type': {
+          const sellTypeMap: Record<string, string> = {
+            old: 'ancien',
+            new: 'neuf',
+            ancien: 'ancien',
+            neuf: 'neuf',
+          };
+          const sellTypeLabel = attr.value_label?.toLowerCase();
+          ad.immo_sell_type = sellTypeLabel ? sellTypeMap[sellTypeLabel] : undefined;
+          break;
         }
       }
     }
-
-    return ad;
   }
 
   /**

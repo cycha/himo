@@ -3,6 +3,7 @@
 ## Quick Start (5 minutes)
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
@@ -18,6 +19,7 @@ cp bot/.env.example bot/.env
 ```
 
 Edit `api/.env`:
+
 ```env
 API_PORT=3000
 DATABASE_URL=postgresql://localhost:27017/himo
@@ -27,6 +29,7 @@ CORS_ORIGIN=http://localhost:3001
 ```
 
 Edit `bot/.env`:
+
 ```env
 NODE_ENV=development
 DATABASE_URL=postgresql://localhost:27017/himo
@@ -36,21 +39,25 @@ SCRAPING_INTERVAL=*/5 * * * *
 ### 3. Start PostgreSQL
 
 **Option A: Docker (Recommended)**
+
 ```bash
 docker run -d -p 27017:27017 --name himo-postgres postgres:16-alpine
 ```
 
 **Option B: Homebrew (macOS)**
+
 ```bash
 brew services start docker-compose up -d postgresb-community
 ```
 
 **Option C: PostgreSQL Atlas (Cloud)**
+
 - Sign up at https://www.docker-compose up -d postgresb.com/cloud/atlas
 - Create a free cluster
 - Get connection string and update `.env` files
 
 ### 4. Build the Project
+
 ```bash
 npm run build
 ```
@@ -60,17 +67,21 @@ This compiles all TypeScript modules to JavaScript.
 ### 5. Run the Application
 
 **Terminal 1 - API Server:**
+
 ```bash
 npm run dev:api
 ```
+
 API will start at http://localhost:3000
 
 **Terminal 2 - Scraper Bot:**
+
 ```bash
 npm run dev:bot
 ```
 
 **Terminal 3 - Client (when ready):**
+
 ```bash
 npm run dev:client
 ```
@@ -95,12 +106,14 @@ curl -X POST http://localhost:3000/api/users/signup \
 ## What Just Happened?
 
 ### ✅ Commons Module (`@himo/commons`)
+
 - **TypeScript types** for Ads and Users
 - **Prisma models** with validation and indexes
 - **Database utilities** with connection pooling
 - **Security** with bcrypt password hashing
 
 ### ✅ API Module (`@himo/api`)
+
 - **REST API** with Express and TypeScript
 - **Clean architecture** with controllers → services → models
 - **Authentication** with JWT tokens
@@ -109,6 +122,7 @@ curl -X POST http://localhost:3000/api/users/signup \
 - **Error handling** with centralized middleware
 
 ### ✅ Bot Module (`@himo/bot`)
+
 - **Web scraper** for LeBonCoin and other sites
 - **Cron jobs** for scheduled scraping
 - **OOP design** with base scraper class
@@ -148,6 +162,7 @@ himo/
 ## Available Scripts
 
 ### Root Level
+
 ```bash
 npm run build          # Build all TypeScript projects
 npm run build:watch    # Watch mode for all projects
@@ -158,6 +173,7 @@ npm run format         # Format all code with Prettier
 ```
 
 ### API
+
 ```bash
 npm run dev --workspace=api      # Dev mode with hot reload
 npm run build --workspace=api    # Build TypeScript
@@ -165,6 +181,7 @@ npm start --workspace=api        # Start production build
 ```
 
 ### Bot
+
 ```bash
 npm run dev --workspace=bot      # Dev mode with hot reload
 npm run build --workspace=bot    # Build TypeScript
@@ -177,6 +194,7 @@ npm run lbc --workspace=bot      # Run LeBonCoin scraper once
 ### ❌ "Cannot find module '@himo/commons'"
 
 **Solution:**
+
 ```bash
 cd commons
 npm run build
@@ -187,6 +205,7 @@ npm install
 ### ❌ "Connection refused to PostgreSQL"
 
 **Solution:**
+
 ```bash
 # Check if PostgreSQL is running
 docker ps  # or
@@ -200,6 +219,7 @@ brew services start docker-compose up -d postgresb-community
 ### ❌ TypeScript compilation errors
 
 **Solution:**
+
 ```bash
 npm run clean
 npm install
@@ -209,6 +229,7 @@ npm run build
 ### ❌ Port already in use
 
 **Solution:**
+
 ```bash
 # Find process using the port
 lsof -i :3000
@@ -279,6 +300,7 @@ node -e "
 ## API Endpoints
 
 ### Public Endpoints
+
 ```
 POST /api/ads/search      # Search ads
 GET  /api/ads/:id         # Get ad details
@@ -288,6 +310,7 @@ GET  /api/health          # Health check
 ```
 
 ### Protected Endpoints (require JWT token)
+
 ```
 GET  /api/users/profile   # Get user profile
 ```
@@ -309,16 +332,19 @@ curl http://localhost:3000/api/users/profile \
 ## What's Next?
 
 ### Immediate Priority
+
 1. **Run and test** the backend (API + Bot)
 2. **Review the code** to understand the architecture
 3. **Migrate the client** to TypeScript + React 18
 
 ### Short Term
+
 - Add comprehensive testing (Jest + Playwright)
 - Improve UI with modern design system
 - Add more scrapers for other sites
 
 ### Long Term
+
 - Set up CI/CD pipeline
 - Deploy to production
 - Add monitoring and analytics
@@ -327,14 +353,17 @@ curl http://localhost:3000/api/users/profile \
 ## Learning Resources
 
 ### TypeScript
+
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [TypeScript Deep Dive](https://basarat.gitbook.io/typescript/)
 
 ### Architecture
+
 - [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [SOLID Principles](https://www.digitalocean.com/community/conceptual_articles/s-o-l-i-d-the-first-five-principles-of-object-oriented-design)
 
 ### Express + TypeScript
+
 - [Express TypeScript Guide](https://www.typescriptlang.org/docs/handbook/asp-net-core.html)
 - [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
 

@@ -12,13 +12,9 @@ export class AppError extends Error {
   }
 }
 
-export const handleValidationErrors = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+export const handleValidationErrors = (req: Request, res: Response, next: NextFunction): void => {
   const errors = validationResult(req);
-  
+
   if (!errors.isEmpty()) {
     res.status(400).json({
       error: 'Validation failed',
@@ -26,7 +22,7 @@ export const handleValidationErrors = (
     });
     return;
   }
-  
+
   next();
 };
 

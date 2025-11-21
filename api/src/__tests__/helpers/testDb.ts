@@ -4,10 +4,12 @@ import { RealEstateType, ImmoSellType, Provider } from '../../types/enums';
 /**
  * Creates a test user in the database
  */
-export async function createTestUser(overrides: {
-  email?: string;
-  password?: string;
-} = {}) {
+export async function createTestUser(
+  overrides: {
+    email?: string;
+    password?: string;
+  } = {}
+) {
   const defaultUser = {
     email: `test-${Date.now()}@example.com`,
     password: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYVGWVyYmW2', // "password123"
@@ -21,24 +23,26 @@ export async function createTestUser(overrides: {
 /**
  * Creates a test ad in the database
  */
-export async function createTestAd(overrides: Partial<{
-  title: string;
-  description: string;
-  url: string;
-  realEstateType: RealEstateType;
-  price: number;
-  surface: number;
-  rooms: number;
-  city: string;
-  zipcode: string;
-  departmentId: string;
-  departmentName: string;
-  regionName: string;
-  latitude: number;
-  longitude: number;
-  provider: Provider;
-  immoSellType: ImmoSellType;
-}> = {}) {
+export async function createTestAd(
+  overrides: Partial<{
+    title: string;
+    description: string;
+    url: string;
+    realEstateType: RealEstateType;
+    price: number;
+    surface: number;
+    rooms: number;
+    city: string;
+    zipcode: string;
+    departmentId: string;
+    departmentName: string;
+    regionName: string;
+    latitude: number;
+    longitude: number;
+    provider: Provider;
+    immoSellType: ImmoSellType;
+  }> = {}
+) {
   const defaultAd = {
     title: 'Test Property',
     description: 'A nice test property',

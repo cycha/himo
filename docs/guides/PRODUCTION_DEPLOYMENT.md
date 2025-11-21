@@ -17,6 +17,7 @@ Complete guide for deploying Himo to production with Docker or cloud platforms.
 ## 🐳 Docker Deployment
 
 ### Prerequisites
+
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 - 2GB RAM minimum
@@ -41,6 +42,7 @@ docker-compose -f docker-compose.prod.yml ps
 ```
 
 **Access:**
+
 - Frontend: http://localhost
 - API: http://localhost/api
 - PostgreSQL: localhost:27017
@@ -70,6 +72,7 @@ docker-compose -f docker-compose.prod.yml ps
 ### Container Details
 
 #### Client (Frontend)
+
 - **Base:** nginx:stable-alpine
 - **Build:** Multi-stage (Node 18 → Nginx)
 - **Port:** 80
@@ -81,6 +84,7 @@ docker-compose -f docker-compose.prod.yml ps
   - API proxy to backend
 
 #### API (Backend)
+
 - **Base:** node:18-alpine
 - **Port:** 3000
 - **Features:**
@@ -89,6 +93,7 @@ docker-compose -f docker-compose.prod.yml ps
   - Auto-restart
 
 #### PostgreSQL
+
 - **Base:** postgres:16-alpine
 - **Port:** 27017
 - **Persistent:** Volume mounted
@@ -100,6 +105,7 @@ docker-compose -f docker-compose.prod.yml ps
 ### Option 1: Vercel (Frontend) + Railway (Backend) ⭐ Recommended
 
 **Frontend on Vercel:**
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -110,6 +116,7 @@ vercel --prod
 ```
 
 **Vercel Configuration (`vercel.json`):**
+
 ```json
 {
   "buildCommand": "npm run build",
@@ -124,6 +131,7 @@ vercel --prod
 ```
 
 **Backend on Railway:**
+
 1. Connect GitHub repository
 2. Select `api` folder as root
 3. Add environment variables
@@ -134,6 +142,7 @@ vercel --prod
 ### Option 2: AWS (Full Stack)
 
 **Frontend (S3 + CloudFront):**
+
 ```bash
 # Build
 cd client && npm run build
@@ -148,6 +157,7 @@ aws cloudfront create-invalidation \
 ```
 
 **Backend (EC2 or ECS):**
+
 - Use Docker containers
 - Auto-scaling group
 - Load balancer
@@ -174,6 +184,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ### Required Variables
 
 **API (.env):**
+
 ```env
 NODE_ENV=production
 PORT=3000
@@ -184,6 +195,7 @@ BCRYPT_ROUNDS=12
 ```
 
 **Client (.env):**
+
 ```env
 VITE_API_URL=https://your-api-domain.com
 ```
@@ -205,11 +217,13 @@ openssl rand -hex 64
 ### With Docker + Let's Encrypt
 
 **1. Install Certbot:**
+
 ```bash
 docker-compose -f docker-compose.prod.yml down
 ```
 
 **2. Update nginx.conf:**
+
 ```nginx
 server {
     listen 443 ssl http2;
@@ -230,11 +244,12 @@ server {
 ```
 
 **3. Update docker-compose.prod.yml:**
+
 ```yaml
 client:
   ports:
-    - "80:80"
-    - "443:443"
+    - '80:80'
+    - '443:443'
   volumes:
     - ./certbot/conf:/etc/letsencrypt
     - ./certbot/www:/var/www/certbot
@@ -247,11 +262,13 @@ client:
 ### Health Checks
 
 **API Health Endpoint:**
+
 ```bash
 curl http://localhost:3000/health
 ```
 
 **Frontend Health:**
+
 ```bash
 curl http://localhost/
 ```
@@ -360,20 +377,24 @@ docker exec himo-api env | grep DATABASE_URL
 ## 📈 Performance Optimization
 
 ### Enable CDN
+
 - CloudFlare (free SSL + CDN)
 - AWS CloudFront
 - Fastly
 
 ### Database Indexing
+
 ```javascript
 // Ensure indexes are created
-db.ads.createIndex({ price: 1 })
-db.ads.createIndex({ location: "2dsphere" })
-db.users.createIndex({ email: 1 }, { unique: true })
+db.ads.createIndex({ price: 1 });
+db.ads.createIndex({ location: '2dsphere' });
+db.users.createIndex({ email: 1 }, { unique: true });
 ```
 
 ### Nginx Caching
+
 Already configured in `nginx.conf`:
+
 - Static assets: 1 year cache
 - Gzip compression enabled
 - Security headers added
@@ -401,6 +422,7 @@ Before deploying:
 ## 🆘 Support
 
 For deployment issues:
+
 1. Check logs: `docker-compose logs`
 2. Review this guide
 3. Check [Docker Guide](DOCKER_GUIDE.md)

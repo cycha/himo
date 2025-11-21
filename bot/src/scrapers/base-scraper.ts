@@ -59,9 +59,9 @@ export abstract class BaseScraper {
 
     try {
       this.logger.info(`Saving ${ads.length} ads...`);
-      
+
       // Transform ads to Prisma format
-      const prismaAds: Prisma.AdCreateManyInput[] = ads.map(ad => ({
+      const prismaAds: Prisma.AdCreateManyInput[] = ads.map((ad) => ({
         title: ad.title!,
         description: ad.description || '',
         thumbUrls: ad.thumb_urls || [],
@@ -135,7 +135,9 @@ export abstract class BaseScraper {
 
     const stats = calculateStatistics(retryArray);
     this.logger.info('✅ Scraping completed');
-    this.logger.info(`📊 Stats: ${totalAdsSaved} ads saved, ${stats.failurePercentage}% failure rate`);
+    this.logger.info(
+      `📊 Stats: ${totalAdsSaved} ads saved, ${stats.failurePercentage}% failure rate`
+    );
 
     return {
       adsSaved: totalAdsSaved,
@@ -146,7 +148,7 @@ export abstract class BaseScraper {
 
   protected async fetchWithRetry(url: string, retryArray: number[]): Promise<string> {
     let retry = 0;
-    
+
     while (retry <= this.config.maxRetries) {
       try {
         this.logger.info(`→ Requesting ${url} (attempt ${retry + 1})`);
@@ -157,21 +159,25 @@ export abstract class BaseScraper {
         // Check if it's an anti-bot error - stop immediately
         const errorMessage = error instanceof Error ? error.message : '';
         if (errorMessage.includes('Anti-bot') || errorMessage.includes('DataDome')) {
-          this.logger.error('🛑 Anti-bot protection detected - stopping scraping to avoid further blocks');
+          this.logger.error(
+            '🛑 Anti-bot protection detected - stopping scraping to avoid further blocks'
+          );
           retryArray.push(retry);
           throw error; // Don't retry on anti-bot errors
         }
-        
+
         // Exponential backoff for other errors
         const baseWait = this.config.waitError;
-        const waitTime = Math.round(baseWait * Math.pow(2, retry) + (Math.random() * baseWait));
-        this.logger.error(`Request failed (retry ${retry}/${this.config.maxRetries}). Waiting ${waitTime}s...`);
-        
+        const waitTime = Math.round(baseWait * Math.pow(2, retry) + Math.random() * baseWait);
+        this.logger.error(
+          `Request failed (retry ${retry}/${this.config.maxRetries}). Waiting ${waitTime}s...`
+        );
+
         if (retry >= this.config.maxRetries) {
           retryArray.push(retry);
           throw new Error(`Max retries (${this.config.maxRetries}) reached for ${url}`);
         }
-        
+
         retry++;
         await sleep(waitTime);
       }

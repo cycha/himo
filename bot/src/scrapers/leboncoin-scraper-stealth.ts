@@ -13,16 +13,16 @@ chromium.use(StealthPlugin());
 
 const DEFAULT_CONFIG: ScraperConfig = {
   maxPages: 30,
-  maxRetries: 0,  // No retries - if blocked, stop immediately to avoid detection
+  maxRetries: 0, // No retries - if blocked, stop immediately to avoid detection
   waitSuccess: 8, // Longer wait between pages (8-16 seconds)
-  waitError: 30,  // Much longer wait on errors (30+ seconds)
+  waitError: 30, // Much longer wait on errors (30+ seconds)
   baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
 };
 
 /**
  * ULTRA-STEALTH LeBonCoin Scraper
- * 
+ *
  * Advanced anti-detection techniques:
  * - playwright-extra with stealth plugin (best-in-class)
  * - Real browser fingerprinting
@@ -64,7 +64,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const launchOptions: any = {
-      headless: process.env.HEADLESS === 'false' ? false : true,
+      headless: process.env.HEADLESS !== 'false',
       args: [
         // Essential stealth args
         '--disable-blink-features=AutomationControlled',
@@ -73,7 +73,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         '--no-sandbox',
         '--disable-web-security',
         '--disable-features=IsolateOrigins,site-per-process',
-        
+
         // Additional stealth
         '--disable-infobars',
         '--window-position=0,0',
@@ -87,7 +87,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         '--no-default-browser-check',
         '--disable-translate',
         '--disable-extensions',
-        
+
         // Language and locale
         '--lang=fr-FR',
         '--accept-lang=fr-FR,fr',
@@ -111,9 +111,9 @@ export class LeBonCoinScraperStealth extends BaseScraper {
     // Create stealth page
     const userAgent = this.getRandomUserAgent();
     this.page = await this.browser.newPage({
-      viewport: { 
-        width: 1920 + Math.floor(Math.random() * 100), 
-        height: 1080 + Math.floor(Math.random() * 100) 
+      viewport: {
+        width: 1920 + Math.floor(Math.random() * 100),
+        height: 1080 + Math.floor(Math.random() * 100),
       },
       userAgent,
       locale: 'fr-FR',
@@ -129,11 +129,12 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
     // Set extra HTTP headers
     await this.page.setExtraHTTPHeaders({
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
       'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
       'Accept-Encoding': 'gzip, deflate, br',
-      'DNT': '1',
-      'Connection': 'keep-alive',
+      DNT: '1',
+      Connection: 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
       'Sec-Fetch-Dest': 'document',
       'Sec-Fetch-Mode': 'navigate',
@@ -155,24 +156,32 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).navigator.permissions.query = (parameters: any) =>
         parameters.name === 'notifications'
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? Promise.resolve({ state: 'denied' } as any)
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Promise.resolve({ state: 'denied' } as any)
           : originalQuery(parameters);
 
       // 3. Add chrome object
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).chrome = {
         runtime: {},
-        loadTimes: function() {},
-        csi: function() {},
+        loadTimes: function () {},
+        csi: function () {},
         app: {},
       };
 
       // 4. Override plugins
       Object.defineProperty(navigator, 'plugins', {
         get: () => [
-          { name: 'Chrome PDF Plugin', description: 'Portable Document Format', filename: 'internal-pdf-viewer' },
-          { name: 'Chrome PDF Viewer', description: '', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' },
+          {
+            name: 'Chrome PDF Plugin',
+            description: 'Portable Document Format',
+            filename: 'internal-pdf-viewer',
+          },
+          {
+            name: 'Chrome PDF Viewer',
+            description: '',
+            filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai',
+          },
           { name: 'Native Client', description: '', filename: 'internal-nacl-plugin' },
         ],
       });
@@ -194,16 +203,17 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
       // 8. Mock battery API
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).getBattery = () => Promise.resolve({
-        charging: true,
-        chargingTime: 0,
-        dischargingTime: Infinity,
-        level: 1,
-        onchargingchange: null,
-        onchargingtimechange: null,
-        ondischargingtimechange: null,
-        onlevelchange: null,
-      });
+      (navigator as any).getBattery = () =>
+        Promise.resolve({
+          charging: true,
+          chargingTime: 0,
+          dischargingTime: Infinity,
+          level: 1,
+          onchargingchange: null,
+          onchargingtimechange: null,
+          ondischargingtimechange: null,
+          onlevelchange: null,
+        });
 
       // 9. Add realistic connection
       Object.defineProperty(navigator, 'connection', {
@@ -265,7 +275,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       // Check response status
       const status = response.status();
       this.logger.info(`   HTTP Status: ${status}`);
-      
+
       if (status !== 200) {
         this.logger.warn(`⚠️ HTTP ${status} response - BLOCKED!`);
         const responseText = await response.text();
@@ -273,7 +283,9 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         if (status === 403 || status === 429) {
           this.logger.error('🚫 DataDome anti-bot detected! Stopping to avoid further blocks.');
           this.logger.error('💡 Suggestion: Wait 6-12 hours before next scraping attempt.');
-          throw new Error(`HTTP ${status} - Anti-bot protection detected (DataDome). Stop scraping.`);
+          throw new Error(
+            `HTTP ${status} - Anti-bot protection detected (DataDome). Stop scraping.`
+          );
         }
       }
 
@@ -302,13 +314,16 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
       // Scroll like a human (multiple small scrolls)
       for (let i = 0; i < 3; i++) {
-        await this.page.evaluate((scroll) => {
-          window.scrollBy({
-            top: scroll,
-            left: 0,
-            behavior: 'smooth'
-          });
-        }, Math.floor(Math.random() * 300 + 100));
+        await this.page.evaluate(
+          (scroll) => {
+            window.scrollBy({
+              top: scroll,
+              left: 0,
+              behavior: 'smooth',
+            });
+          },
+          Math.floor(Math.random() * 300 + 100)
+        );
         await sleep(Math.random() * 1 + 0.5);
       }
 
@@ -350,71 +365,80 @@ export class LeBonCoinScraperStealth extends BaseScraper {
    * Parse ads from HTML
    */
   async parseAds(html: string, latestDate: Date, latestTitle: string): Promise<ParseResult> {
-    const ads: Partial<BotAdData>[] = [];
-    let isUpToDate = false;
-
     try {
       // Method 1: Extract ads array from embedded JSON
       const regex = /"ads":(\[.+?\]),"ads_alu"/;
       const match = html.match(regex);
 
       if (!match || !match[1]) {
-        this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
-        
-        // Method 2: Try alternative extraction
-        const altRegex = /"ads":(\[[\s\S]+?\])(?=,"ads_alu"|,"parameters"|$)/;
-        const altMatch = html.match(altRegex);
-        
-        if (!altMatch || !altMatch[1]) {
-          this.logger.warn('⚠️ No ads found with alternative method either');
-          
-          // Debug: Save HTML for inspection
-          if (html.length < 100000) {
-            // fs is imported at the top of the file
-            fs.writeFileSync('failed-scrape.html', html);
-            this.logger.warn('💾 Saved failed HTML to failed-scrape.html for debugging');
-          }
-          
-          return { ads: [], isUpToDate: true };
-        }
-        
-        const rawAds: RawAdData[] = JSON.parse(altMatch[1]);
-        this.logger.info(`✅ Found ${rawAds.length} raw ads (alternative method)`);
-        
-        for (const rawAd of rawAds) {
-          const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
-          
-          if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
-            this.logger.info('🛑 Reached latest ad in DB, stopping...');
-            isUpToDate = true;
-            break;
-          }
-          
-          const parsedAd = this.transformRawAd(rawAd, releaseDate);
-          ads.push(parsedAd);
-        }
-        
-        return { ads, isUpToDate };
+        return this.parseAdsAlternativeMethod(html, latestDate, latestTitle);
       }
 
       const rawAds: RawAdData[] = JSON.parse(match[1]);
-      this.logger.info(`✅ Found ${rawAds.length} raw ads`);
-
-      for (const rawAd of rawAds) {
-        const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
-
-        if (releaseDate < latestDate || (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)) {
-          this.logger.info('🛑 Reached latest ad in DB, stopping...');
-          isUpToDate = true;
-          break;
-        }
-
-        const parsedAd = this.transformRawAd(rawAd, releaseDate);
-        ads.push(parsedAd);
-      }
+      return this.processRawAds(rawAds, latestDate, latestTitle);
     } catch (error) {
       this.logger.error('❌ Error parsing ads from HTML:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Alternative method to extract ads from HTML
+   */
+  private parseAdsAlternativeMethod(
+    html: string,
+    latestDate: Date,
+    latestTitle: string
+  ): ParseResult {
+    this.logger.warn('⚠️ No ads found in embedded JSON (primary method)');
+
+    const altRegex = /"ads":(\[[\s\S]+?\])(?=,"ads_alu"|,"parameters"|$)/;
+    const altMatch = html.match(altRegex);
+
+    if (!altMatch || !altMatch[1]) {
+      this.logger.warn('⚠️ No ads found with alternative method either');
+      this.saveFailedHtml(html);
+      return { ads: [], isUpToDate: true };
+    }
+
+    const rawAds: RawAdData[] = JSON.parse(altMatch[1]);
+    this.logger.info(`✅ Found ${rawAds.length} raw ads (alternative method)`);
+    return this.processRawAds(rawAds, latestDate, latestTitle);
+  }
+
+  /**
+   * Save failed HTML for debugging
+   */
+  private saveFailedHtml(html: string): void {
+    if (html.length < 100000) {
+      fs.writeFileSync('failed-scrape.html', html);
+      this.logger.warn('💾 Saved failed HTML to failed-scrape.html for debugging');
+    }
+  }
+
+  /**
+   * Process raw ads and check for up-to-date status
+   */
+  private processRawAds(rawAds: RawAdData[], latestDate: Date, latestTitle: string): ParseResult {
+    const ads: Partial<BotAdData>[] = [];
+    let isUpToDate = false;
+
+    this.logger.info(`✅ Found ${rawAds.length} raw ads`);
+
+    for (const rawAd of rawAds) {
+      const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
+
+      if (
+        releaseDate < latestDate ||
+        (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)
+      ) {
+        this.logger.info('🛑 Reached latest ad in DB, stopping...');
+        isUpToDate = true;
+        break;
+      }
+
+      const parsedAd = this.transformRawAd(rawAd, releaseDate);
+      ads.push(parsedAd);
     }
 
     return { ads, isUpToDate };
@@ -424,90 +448,129 @@ export class LeBonCoinScraperStealth extends BaseScraper {
    * Transform raw ad data
    */
   private transformRawAd(rawAd: RawAdData, releaseDate: Date): Partial<BotAdData> {
-    // Ensure title is within 200 char limit (Prisma schema constraint)
-    const title = rawAd.subject?.substring(0, 200) || 'Sans titre';
-    
-    // Ensure URL is within 500 char limit
-    let url = rawAd.url?.startsWith('http') ? rawAd.url : `https://www.leboncoin.fr/${rawAd.url}`;
-    url = url?.substring(0, 500) || '';
-    
-    // Parse price safely
-    let price = 0;
-    if (typeof rawAd.price === 'string') {
-      price = parseInt(rawAd.price.replace(/\D/g, '')) || 0;
-    } else if (typeof rawAd.price === 'number') {
-      price = rawAd.price;
-    }
-    
     const ad: Partial<BotAdData> = {
-      title,
-      description: rawAd.body?.substring(0, 10000) || '', // Limit description size
-      thumb_urls: rawAd.images?.urls?.slice(0, 10) || [], // Limit to 10 images
-      url,
-      price,
+      title: rawAd.subject?.substring(0, 200) || 'Sans titre',
+      description: rawAd.body?.substring(0, 10000) || '',
+      thumb_urls: rawAd.images?.urls?.slice(0, 10) || [],
+      url: this.buildAdUrl(rawAd.url),
+      price: this.parsePrice(rawAd.price),
       provider: 'leboncoin',
-      location: {
-        region_name: rawAd.location?.region_name?.substring(0, 100),
-        department_id: rawAd.location?.department_id?.substring(0, 10),
-        department_name: rawAd.location?.department_name?.substring(0, 100),
-        city: rawAd.location?.city?.substring(0, 100),
-        zipcode: rawAd.location?.zipcode?.substring(0, 10) || 'unknown',
-        coordinates: [
-          rawAd.location?.lng || rawAd.location?.coordinates?.[0] || null,
-          rawAd.location?.lat || rawAd.location?.coordinates?.[1] || null
-        ] as [number, number],
-      },
+      location: this.buildLocation(rawAd.location),
       release_date: releaseDate,
     };
 
-    // Parse attributes
-    if (rawAd.attributes) {
-      for (const attr of rawAd.attributes) {
-        switch (attr.key) {
-          case 'real_estate_type': {
-            // Map to Prisma enum values
-            const typeMap: Record<string, string> = {
-              'appartement': 'appartement',
-              'apartment': 'appartement',
-              'maison': 'maison',
-              'house': 'maison',
-              'terrain': 'terrain',
-              'land': 'terrain',
-              'parking': 'parking',
-              'local commercial': 'local_commercial',
-              'commercial': 'local_commercial',
-            };
-            const typeLabel = attr.value_label?.toLowerCase() || '';
-            ad.real_estate_type = typeMap[typeLabel] || undefined;
-            break;
-          }
-          case 'rooms': {
-            const rooms = parseInt(attr.value);
-            ad.rooms = !isNaN(rooms) && rooms > 0 && rooms < 32767 ? rooms : undefined;
-            break;
-          }
-          case 'square': {
-            const surface = parseInt(attr.value);
-            ad.surface = !isNaN(surface) && surface > 0 && surface < 32767 ? surface : undefined;
-            break;
-          }
-          case 'immo_sell_type': {
-            // Map English/French labels to Prisma enum values
-            const sellTypeMap: Record<string, string> = {
-              'old': 'ancien',
-              'new': 'neuf',
-              'ancien': 'ancien',
-              'neuf': 'neuf',
-            };
-            const sellTypeLabel = attr.value_label?.toLowerCase() || '';
-            ad.immo_sell_type = sellTypeMap[sellTypeLabel] || undefined;
-            break;
-          }
-        }
+    this.parseAdAttributes(ad, rawAd.attributes);
+    return ad;
+  }
+
+  /**
+   * Build ad URL with validation
+   */
+  private buildAdUrl(url?: string): string {
+    if (!url) return '';
+    const fullUrl = url.startsWith('http') ? url : `https://www.leboncoin.fr/${url}`;
+    return fullUrl.substring(0, 500);
+  }
+
+  /**
+   * Parse price safely
+   */
+  private parsePrice(price?: string | number): number {
+    if (typeof price === 'string') {
+      return parseInt(price.replace(/\D/g, '')) || 0;
+    }
+    return typeof price === 'number' ? price : 0;
+  }
+
+  /**
+   * Build location object with field length limits
+   */
+  private buildLocation(location?: RawAdData['location']) {
+    return {
+      region_name: location?.region_name?.substring(0, 100),
+      department_id: location?.department_id?.substring(0, 10),
+      department_name: location?.department_name?.substring(0, 100),
+      city: location?.city?.substring(0, 100),
+      zipcode: location?.zipcode?.substring(0, 10) || 'unknown',
+      coordinates: this.extractCoordinates(location),
+    };
+  }
+
+  /**
+   * Extract coordinates from location data
+   */
+  private extractCoordinates(location?: RawAdData['location']): [number, number] {
+    const lng = location?.lng || location?.coordinates?.[0] || null;
+    const lat = location?.lat || location?.coordinates?.[1] || null;
+    return [lng, lat] as [number, number];
+  }
+
+  /**
+   * Parse attributes and add them to the ad
+   */
+  private parseAdAttributes(
+    ad: Partial<BotAdData>,
+    attributes?: Array<{ key: string; value: string; value_label?: string }>
+  ): void {
+    if (!attributes) return;
+
+    for (const attr of attributes) {
+      switch (attr.key) {
+        case 'real_estate_type':
+          ad.real_estate_type = this.mapRealEstateType(attr.value_label);
+          break;
+        case 'rooms':
+          ad.rooms = this.parseIntegerAttribute(attr.value);
+          break;
+        case 'square':
+          ad.surface = this.parseIntegerAttribute(attr.value);
+          break;
+        case 'immo_sell_type':
+          ad.immo_sell_type = this.mapImmoSellType(attr.value_label);
+          break;
       }
     }
+  }
 
-    return ad;
+  /**
+   * Map real estate type to Prisma enum
+   */
+  private mapRealEstateType(label?: string): string | undefined {
+    const typeMap: Record<string, string> = {
+      appartement: 'appartement',
+      apartment: 'appartement',
+      maison: 'maison',
+      house: 'maison',
+      terrain: 'terrain',
+      land: 'terrain',
+      parking: 'parking',
+      'local commercial': 'local_commercial',
+      commercial: 'local_commercial',
+    };
+    const typeLabel = label?.toLowerCase() || '';
+    return typeMap[typeLabel] || undefined;
+  }
+
+  /**
+   * Map immo sell type to Prisma enum
+   */
+  private mapImmoSellType(label?: string): string | undefined {
+    const sellTypeMap: Record<string, string> = {
+      old: 'ancien',
+      new: 'neuf',
+      ancien: 'ancien',
+      neuf: 'neuf',
+    };
+    const sellTypeLabel = label?.toLowerCase() || '';
+    return sellTypeMap[sellTypeLabel] || undefined;
+  }
+
+  /**
+   * Parse integer attribute with validation
+   */
+  private parseIntegerAttribute(value: string): number | undefined {
+    const parsed = parseInt(value);
+    return !isNaN(parsed) && parsed > 0 && parsed < 32767 ? parsed : undefined;
   }
 
   /**

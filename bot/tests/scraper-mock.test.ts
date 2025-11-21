@@ -30,7 +30,7 @@ class MockLeBonCoinScraper extends LeBonCoinScraperStealth {
   async fetchPage(url: string, userAgent: string): Promise<string> {
     logger.info(`📦 Using mock data instead of fetching: ${url}`);
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     return this.mockHTML;
   }
 }
@@ -60,7 +60,7 @@ async function testWithMockData() {
     logger.info(`   - Ads saved: ${results.adsSaved}`);
     logger.info(`   - Failure rate: ${results.failurePercentage}%`);
     logger.info(`   - Duration: ${duration}s`);
-    
+
     if (results.adsSaved > 0) {
       logger.info('✅ Parser working correctly!');
       logger.info('✅ Prisma validation passed!');
@@ -68,7 +68,7 @@ async function testWithMockData() {
     } else {
       logger.warn('⚠️ No ads were saved - check validation logic');
     }
-    
+
     logger.info('=====================================');
 
     // Verify in database
@@ -76,12 +76,12 @@ async function testWithMockData() {
     const prisma = new PrismaClient();
     const count = await prisma.ad.count();
     logger.info(`📊 Total ads in database: ${count}`);
-    
+
     const latestAds = await prisma.ad.findMany({
       take: 3,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
-    
+
     logger.info('📋 Latest ads in database:');
     latestAds.forEach((ad, i) => {
       logger.info(`   ${i + 1}. ${ad.title} - ${ad.price}€ - ${ad.city}`);
@@ -95,13 +95,13 @@ async function testWithMockData() {
     process.exit(0);
   } catch (error: any) {
     logger.error('❌ Test failed:', error);
-    
+
     // Show detailed error for Prisma validation errors
     if (error.message?.includes('Prisma') || error.message?.includes('validation')) {
       logger.error('🔍 PRISMA VALIDATION ERROR DETAILS:');
       logger.error(JSON.stringify(error, null, 2));
     }
-    
+
     process.exit(1);
   }
 }

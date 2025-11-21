@@ -6,7 +6,7 @@ const logger = new Logger('ScrappingTask');
 
 export async function scrapingTask(): Promise<void> {
   const startTime = Date.now();
-  
+
   logger.info('##################################################################');
   logger.info('## SCRAPING TASK STARTING...');
   logger.info('##################################################################');

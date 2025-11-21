@@ -135,7 +135,7 @@ describe('AdService', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(2);
-      result.data.forEach(ad => {
+      result.data.forEach((ad) => {
         expect(ad.surface).toBeGreaterThanOrEqual(100);
       });
     });

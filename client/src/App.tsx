@@ -39,11 +39,11 @@ const AppLayout: React.FC = () => {
               <Home className="h-6 w-6 text-white" />
               <span className="text-white text-xl font-bold">HIMO</span>
             </div>
-            
+
             {/* Navigation */}
             <nav className="flex items-center gap-6 flex-1 ml-12">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className={`flex items-center gap-2 text-sm font-medium transition-colors ${
                   location.pathname === '/' ? 'text-white' : 'text-slate-400 hover:text-white'
                 }`}
@@ -52,10 +52,12 @@ const AppLayout: React.FC = () => {
                 Search
               </Link>
               {isAuthenticated && (
-                <Link 
+                <Link
                   to="/dashboard"
                   className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                    location.pathname === '/dashboard' ? 'text-white' : 'text-slate-400 hover:text-white'
+                    location.pathname === '/dashboard'
+                      ? 'text-white'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <LayoutDashboard className="h-4 w-4" />
@@ -74,7 +76,11 @@ const AppLayout: React.FC = () => {
               ) : (
                 <>
                   <Link to="/login">
-                    <Button variant="ghost" size="sm" className="text-white hover:text-white hover:bg-slate-800">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-white hover:text-white hover:bg-slate-800"
+                    >
                       <LogIn className="h-4 w-4 mr-2" />
                       Login
                     </Button>

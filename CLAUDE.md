@@ -25,6 +25,7 @@ All development commands use `pnpm --filter` to target specific workspaces.
 ## Common Development Commands
 
 ### Installation & Setup
+
 ```bash
 pnpm install                          # Install all dependencies
 cd api && npx prisma migrate deploy   # Run database migrations
@@ -32,6 +33,7 @@ docker-compose up -d postgres         # Start PostgreSQL with Docker
 ```
 
 ### Development Servers
+
 ```bash
 pnpm dev:api                    # Start backend (Express with hot reload via tsx)
 pnpm dev:client                 # Start frontend (Vite dev server, port 3001)
@@ -39,6 +41,7 @@ pnpm dev:bot                    # Start scraper
 ```
 
 ### Building
+
 ```bash
 pnpm build                      # TypeScript build all packages
 pnpm build:watch               # Watch mode for all packages
@@ -46,6 +49,7 @@ pnpm clean                      # Clean all dist folders
 ```
 
 ### Testing
+
 ```bash
 pnpm --filter api test          # Run Jest tests (backend only)
 pnpm --filter api test -- <pattern>  # Run specific tests matching pattern
@@ -53,6 +57,7 @@ pnpm --filter api test -- --watch    # Watch mode
 ```
 
 ### Code Quality
+
 ```bash
 pnpm lint                       # Run ESLint
 pnpm lint -- --fix              # Fix linting issues
@@ -61,6 +66,7 @@ pnpm type-check                 # TypeScript type checking (no emit)
 ```
 
 ### Database Commands
+
 ```bash
 pnpm --filter api prisma:generate   # Generate Prisma Client
 pnpm --filter api prisma:migrate    # Create new migration
@@ -70,6 +76,7 @@ pnpm seed                           # Seed database with sample data
 ```
 
 ### Docker
+
 ```bash
 docker-compose up               # Start all services (PostgreSQL, API, Bot)
 docker-compose up postgres      # PostgreSQL only
@@ -81,6 +88,7 @@ docker-compose down             # Stop all services
 The API follows **Clean Architecture** with strict separation of concerns:
 
 ### Layer Structure
+
 ```
 Controllers (HTTP handling)
     ↓
@@ -92,6 +100,7 @@ Database (PostgreSQL + Prisma ORM)
 ```
 
 ### Directory Organization
+
 ```
 api/src/
 ├── controllers/       # HTTP request/response handling
@@ -132,6 +141,7 @@ api/src/
 ### Testing
 
 Backend uses **Jest** with mocking and integration tests:
+
 - Test files coexist with source (`*.test.ts` pattern)
 - Database setup in `api/src/__tests__/setup.ts` handles cleanup between tests
 - Use `jest-mock-extended` for mocking Prisma
@@ -144,6 +154,7 @@ Run tests: `pnpm --filter api test`
 The Client uses **React 19** with modern patterns and feature-based organization:
 
 ### Tech Stack
+
 - **Vite 7** for ultra-fast development (<50ms HMR)
 - **React Router 6** for client-side routing
 - **React Query** for server state management
@@ -151,6 +162,7 @@ The Client uses **React 19** with modern patterns and feature-based organization
 - **TypeScript** for type safety
 
 ### Directory Structure
+
 ```
 client/src/
 ├── features/        # Feature modules (auth, ads, dashboard)
@@ -187,14 +199,17 @@ client/src/
 **PostgreSQL 16 + PostGIS** with Prisma ORM:
 
 ### Key Models
+
 - **User**: Authentication with bcrypt hashing
 - **Ad**: Real estate listings with geospatial support (latitude/longitude)
 
 ### Important Indexes
+
 - Ads indexed by: provider + releaseDate, price, surface, type, zipcode, geospatial coordinates
 - Users indexed by email
 
 ### Environment Variables
+
 ```
 DATABASE_URL=postgresql://user:password@host:5432/himo
 JWT_SECRET=<your-secret-key>
@@ -208,15 +223,18 @@ See `.env.example` for complete reference.
 ## Key Files & Patterns
 
 ### Authentication
+
 - **Backend**: JWT tokens with HTTP-only cookies, bcrypt hashing (12 rounds)
 - **Frontend**: `AuthContext` for state, `useAuth` hook for API calls
 - **Middleware**: `auth.ts` validates JWT tokens
 
 ### API Client
+
 - **Frontend**: `client/src/services/api.ts` (Axios instance with auth headers)
 - **Hooks**: `useAuth`, `useAds` handle all API communication
 
 ### Error Handling
+
 - Backend: `error-handler.ts` middleware catches and formats errors
 - Frontend: React Query handles API errors with built-in retry logic
 
@@ -231,9 +249,11 @@ See `.env.example` for complete reference.
    - Frontend: Vite provides sub-50ms HMR for instant feedback
 
 4. **Database Migrations**: Use Prisma for all schema changes:
+
    ```bash
    pnpm --filter api prisma:migrate
    ```
+
    This creates migration files in `api/prisma/migrations/`
 
 5. **API Port**: Backend runs on port 3000, frontend on port 3001
@@ -245,6 +265,7 @@ See `.env.example` for complete reference.
 ## Documentation
 
 Comprehensive docs are in the `docs/` folder:
+
 - **architecture/ARCHITECTURE.md**: Backend architecture deep dive
 - **guides/GETTING_STARTED.md**: Detailed setup instructions
 - **guides/DOCKER_GUIDE.md**: Docker deployment

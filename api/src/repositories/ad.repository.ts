@@ -21,13 +21,9 @@ export class AdRepositoryPrisma {
   /**
    * Find ads with filters
    */
-  async findWithFilters(
-    filters: AdSearchFilters,
-    page: number = 0,
-    limit?: number
-  ): Promise<Ad[]> {
+  async findWithFilters(filters: AdSearchFilters, page: number = 0, limit?: number): Promise<Ad[]> {
     const itemsPerPage = limit || this.ITEMS_PER_PAGE;
-    
+
     const where: Prisma.AdWhereInput = this.buildWhereClause(filters);
 
     return prisma.ad.findMany({
@@ -158,7 +154,7 @@ export class AdRepositoryPrisma {
    */
   async search(searchTerm: string, page: number = 0, limit?: number): Promise<Ad[]> {
     const itemsPerPage = limit || this.ITEMS_PER_PAGE;
-    
+
     return prisma.ad.findMany({
       where: {
         OR: [
@@ -203,27 +199,8 @@ export class AdRepositoryPrisma {
       where.rooms = { gte: filters.rooms };
     }
 
-    // Price range
-    if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
-      where.price = {};
-      if (filters.priceMin !== undefined) {
-        where.price.gte = filters.priceMin;
-      }
-      if (filters.priceMax !== undefined) {
-        where.price.lte = filters.priceMax;
-      }
-    }
-
-    // Surface range
-    if (filters.surfaceMin !== undefined || filters.surfaceMax !== undefined) {
-      where.surface = {};
-      if (filters.surfaceMin !== undefined) {
-        where.surface.gte = filters.surfaceMin;
-      }
-      if (filters.surfaceMax !== undefined) {
-        where.surface.lte = filters.surfaceMax;
-      }
-    }
+    this.applyPriceRange(where, filters);
+    this.applySurfaceRange(where, filters);
 
     // Full-text search
     if (filters.search) {
@@ -234,6 +211,36 @@ export class AdRepositoryPrisma {
     }
 
     return where;
+  }
+
+  /**
+   * Apply price range filter to where clause
+   */
+  private applyPriceRange(where: Prisma.AdWhereInput, filters: AdSearchFilters): void {
+    if (filters.priceMin !== undefined || filters.priceMax !== undefined) {
+      where.price = {};
+      if (filters.priceMin !== undefined) {
+        where.price.gte = filters.priceMin;
+      }
+      if (filters.priceMax !== undefined) {
+        where.price.lte = filters.priceMax;
+      }
+    }
+  }
+
+  /**
+   * Apply surface range filter to where clause
+   */
+  private applySurfaceRange(where: Prisma.AdWhereInput, filters: AdSearchFilters): void {
+    if (filters.surfaceMin !== undefined || filters.surfaceMax !== undefined) {
+      where.surface = {};
+      if (filters.surfaceMin !== undefined) {
+        where.surface.gte = filters.surfaceMin;
+      }
+      if (filters.surfaceMax !== undefined) {
+        where.surface.lte = filters.surfaceMax;
+      }
+    }
   }
 }
 

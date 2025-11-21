@@ -64,11 +64,7 @@ describe('Error Handler Middleware', () => {
         array: () => [],
       });
 
-      handleValidationErrors(
-        mockRequest as Request,
-        mockResponse as Response,
-        nextFunction
-      );
+      handleValidationErrors(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(nextFunction).toHaveBeenCalled();
       expect(statusMock).not.toHaveBeenCalled();
@@ -85,11 +81,7 @@ describe('Error Handler Middleware', () => {
         array: () => errors,
       });
 
-      handleValidationErrors(
-        mockRequest as Request,
-        mockResponse as Response,
-        nextFunction
-      );
+      handleValidationErrors(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(statusMock).toHaveBeenCalledWith(400);
       expect(jsonMock).toHaveBeenCalledWith({
@@ -107,11 +99,7 @@ describe('Error Handler Middleware', () => {
         array: () => errors,
       });
 
-      handleValidationErrors(
-        mockRequest as Request,
-        mockResponse as Response,
-        nextFunction
-      );
+      handleValidationErrors(mockRequest as Request, mockResponse as Response, nextFunction);
 
       expect(statusMock).toHaveBeenCalledWith(400);
       expect(jsonMock).toHaveBeenCalledWith({

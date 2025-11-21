@@ -22,26 +22,28 @@ The Himo bot uses **Playwright** (headless Chrome) to scrape real estate listing
 
 ### Why Playwright?
 
-| Feature | axios (old) | Playwright (new) | Winner |
-|---------|-------------|------------------|--------|
-| **JavaScript Rendering** | ❌ No | ✅ Yes | **Playwright** |
-| **Anti-Detection** | ❌ Easy to block | ✅ Hard to detect | **Playwright** |
-| **CAPTCHA Handling** | ❌ Fails | ✅ Better | **Playwright** |
-| **Reliability** | ⚠️ 50-70% | ✅ 90-95% | **Playwright** |
-| **Speed** | ✅ Fast | ⚠️ Slower | axios |
-| **Cost** | ✅ Free | ✅ **FREE** | Tie ✅ |
+| Feature                  | axios (old)      | Playwright (new)  | Winner         |
+| ------------------------ | ---------------- | ----------------- | -------------- |
+| **JavaScript Rendering** | ❌ No            | ✅ Yes            | **Playwright** |
+| **Anti-Detection**       | ❌ Easy to block | ✅ Hard to detect | **Playwright** |
+| **CAPTCHA Handling**     | ❌ Fails         | ✅ Better         | **Playwright** |
+| **Reliability**          | ⚠️ 50-70%        | ✅ 90-95%         | **Playwright** |
+| **Speed**                | ✅ Fast          | ⚠️ Slower         | axios          |
+| **Cost**                 | ✅ Free          | ✅ **FREE**       | Tie ✅         |
 
 ---
 
 ## 🛠️ Technology Stack
 
 ### Playwright
+
 - **What:** Headless browser automation (by Microsoft)
 - **Why:** Looks like a real user, hard to detect
 - **Cost:** **100% FREE** and open-source
 - **Used by:** Microsoft, GitHub, VS Code testing
 
 ### Key Features
+
 1. ✅ **Headless Chrome** - Real browser, not HTTP client
 2. ✅ **Stealth Mode** - Hides automation traces
 3. ✅ **JavaScript Support** - Renders React/Vue apps
@@ -53,6 +55,7 @@ The Himo bot uses **Playwright** (headless Chrome) to scrape real estate listing
 ## 🥷 Anti-Detection Features
 
 ### 1. **Stealth Browser Launch**
+
 ```typescript
 chromium.launch({
   headless: true,
@@ -66,6 +69,7 @@ chromium.launch({
 ```
 
 ### 2. **Fake Browser Fingerprint**
+
 ```typescript
 // Override navigator.webdriver (normally true for automation)
 Object.defineProperty(navigator, 'webdriver', {
@@ -80,6 +84,7 @@ navigator.plugins = [1, 2, 3, 4, 5];
 ```
 
 ### 3. **Realistic Headers**
+
 ```typescript
 {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...',
@@ -90,6 +95,7 @@ navigator.plugins = [1, 2, 3, 4, 5];
 ```
 
 ### 4. **Human Behavior Simulation**
+
 ```typescript
 // Random delays (1-3 seconds)
 await sleep(Math.random() * 2 + 1);
@@ -102,6 +108,7 @@ window.scrollBy(0, randomScroll);
 ```
 
 ### 5. **French Locale**
+
 ```typescript
 {
   locale: 'fr-FR',
@@ -115,6 +122,7 @@ window.scrollBy(0, randomScroll);
 ## ⚙️ How It Works
 
 ### 1. **Initialization**
+
 ```typescript
 // Launch headless Chrome
 const browser = await chromium.launch({ headless: true });
@@ -127,6 +135,7 @@ const page = await browser.newPage({
 ```
 
 ### 2. **Navigation**
+
 ```typescript
 // Go to LeBonCoin search page
 await page.goto('https://www.leboncoin.fr/recherche/?category=9', {
@@ -135,12 +144,14 @@ await page.goto('https://www.leboncoin.fr/recherche/?category=9', {
 ```
 
 ### 3. **Wait for Content**
+
 ```typescript
 // Wait for React to render ads
 await page.waitForSelector('[data-qa-id="aditem_container"]');
 ```
 
 ### 4. **Simulate Human**
+
 ```typescript
 // Random delay
 await sleep(Math.random() * 2);
@@ -153,6 +164,7 @@ await page.evaluate(() => window.scrollBy(0, 200));
 ```
 
 ### 5. **Extract Data**
+
 ```typescript
 // Get page HTML
 const html = await page.content();
@@ -164,6 +176,7 @@ const ads = JSON.parse('[' + match[0] + ']');
 ```
 
 ### 6. **Save to Database**
+
 ```typescript
 // Transform and save to PostgreSQL
 await prisma.ad.createMany({
@@ -173,6 +186,7 @@ await prisma.ad.createMany({
 ```
 
 ### 7. **Cleanup**
+
 ```typescript
 // Always close browser
 await page.close();
@@ -184,6 +198,7 @@ await browser.close();
 ## 🔧 Configuration
 
 ### Environment Variables (.env)
+
 ```env
 # Scraping schedule (cron format)
 SCRAPING_INTERVAL=*/2 5-22 * * *
@@ -197,29 +212,31 @@ DEBUG=false  # Set to true to see browser window
 ```
 
 ### Scraper Config
+
 ```typescript
 const config = {
-  maxPages: 30,          // Maximum pages to scrape
-  maxRetries: 10,        // Retry on failure
-  waitSuccess: 3,        // Wait 3s between successful pages
-  waitError: 6,          // Wait 6s after errors
+  maxPages: 30, // Maximum pages to scrape
+  maxRetries: 10, // Retry on failure
+  waitSuccess: 3, // Wait 3s between successful pages
+  waitError: 6, // Wait 6s after errors
   baseUrl: 'https://www.leboncoin.fr/recherche/?category=9',
 };
 ```
 
 ### Search Customization
+
 ```typescript
 // Real estate (category 9)
-'https://www.leboncoin.fr/recherche/?category=9'
+'https://www.leboncoin.fr/recherche/?category=9';
 
 // Add location
-'https://www.leboncoin.fr/recherche/?category=9&locations=Paris'
+'https://www.leboncoin.fr/recherche/?category=9&locations=Paris';
 
 // Add price range
-'https://www.leboncoin.fr/recherche/?category=9&price=100000-300000'
+'https://www.leboncoin.fr/recherche/?category=9&price=100000-300000';
 
 // Add type
-'https://www.leboncoin.fr/recherche/?category=9&real_estate_type=1' // Apartment
+'https://www.leboncoin.fr/recherche/?category=9&real_estate_type=1'; // Apartment
 ```
 
 ---
@@ -227,18 +244,21 @@ const config = {
 ## 🚀 Running the Scraper
 
 ### Development (Manual Test)
+
 ```bash
 cd bot
 pnpm dev
 ```
 
 ### Production (Cron Job)
+
 ```bash
 # Bot starts automatically and runs on schedule
 docker-compose up bot
 ```
 
 ### Manual Scrape (One-Time)
+
 ```typescript
 import { leboncoinScraper } from './scrappers/leboncoin-scraper-playwright';
 
@@ -253,6 +273,7 @@ console.log(`Saved ${results.adsSaved} ads`);
 ## 📊 Performance
 
 ### Expected Results
+
 - **Success Rate:** 90-95%
 - **Speed:** ~5-10 seconds per page
 - **Ads per Page:** ~35 ads
@@ -260,6 +281,7 @@ console.log(`Saved ${results.adsSaved} ads`);
 - **Total Ads per Run:** Up to 1,050 ads
 
 ### Resource Usage
+
 - **Memory:** ~200-300 MB per browser instance
 - **CPU:** Low (headless mode)
 - **Network:** ~1-2 MB per page
@@ -269,7 +291,9 @@ console.log(`Saved ${results.adsSaved} ads`);
 ## 🐛 Troubleshooting
 
 ### Issue: "CAPTCHA detected"
+
 **Solution:**
+
 ```typescript
 // Add longer delays
 waitSuccess: 5,  // Instead of 3
@@ -282,12 +306,15 @@ const userAgents = [
 ```
 
 ### Issue: "No ads found"
+
 **Causes:**
+
 1. LeBonCoin changed their HTML structure
 2. CAPTCHA/blocking
 3. JavaScript didn't load
 
 **Solution:**
+
 ```typescript
 // Check page content
 console.log(await page.content());
@@ -300,7 +327,9 @@ waitForSelector('[data-qa-id="aditem_container"]', { timeout: 30000 });
 ```
 
 ### Issue: "Browser crashes"
+
 **Solution:**
+
 ```bash
 # Install browser dependencies
 npx playwright install-deps chromium
@@ -311,7 +340,9 @@ const browser = await firefox.launch();
 ```
 
 ### Issue: "Too slow"
+
 **Optimization:**
+
 ```typescript
 // Block images and CSS (faster)
 await page.route('**/*', (route) => {
@@ -324,7 +355,7 @@ await page.route('**/*', (route) => {
 });
 
 // Reduce pages
-maxPages: 10  // Instead of 30
+maxPages: 10; // Instead of 30
 ```
 
 ---
@@ -332,6 +363,7 @@ maxPages: 10  // Instead of 30
 ## 📈 Best Practices
 
 ### 1. **Respect Rate Limits**
+
 ```typescript
 // Don't scrape too aggressively
 waitSuccess: 3,  // 3 seconds between pages
@@ -339,12 +371,14 @@ maxPages: 30,    // Limit pages per run
 ```
 
 ### 2. **Monitor Logs**
+
 ```typescript
 // Check logs regularly
 docker logs himo-bot --tail 100
 ```
 
 ### 3. **Handle Errors Gracefully**
+
 ```typescript
 try {
   await scrape();
@@ -355,6 +389,7 @@ try {
 ```
 
 ### 4. **Clean Up Resources**
+
 ```typescript
 // Always close browser
 finally {
@@ -363,6 +398,7 @@ finally {
 ```
 
 ### 5. **Rotate User Agents**
+
 ```typescript
 const userAgents = [
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...',
@@ -378,6 +414,7 @@ const ua = userAgents[Math.floor(Math.random() * userAgents.length)];
 ## 🎓 Advanced Techniques
 
 ### 1. **Proxy Support** (if needed)
+
 ```typescript
 const browser = await chromium.launch({
   proxy: {
@@ -389,6 +426,7 @@ const browser = await chromium.launch({
 ```
 
 ### 2. **Screenshot on Error**
+
 ```typescript
 catch (error) {
   await page.screenshot({ path: `error-${Date.now()}.png` });
@@ -397,6 +435,7 @@ catch (error) {
 ```
 
 ### 3. **Network Interception**
+
 ```typescript
 // Block analytics/tracking
 await page.route('**/*', (route) => {
@@ -410,6 +449,7 @@ await page.route('**/*', (route) => {
 ```
 
 ### 4. **Cookies/Session**
+
 ```typescript
 // Save cookies for session persistence
 const cookies = await context.cookies();

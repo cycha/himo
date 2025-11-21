@@ -112,7 +112,7 @@ const startServer = async () => {
 // Handle graceful shutdown
 const gracefulShutdown = async (signal: string) => {
   console.log(`\n${signal} received. Closing server gracefully...`);
-  
+
   try {
     await disconnect();
     process.exit(0);

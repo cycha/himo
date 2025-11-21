@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 
 async function debugScrape() {
   console.log('🔍 Debugging LeBonCoin page structure...');
-  
+
   const browser = await chromium.launch({
     headless: false, // Show browser window to see what's happening
     args: ['--disable-blink-features=AutomationControlled'],
@@ -10,7 +10,8 @@ async function debugScrape() {
 
   const page = await browser.newPage({
     viewport: { width: 1920, height: 1080 },
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     locale: 'fr-FR',
   });
 
@@ -34,7 +35,7 @@ async function debugScrape() {
   const hasAds = html.includes('"ads":');
   const hasListID = html.includes('"listID"');
   const hasAdItems = html.includes('data-qa-id');
-  
+
   console.log(`   Contains "ads": ${hasAds}`);
   console.log(`   Contains "listID": ${hasListID}`);
   console.log(`   Contains ad items: ${hasAdItems}`);
@@ -47,7 +48,7 @@ async function debugScrape() {
 
   console.log('\n⏸️  Browser window will stay open for 30 seconds...');
   console.log('   Check the browser to see if there are CAPTCHA or other issues');
-  
+
   await page.waitForTimeout(30000);
 
   await browser.close();

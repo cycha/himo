@@ -14,11 +14,13 @@ export function createTestApp(): Application {
   app.use(helmet());
 
   // CORS configuration
-  app.use(cors({
-    origin: '*',
-    credentials: true,
-    optionsSuccessStatus: 200,
-  }));
+  app.use(
+    cors({
+      origin: '*',
+      credentials: true,
+      optionsSuccessStatus: 200,
+    })
+  );
 
   // Body parsing middleware
   app.use(express.json({ limit: '10mb' }));

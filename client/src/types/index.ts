@@ -50,8 +50,8 @@ export interface SearchFilters {
   priceMax?: number;
   surfaceMin?: number;
   surfaceMax?: number;
-  city?: string;  // Simple city filter
-  zipcode?: string;  // Simple zipcode filter
+  city?: string; // Simple city filter
+  zipcode?: string; // Simple zipcode filter
   location?: {
     address_components?: Array<{
       types: string[];

@@ -1,23 +1,13 @@
 import { body, ValidationChain } from 'express-validator';
 
 export const signupValidation: ValidationChain[] = [
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email address')
-    .normalizeEmail(),
-  body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
+  body('email').isEmail().withMessage('Please provide a valid email address').normalizeEmail(),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
 ];
 
 export const loginValidation: ValidationChain[] = [
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email address')
-    .normalizeEmail(),
-  body('password')
-    .notEmpty()
-    .withMessage('Password is required'),
+  body('email').isEmail().withMessage('Please provide a valid email address').normalizeEmail(),
+  body('password').notEmpty().withMessage('Password is required'),
 ];
 
 export const searchValidation: ValidationChain[] = [
@@ -45,8 +35,5 @@ export const searchValidation: ValidationChain[] = [
     .withMessage('Maximum surface must be a number')
     .isFloat({ min: 0 })
     .withMessage('Maximum surface must be positive'),
-  body('page')
-    .optional()
-    .isInt({ min: 0 })
-    .withMessage('Page must be a positive integer'),
+  body('page').optional().isInt({ min: 0 }).withMessage('Page must be a positive integer'),
 ];

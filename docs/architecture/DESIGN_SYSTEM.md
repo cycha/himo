@@ -11,7 +11,7 @@ We use **shadcn/ui** with **Tailwind CSS** - the most modern design system for 2
 ✅ **Radix UI primitives** - Accessibility built-in  
 ✅ **Tailwind CSS** - Utility-first styling  
 ✅ **TypeScript first** - Type-safe components  
-✅ **Modern & trendy** - Used by Vercel, Linear, Cal.com  
+✅ **Modern & trendy** - Used by Vercel, Linear, Cal.com
 
 ## Architecture
 
@@ -91,13 +91,13 @@ Themes are controlled via CSS variables in `index.css`:
 
 ```css
 :root {
-  --primary: 217 91% 60%;        /* Blue */
-  --secondary: 210 40% 96.1%;    /* Light gray */
-  --destructive: 0 84.2% 60.2%;  /* Red */
-  --muted: 210 40% 96.1%;        /* Muted gray */
-  --accent: 210 40% 96.1%;       /* Accent color */
-  --border: 214.3 31.8% 91.4%;   /* Border color */
-  --radius: 0.5rem;              /* Border radius */
+  --primary: 217 91% 60%; /* Blue */
+  --secondary: 210 40% 96.1%; /* Light gray */
+  --destructive: 0 84.2% 60.2%; /* Red */
+  --muted: 210 40% 96.1%; /* Muted gray */
+  --accent: 210 40% 96.1%; /* Accent color */
+  --border: 214.3 31.8% 91.4%; /* Border color */
+  --radius: 0.5rem; /* Border radius */
 }
 ```
 
@@ -190,6 +190,7 @@ const LoginForm = () => {
 ## Migration from Ant Design
 
 ### Button
+
 ```typescript
 // Before (Ant Design)
 <Button type="primary" size="large" loading={loading}>
@@ -203,6 +204,7 @@ const LoginForm = () => {
 ```
 
 ### Card
+
 ```typescript
 // Before (Ant Design)
 <Card title="Title" extra={<Button>Action</Button>}>
@@ -224,11 +226,12 @@ const LoginForm = () => {
 ```
 
 ### Input
+
 ```typescript
 // Before (Ant Design)
-<Input 
-  prefix={<UserIcon />} 
-  size="large" 
+<Input
+  prefix={<UserIcon />}
+  size="large"
   placeholder="Email"
 />
 
@@ -250,6 +253,7 @@ shadcn/ui has 40+ components. To add more:
 ```
 
 Popular components:
+
 - `dialog.tsx` - Modal dialogs
 - `dropdown-menu.tsx` - Dropdown menus
 - `select.tsx` - Select inputs
@@ -262,6 +266,7 @@ Popular components:
 ## Best Practices
 
 ### 1. Use Semantic Colors
+
 ```typescript
 // ✅ Good
 <Button variant="destructive">Delete</Button>
@@ -272,6 +277,7 @@ Popular components:
 ```
 
 ### 2. Compose Components
+
 ```typescript
 // ✅ Good - Composable
 <Card>
@@ -288,6 +294,7 @@ Popular components:
 ```
 
 ### 3. Extend, Don't Modify
+
 ```typescript
 // ✅ Good - Extend via className
 <Button className="w-full shadow-lg">
@@ -303,6 +310,7 @@ const BigButton = ({ children }) => (
 ```
 
 ### 4. Use TypeScript
+
 ```typescript
 // ✅ Good - Typed props
 interface FormProps {
@@ -318,7 +326,9 @@ const Form: React.FC<FormProps> = ({ onSubmit, loading }) => {
 ## Performance
 
 ### Tree Shaking
+
 Tailwind automatically removes unused classes:
+
 ```bash
 # Production build
 npm run build
@@ -327,11 +337,13 @@ npm run build
 ```
 
 ### Component Size
+
 - Button: ~2KB
 - Card: ~1KB
 - Input: ~1KB
 
 Compare to Ant Design:
+
 - Ant Design full: ~500KB
 - shadcn/ui components: ~20KB
 
@@ -349,6 +361,6 @@ Compare to Ant Design:
 ✅ **Performance** - Small bundle size, tree-shaking  
 ✅ **Accessibility** - Radix UI primitives are WCAG compliant  
 ✅ **TypeScript** - Fully typed components  
-✅ **Industry Standard** - Used by top companies  
+✅ **Industry Standard** - Used by top companies
 
 Perfect for impressing potential employers! 🚀
