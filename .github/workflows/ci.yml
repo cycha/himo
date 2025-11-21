@@ -149,7 +149,7 @@ jobs:
           name: build-artifacts
           path: |
             api/dist
-            client/dist
+            client/build
             bot/dist
             commons/dist
           retention-days: 7
