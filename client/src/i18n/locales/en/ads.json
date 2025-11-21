@@ -1,0 +1,33 @@
+{
+  "search": {
+    "title": "Search Real Estate",
+    "description": "Find your dream property in France",
+    "propertyType": "Property Type",
+    "allTypes": "All Types",
+    "appartement": "Appartement",
+    "maison": "Maison",
+    "terrain": "Terrain",
+    "city": "City",
+    "cityPlaceholder": "Paris, Lyon, Marseille...",
+    "cityNotFound": "City not found. Please select from suggestions.",
+    "cityVerified": "City verified ✓",
+    "minPrice": "Min Price (€)",
+    "minPricePlaceholder": "100 000",
+    "maxPrice": "Max Price (€)",
+    "maxPricePlaceholder": "1 000 000",
+    "minSurface": "Min Surface (m²)",
+    "minSurfacePlaceholder": "50",
+    "searchButton": "Search",
+    "searching": "Searching...",
+    "startSearchTitle": "Start Your Search",
+    "startSearchDescription": "Click the search button to find real estate ads",
+    "results": "Results",
+    "resultsCount": "{{count}} Results",
+    "searchResults": "Search Results"
+  },
+  "list": {
+    "noAdsTitle": "No ads found",
+    "noAdsDescription": "Try adjusting your search criteria.",
+    "rooms": "rooms"
+  }
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select } from '../../components/ui/select';
@@ -18,6 +19,7 @@ interface CitySuggestion {
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
+  const { t } = useTranslation('ads');
   const [type, setType] = React.useState('');
   const [city, setCity] = React.useState('');
   const [citySuggestions, setCitySuggestions] = React.useState<CitySuggestion[]>([]);
@@ -136,7 +138,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
         }
       }
 
-      setCityError('City not found. Please select from suggestions.');
+      setCityError(t('search.cityNotFound'));
       return false;
     } catch (error) {
       console.error('Error validating city:', error);
@@ -168,23 +170,23 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="type">Property Type</Label>
+          <Label htmlFor="type">{t('search.propertyType')}</Label>
           <Select id="type" value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="">All Types</option>
-            <option value="appartement">Appartement</option>
-            <option value="maison">Maison</option>
-            <option value="terrain">Terrain</option>
+            <option value="">{t('search.allTypes')}</option>
+            <option value="appartement">{t('search.appartement')}</option>
+            <option value="maison">{t('search.maison')}</option>
+            <option value="terrain">{t('search.terrain')}</option>
           </Select>
         </div>
 
         <div className="space-y-2 relative">
-          <Label htmlFor="city">City</Label>
+          <Label htmlFor="city">{t('search.city')}</Label>
           <div className="relative">
             <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               id="city"
               type="text"
-              placeholder="Paris, Lyon, Marseille..."
+              placeholder={t('search.cityPlaceholder')}
               value={city}
               onChange={(e) => handleCityChange(e.target.value)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
@@ -227,18 +229,18 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
           {validatedCity && !cityError && (
             <div className="flex items-center gap-1 text-green-600 text-sm">
               <MapPin className="h-4 w-4" />
-              <span>City verified ✓</span>
+              <span>{t('search.cityVerified')}</span>
             </div>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="priceMin">Min Price (€)</Label>
+          <Label htmlFor="priceMin">{t('search.minPrice')}</Label>
           <Input
             id="priceMin"
             type="text"
             inputMode="numeric"
-            placeholder="100 000"
+            placeholder={t('search.minPricePlaceholder')}
             value={formatPrice(priceMin)}
             onChange={handlePriceMinChange}
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -246,12 +248,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="priceMax">Max Price (€)</Label>
+          <Label htmlFor="priceMax">{t('search.maxPrice')}</Label>
           <Input
             id="priceMax"
             type="text"
             inputMode="numeric"
-            placeholder="1 000 000"
+            placeholder={t('search.maxPricePlaceholder')}
             value={formatPrice(priceMax)}
             onChange={handlePriceMaxChange}
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -259,11 +261,11 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="surfaceMin">Min Surface (m²)</Label>
+          <Label htmlFor="surfaceMin">{t('search.minSurface')}</Label>
           <Input
             id="surfaceMin"
             type="number"
-            placeholder="50"
+            placeholder={t('search.minSurfacePlaceholder')}
             value={surfaceMin}
             onChange={(e) => setSurfaceMin(e.target.value)}
             className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -273,7 +275,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch, loading }) => {
 
       <Button type="submit" className="w-full" size="lg" disabled={loading}>
         <Search className="h-4 w-4 mr-2" />
-        {loading ? 'Searching...' : 'Search'}
+        {loading ? t('search.searching') : t('search.searchButton')}
       </Button>
     </form>
   );

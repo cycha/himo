@@ -1,5 +1,6 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from '../../components/ui/toast';
 import { useAuth } from '../../context/AuthContext';
 import type { LoginForm, SignupForm, AuthResponse } from '../../types';
@@ -7,6 +8,7 @@ import type { LoginForm, SignupForm, AuthResponse } from '../../types';
 export const useLogin = (): UseMutationResult<AuthResponse, Error, LoginForm> => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation('auth');
 
   return useMutation({
     mutationFn: async (credentials: LoginForm) => {
@@ -15,11 +17,11 @@ export const useLogin = (): UseMutationResult<AuthResponse, Error, LoginForm> =>
       return {} as AuthResponse;
     },
     onSuccess: () => {
-      toast.success('Login successful!');
+      toast.success(t('login.success'));
       navigate('/dashboard');
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || error.message || 'Login failed');
+      toast.error(error.response?.data?.message || error.message || t('login.error'));
     },
   });
 };
@@ -27,6 +29,7 @@ export const useLogin = (): UseMutationResult<AuthResponse, Error, LoginForm> =>
 export const useSignup = (): UseMutationResult<AuthResponse, Error, SignupForm> => {
   const navigate = useNavigate();
   const { signup } = useAuth();
+  const { t } = useTranslation('auth');
 
   return useMutation({
     mutationFn: async (data: SignupForm) => {
@@ -35,7 +38,7 @@ export const useSignup = (): UseMutationResult<AuthResponse, Error, SignupForm> 
       return {} as AuthResponse;
     },
     onSuccess: () => {
-      toast.success('Account created successfully!');
+      toast.success(t('signup.success'));
       navigate('/dashboard');
     },
     onError: (error: any) => {
@@ -50,7 +53,7 @@ export const useSignup = (): UseMutationResult<AuthResponse, Error, SignupForm> 
           error.response?.data?.message ||
             error.response?.data?.error ||
             error.message ||
-            'Signup failed'
+            t('signup.error')
         );
       }
     },

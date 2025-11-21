@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import {
   Card,
@@ -13,6 +14,7 @@ import { Label } from '../../components/ui/label';
 import { useSignup } from '../../hooks/api/useAuth';
 
 const SignupForm: React.FC = () => {
+  const { t } = useTranslation('auth');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
@@ -22,7 +24,7 @@ const SignupForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match');
+      setPasswordError(t('signup.passwordMismatch'));
       return;
     }
     if (email && password) {
@@ -35,43 +37,43 @@ const SignupForm: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create Your Account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">{t('signup.title')}</CardTitle>
           <CardDescription className="text-center">
-            Sign up to start finding your dream property
+            {t('signup.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('signup.email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder={t('signup.emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('signup.password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('signup.passwordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
               />
-              <p className="text-xs text-muted-foreground">Must be at least 6 characters long</p>
+              <p className="text-xs text-muted-foreground">{t('signup.passwordHint')}</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{t('signup.confirmPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('signup.confirmPasswordPlaceholder')}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -84,13 +86,13 @@ const SignupForm: React.FC = () => {
               size="lg"
               disabled={signupMutation.isPending || password !== confirmPassword}
             >
-              {signupMutation.isPending ? 'Creating account...' : 'Sign up'}
+              {signupMutation.isPending ? t('signup.creatingAccount') : t('signup.signupButton')}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Already have an account?{' '}
+            {t('signup.haveAccount')}{' '}
             <Link to="/login" className="text-primary hover:underline font-medium">
-              Log in
+              {t('signup.loginLink')}
             </Link>
           </div>
         </CardContent>
