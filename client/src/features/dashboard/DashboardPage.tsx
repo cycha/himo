@@ -9,6 +9,7 @@ import {
 import { Button } from '../../components/ui/button';
 import { User, Calendar, LogOut, Home } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import BotControlPanel from './components/BotControlPanel';
 
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -62,15 +63,17 @@ const DashboardPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Home className="h-5 w-5" />
-            Welcome to Himo! 🏠
+            Welcome to Himo!
           </CardTitle>
           <CardDescription>Your real estate search platform</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <p>Search for real estate ads and find your dream property.</p>
-          <p className="text-muted-foreground">More features coming soon!</p>
         </CardContent>
       </Card>
+
+      {/* Bot Control Panel */}
+      <BotControlPanel />
     </div>
   );
 };

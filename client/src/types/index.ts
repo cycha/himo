@@ -80,3 +80,62 @@ export interface SignupForm {
   password: string;
   confirmPassword?: string;
 }
+
+// Bot types
+export enum BotRunStatus {
+  Running = 'running',
+  Completed = 'completed',
+  Failed = 'failed',
+  Stopped = 'stopped',
+}
+
+export interface BotRun {
+  id: string;
+  status: BotRunStatus;
+  start_time: string;
+  end_time?: string;
+  ads_saved?: number;
+  pages_scraped?: number;
+  failure_percentage?: number;
+  average_retries_per_request?: number;
+  error_message?: string;
+  triggered_by?: string;
+}
+
+export interface BotStatus {
+  isRunning: boolean;
+  currentRun?: BotRun;
+  lastRun?: BotRun;
+}
+
+export interface BotStats {
+  totalRuns: number;
+  successfulRuns: number;
+  failedRuns: number;
+  totalAdsSaved: number;
+  averageAdsSavedPerRun: number;
+  lastRunTime: string | null;
+  totalAdsInDatabase: number;
+  recentRuns: BotRun[];
+}
+
+export interface BotStatusResponse {
+  success: boolean;
+  data: BotStatus;
+}
+
+export interface BotStatsResponse {
+  success: boolean;
+  data: BotStats;
+}
+
+export interface BotStartResponse {
+  success: boolean;
+  data: BotRun;
+  message: string;
+}
+
+export interface BotStopResponse {
+  success: boolean;
+  message: string;
+}
