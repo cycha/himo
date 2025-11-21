@@ -45,8 +45,9 @@ COPY bot ./bot
 RUN pnpm install --frozen-lockfile --filter bot
 RUN pnpm --filter bot exec prisma generate --schema=../api/prisma/schema.prisma 2>/dev/null || true
 
-# Install Playwright browsers
-RUN npx playwright install chromium --with-deps
+# Install Playwright browsers from bot workspace
+WORKDIR /app/bot
+RUN pnpm exec playwright install chromium --with-deps || echo "Playwright installation attempted"
 
 # Build TypeScript
 RUN pnpm run build || true
