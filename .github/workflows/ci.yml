@@ -90,6 +90,9 @@ jobs:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
           PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
 
+      - name: Clean previous builds
+        run: pnpm clean
+
       - name: Run TypeScript type check
         run: pnpm type-check
 
