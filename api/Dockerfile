@@ -30,11 +30,14 @@ RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || tr
 # Generate Prisma Client
 RUN pnpm --filter api exec prisma generate
 
-# Create startup script that runs migrations then starts the dev server
+# Create startup script that resolves failed migrations, runs new ones, then starts the dev server
 RUN echo '#!/bin/sh' > /app/docker-entrypoint.sh && \
-    echo 'set -e' >> /app/docker-entrypoint.sh && \
+    echo 'cd /app/api' >> /app/docker-entrypoint.sh && \
+    echo 'echo "Checking for failed migrations..."' >> /app/docker-entrypoint.sh && \
+    echo 'npx prisma migrate resolve --rolled-back 20251101124956_init 2>&1 || true' >> /app/docker-entrypoint.sh && \
     echo 'echo "Running database migrations..."' >> /app/docker-entrypoint.sh && \
-    echo 'pnpm --filter api exec prisma migrate deploy || true' >> /app/docker-entrypoint.sh && \
+    echo 'npx prisma migrate deploy 2>&1 || true' >> /app/docker-entrypoint.sh && \
+    echo 'cd /app' >> /app/docker-entrypoint.sh && \
     echo 'echo "Migrations complete, starting API dev server..."' >> /app/docker-entrypoint.sh && \
     echo 'pnpm --filter api run dev' >> /app/docker-entrypoint.sh && \
     chmod +x /app/docker-entrypoint.sh

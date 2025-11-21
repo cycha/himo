@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { Button } from './components/ui/button';
 import { Toaster } from './components/ui/toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { ThemeToggle } from './components/ThemeToggle';
 
 // Feature Components
 import SearchPage from './features/ads/SearchPage';
@@ -33,14 +35,14 @@ const AppLayout: React.FC = () => {
   const { t } = useTranslation('common');
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-slate-900 border-b border-slate-800">
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="border-b bg-card">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <Home className="h-6 w-6 text-white" />
-              <span className="text-white text-xl font-bold">{t('appName')}</span>
+              <Home className="h-6 w-6 text-primary" />
+              <span className="text-foreground text-xl font-bold">{t('appName')}</span>
             </div>
 
             {/* Navigation */}
@@ -48,7 +50,9 @@ const AppLayout: React.FC = () => {
               <Link
                 to="/"
                 className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                  location.pathname === '/' ? 'text-white' : 'text-slate-400 hover:text-white'
+                  location.pathname === '/'
+                    ? 'text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <Home className="h-4 w-4" />
@@ -59,8 +63,8 @@ const AppLayout: React.FC = () => {
                   to="/dashboard"
                   className={`flex items-center gap-2 text-sm font-medium transition-colors ${
                     location.pathname === '/dashboard'
-                      ? 'text-white'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <LayoutDashboard className="h-4 w-4" />
@@ -71,6 +75,7 @@ const AppLayout: React.FC = () => {
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <LanguageSwitcher />
               {isAuthenticated ? (
                 <Button onClick={logout} variant="default" size="sm">
@@ -80,11 +85,7 @@ const AppLayout: React.FC = () => {
               ) : (
                 <>
                   <Link to="/login">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-white hover:text-white hover:bg-slate-800"
-                    >
+                    <Button variant="ghost" size="sm">
                       <LogIn className="h-4 w-4 mr-2" />
                       {t('auth.login')}
                     </Button>
@@ -125,13 +126,15 @@ const AppLayout: React.FC = () => {
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          <AppLayout />
-          <Toaster position="top-right" />
-        </BrowserRouter>
-      </AuthProvider>
-      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      <ThemeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <AppLayout />
+            <Toaster position="top-right" />
+          </BrowserRouter>
+        </AuthProvider>
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

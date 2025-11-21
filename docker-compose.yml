@@ -18,7 +18,7 @@ services:
     networks:
       - himo-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres && psql -U postgres -d himo -c 'SELECT 1 FROM pg_extension WHERE extname = \"postgis\"'"]
+      test: ["CMD-SHELL", "pg_isready -U postgres && psql -U postgres -d himo -c \"SELECT 1 FROM pg_extension WHERE extname = 'postgis'\""]
       interval: 10s
       timeout: 5s
       retries: 5
