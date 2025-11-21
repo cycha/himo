@@ -41,12 +41,11 @@ COPY api ./api
 COPY api/prisma ./api/prisma
 COPY bot ./bot
 
-# Install dependencies for bot workspace (postinstall hook will generate Prisma Client)
-RUN pnpm install --frozen-lockfile --filter bot
+# Install dependencies for both api and bot workspaces
+RUN pnpm install --frozen-lockfile --filter api --filter bot
 
 # Generate Prisma Client from API schema
-WORKDIR /app/api
-RUN pnpm exec prisma generate
+RUN pnpm --filter api exec prisma generate
 
 # Install Playwright browsers from bot workspace
 WORKDIR /app/bot
