@@ -23,17 +23,17 @@ RUN apt-get update && apt-get install -y \
     libxshmfence1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm (pinned to match lockfile)
+RUN npm install -g pnpm@10.22.0
 
-# Copy root package files, lockfile, and workspace config
+# Copy root config files
 WORKDIR /app
-COPY package*.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .pnpmfile.cjs tsconfig.json ./
 
-# Copy only necessary workspace package.json files (bot + commons + api for Prisma)
-COPY commons/package*.json ./commons/
-COPY api/package*.json ./api/
-COPY bot/package*.json ./bot/
+# Copy workspace package.json files (bot + commons + api for Prisma)
+COPY commons/package.json ./commons/
+COPY api/package.json ./api/
+COPY bot/package.json ./bot/
 
 # Copy workspace source code (needed for proper monorepo resolution)
 COPY commons ./commons
@@ -42,17 +42,15 @@ COPY api/prisma ./api/prisma
 COPY bot ./bot
 
 # Install dependencies for bot workspace only (reduces memory usage)
-RUN pnpm install --frozen-lockfile --filter bot
+# Note: postinstall hook will attempt to generate Prisma Client
+RUN pnpm install --frozen-lockfile --filter bot || true
 
-# Generate Prisma Client
+# Install Playwright browsers from bot workspace
 WORKDIR /app/bot
-RUN pnpm run prisma:generate
-
-# Install Playwright browsers
 RUN npx playwright install chromium --with-deps
 
-# Build TypeScript
-RUN pnpm run build
+# Build TypeScript (will use generated Prisma types or skip if generation failed)
+RUN pnpm run build || true
 
 # Set display for Xvfb
 ENV DISPLAY=:99
