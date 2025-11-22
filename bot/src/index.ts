@@ -9,8 +9,9 @@ dotenv.config();
 
 const logger = new Logger('Bot');
 
-// Scraping task - runs every 15 minutes from 5 AM to 10 PM (reduced for DataDome protection)
-const scrapingSchedule = process.env.SCRAPING_INTERVAL || '*/15 5-22 * * *';
+// Scraping task - Free VPS Strategy: Every 2 hours from 5 AM to 10 PM
+// Conservative approach for free VPS without proxies (~400 ads/day)
+const scrapingSchedule = process.env.SCRAPING_INTERVAL || '0 */2 5-22 * * *';
 const scrapingJob = cron.schedule(
   scrapingSchedule,
   async () => {

@@ -23,6 +23,7 @@ tor
 ### Configuration for Bot
 
 Add to `.env`:
+
 ```bash
 PROXY_HOST=127.0.0.1
 PROXY_PORT=9050
@@ -53,21 +54,25 @@ PROXY_PORT=8118
 ## ❌ Why Tor Doesn't Work for DataDome
 
 ### 1. Exit Nodes are Known
+
 - All Tor exit node IPs are publicly listed
 - DataDome blocks them automatically
 - Success rate: **~0%**
 
 ### 2. Slow Speed
+
 - Traffic routes through 3+ relays
 - Page loads take 10-30 seconds
 - Scraping becomes impractical
 
 ### 3. Exit Node Consistency
+
 - IP changes between requests
 - Looks extremely suspicious to DataDome
 - Session cookies don't work across IP changes
 
 ### 4. Many Sites Block Tor
+
 - LeBonCoin likely blocks Tor exit nodes
 - You'll get instant 403 errors
 

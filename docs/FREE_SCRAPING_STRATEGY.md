@@ -7,6 +7,7 @@ How to scrape LeBonCoin without paying for proxies, maximizing success rate with
 ## The Strategy
 
 ### 1. Use Your Home IP (Free)
+
 - Most residential IPs aren't blocked initially
 - Our anti-detection features help a lot
 - Monitor for blocks, stop when detected
@@ -14,12 +15,14 @@ How to scrape LeBonCoin without paying for proxies, maximizing success rate with
 ### 2. Scrape MUCH Less Frequently
 
 Update `.env`:
+
 ```bash
 # Scrape twice per day instead of every 15 minutes
 SCRAPING_INTERVAL=0 8,20 * * *  # 8 AM and 8 PM
 ```
 
 Or once per hour:
+
 ```bash
 SCRAPING_INTERVAL=0 * 5-22 * * *  # Every hour from 5 AM to 10 PM
 ```
@@ -27,11 +30,12 @@ SCRAPING_INTERVAL=0 * 5-22 * * *  # Every hour from 5 AM to 10 PM
 ### 3. Reduce Pages Per Session
 
 Edit `bot/src/scrapers/leboncoin-scraper-stealth.ts`:
+
 ```typescript
 const DEFAULT_CONFIG: ScraperConfig = {
-  maxPages: 5,  // Changed from 30 to 5
+  maxPages: 5, // Changed from 30 to 5
   maxRetries: 0,
-  waitSuccess: 20,  // Increased from 15 to 20
+  waitSuccess: 20, // Increased from 15 to 20
   waitError: 60,
   baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
@@ -53,6 +57,7 @@ const targetSearches = [
 ### 5. Monitor Your Success Rate
 
 Keep logs and watch for patterns:
+
 ```bash
 # Check how many ads you're getting
 tail -f logs/bot.log | grep "ads saved"
@@ -64,6 +69,7 @@ tail -f logs/bot.log | grep "403\|429\|BLOCKED"
 ## Expected Results (Free Setup)
 
 ### Conservative Approach (Recommended)
+
 - **Frequency:** Twice per day (8 AM, 8 PM)
 - **Pages:** 5 pages per session
 - **Ads per run:** ~50 ads
@@ -72,6 +78,7 @@ tail -f logs/bot.log | grep "403\|429\|BLOCKED"
 - **Sustainability:** Months without blocks
 
 ### Moderate Approach
+
 - **Frequency:** Every 2 hours (8 times/day)
 - **Pages:** 3 pages per session
 - **Ads per run:** ~30 ads
@@ -80,6 +87,7 @@ tail -f logs/bot.log | grep "403\|429\|BLOCKED"
 - **Sustainability:** Weeks without blocks
 
 ### Aggressive Approach (Not Recommended)
+
 - **Frequency:** Every 30 minutes
 - **Pages:** 10 pages per session
 - **Ads per run:** ~100 ads
@@ -92,6 +100,7 @@ tail -f logs/bot.log | grep "403\|429\|BLOCKED"
 If your home IP gets blocked:
 
 ### Option 1: Wait It Out
+
 ```bash
 # Stop the bot
 docker-compose down
@@ -104,6 +113,7 @@ SCRAPING_INTERVAL=0 12 * * *  # Once per day at noon
 ```
 
 ### Option 2: Mobile Hotspot Rotation
+
 ```bash
 # 1. Stop bot
 # 2. Enable mobile hotspot on phone
@@ -113,7 +123,9 @@ SCRAPING_INTERVAL=0 12 * * *  # Once per day at noon
 ```
 
 ### Option 3: VPN Rotation (Partially Free)
+
 Some VPNs offer free tiers or trials:
+
 - **ProtonVPN** - Free tier (limited servers)
 - **Windscribe** - 10GB/month free
 - **TunnelBear** - 500MB/month free
@@ -121,6 +133,7 @@ Some VPNs offer free tiers or trials:
 **Warning:** VPN IPs are still not residential, success rate only marginally better than datacenter proxies.
 
 ### Option 4: Accept Limits
+
 ```bash
 # Scrape once per day
 # Accept you'll get ~50 ads/day instead of 3000
@@ -130,21 +143,25 @@ Some VPNs offer free tiers or trials:
 ## Long-Term Free Strategy
 
 ### Month 1: Home IP
+
 - Scrape conservatively (twice per day)
 - Build database of ads
 - Monitor for blocks
 
 ### Month 2: Mobile Hotspot
+
 - If home IP blocked, switch to mobile
 - Rotate mobile IP when needed (airplane mode)
 - Continue conservative scraping
 
 ### Month 3: Multiple Locations
+
 - If you have access to multiple locations (friend's house, work, coffee shop)
 - Run bot from different IPs occasionally
 - Never scrape from same location too frequently
 
 ### Month 4+: Consider Proxies
+
 - By now you have good data
 - If you need more, proxies become worth it
 - Start with cheapest tier (~$50/month)
@@ -152,6 +169,7 @@ Some VPNs offer free tiers or trials:
 ## Cost-Benefit Analysis
 
 ### Free Scraping (This Strategy)
+
 - **Cost:** $0
 - **Ads per day:** 50-200
 - **Effort:** Medium (monitoring, IP rotation)
@@ -159,6 +177,7 @@ Some VPNs offer free tiers or trials:
 - **Risk:** May need to stop/rotate IPs
 
 ### Budget Proxies ($50/month)
+
 - **Cost:** $50/month ($600/year)
 - **Ads per day:** 500-1000
 - **Effort:** Low (set and forget)
@@ -166,6 +185,7 @@ Some VPNs offer free tiers or trials:
 - **Risk:** Very low
 
 ### Premium Proxies ($300/month)
+
 - **Cost:** $300/month ($3600/year)
 - **Ads per day:** 3000+
 - **Effort:** Very low
@@ -183,6 +203,7 @@ If you can get **50-100 new ads per day for free**, that's actually pretty good!
 - Zero cost
 
 **Ask yourself:**
+
 - Do I really need 3000 ads/day?
 - Or is 50-100 ads/day sufficient?
 - Is saving $600/year worth the limitations?
@@ -238,6 +259,7 @@ echo "✅ Ads scraped today: $ADS_TODAY"
 ## Summary
 
 Free scraping is possible with:
+
 1. ✅ Home or mobile IP
 2. ✅ Low frequency (2-8x per day)
 3. ✅ Few pages per session (3-5)

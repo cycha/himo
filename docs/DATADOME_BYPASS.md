@@ -32,21 +32,25 @@ Our stealth scraper (`leboncoin-scraper-stealth.ts`) implements:
 ## Configuration Changes Made
 
 ### 1. Reduced Scraping Frequency
+
 **Before:** Every 2 minutes
 **After:** Every 15 minutes
 **Why:** DataDome flags rapid repeated access patterns
 
 ### 2. Increased Delays
+
 **Before:** 8-16 seconds between pages
 **After:** 15-30 seconds between pages
 **Why:** Slower = more human-like
 
 ### 3. Updated User Agents
+
 **Before:** Chrome 120
 **After:** Chrome 130-131
 **Why:** Use current browser versions
 
 ### 4. Added Session Warmup
+
 **New:** Visit homepage before scraping
 **Why:** Real users don't go directly to search results
 
@@ -57,6 +61,7 @@ Our stealth scraper (`leboncoin-scraper-stealth.ts`) implements:
 ### Why Proxies Matter
 
 DataDome maintains a reputation score for each IP:
+
 - Datacenter IPs: Instantly suspicious
 - Residential IPs: Look like real users
 - Rotating IPs: Avoid IP-based rate limiting
@@ -140,6 +145,7 @@ await this.page.setExtraHTTPHeaders({
 ### 4. Monitor for Blocks
 
 Check your logs for these signs of blocking:
+
 - HTTP 403 or 429 status codes
 - Page titles containing "captcha" or "blocked"
 - Small HTML responses (< 100KB)
@@ -154,6 +160,7 @@ HEADLESS=false
 ```
 
 This opens a real browser window so you can:
+
 - See CAPTCHA challenges
 - Verify pages load correctly
 - Debug detection issues
@@ -178,7 +185,7 @@ DataDome checks if you accept cookie banners:
 // After page load
 try {
   const cookieButton = await this.page.waitForSelector('button[id*="cookie"]', {
-    timeout: 3000
+    timeout: 3000,
   });
   await cookieButton?.click();
 } catch {
@@ -208,6 +215,7 @@ pnpm --filter bot dev
 ```
 
 Watch for:
+
 - ✅ "Ad containers detected"
 - ✅ "Found X raw ads"
 - ❌ "CAPTCHA or blocking detected"
@@ -280,18 +288,21 @@ If you're below these metrics, you likely need better proxies.
 ## Cost Analysis
 
 ### Without Proxies
+
 - **Cost:** $0/month
 - **Success Rate:** 10-30%
 - **Blocks:** Very frequent
 - **Verdict:** Not viable long-term
 
 ### With Budget Proxies ($50/month)
+
 - **Cost:** $50/month
 - **Success Rate:** 50-70%
 - **Blocks:** Occasional
 - **Verdict:** OK for small projects
 
 ### With Premium Proxies ($300/month)
+
 - **Cost:** $300/month
 - **Success Rate:** 85-95%
 - **Blocks:** Rare
@@ -310,18 +321,21 @@ If DataDome is too difficult:
 ## Summary
 
 **Must Have:**
+
 - ✅ Residential proxies (Bright Data or Smartproxy)
 - ✅ 15+ second delays between requests
 - ✅ Scraping every 15+ minutes (not every 2 minutes)
 - ✅ Stealth browser configuration (already implemented)
 
 **Nice to Have:**
+
 - Cookie acceptance automation
 - Multiple search URL rotation
 - Browser context rotation
 - CAPTCHA solving integration
 
 **Monitor:**
+
 - Success/failure rate
 - Block frequency
 - HTML size of responses

@@ -13,9 +13,9 @@ import * as path from 'path';
 chromium.use(StealthPlugin());
 
 const DEFAULT_CONFIG: ScraperConfig = {
-  maxPages: 30,
+  maxPages: 5, // REDUCED: Conservative scraping for VPS/free strategy (5 pages per session)
   maxRetries: 0, // No retries - if blocked, stop immediately to avoid detection
-  waitSuccess: 15, // INCREASED: Longer wait between pages (15-30 seconds) for DataDome
+  waitSuccess: 20, // INCREASED: Longer wait between pages (20-40 seconds) for free VPS
   waitError: 60, // INCREASED: Much longer wait on errors (60+ seconds)
   baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
@@ -354,7 +354,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       this.logger.error('🚫 ANTI-BOT PROTECTION DETECTED (DataDome)');
       this.logger.error('═══════════════════════════════════════════════════');
       this.logger.error('');
-      this.logger.error('Your scraping has been blocked. Here\'s what to do:');
+      this.logger.error("Your scraping has been blocked. Here's what to do:");
       this.logger.error('');
       this.logger.error('1. STOP SCRAPING IMMEDIATELY');
       this.logger.error('   → Continuing will make the block worse');
