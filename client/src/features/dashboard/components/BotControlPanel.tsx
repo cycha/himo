@@ -18,7 +18,7 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 import { useBotStatus, useBotStats, useStartBot, useStopBot } from '../../../hooks/api/useBot';
 import { BotRunStatus } from '../../../types';
@@ -188,7 +188,7 @@ const BotControlPanel: React.FC = () => {
                       )}
                     </p>
                   </div>
-                  {!status.isRunning && (status.lastRun?.ads_saved !== undefined) && (
+                  {!status.isRunning && status.lastRun?.ads_saved !== undefined && (
                     <>
                       <div>
                         <span className="text-muted-foreground">{t('bot.details.adsSaved')}:</span>
@@ -203,7 +203,9 @@ const BotControlPanel: React.FC = () => {
                 </div>
                 {status.lastRun?.error_message && (
                   <div className="mt-2">
-                    <span className="text-destructive text-sm">{t('bot.details.error')}: {status.lastRun.error_message}</span>
+                    <span className="text-destructive text-sm">
+                      {t('bot.details.error')}: {status.lastRun.error_message}
+                    </span>
                   </div>
                 )}
               </div>
@@ -224,7 +226,9 @@ const BotControlPanel: React.FC = () => {
             <CardContent>
               <div className="flex items-center gap-2">
                 <Database className="h-4 w-4 text-muted-foreground" />
-                <span className="text-2xl font-bold">{stats.totalAdsInDatabase.toLocaleString()}</span>
+                <span className="text-2xl font-bold">
+                  {stats.totalAdsInDatabase.toLocaleString()}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -241,7 +245,8 @@ const BotControlPanel: React.FC = () => {
                 <span className="text-2xl font-bold">{stats.totalRuns}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {stats.successfulRuns} {t('bot.stats.successful')}, {stats.failedRuns} {t('bot.stats.failed')}
+                {stats.successfulRuns} {t('bot.stats.successful')}, {stats.failedRuns}{' '}
+                {t('bot.stats.failed')}
               </p>
             </CardContent>
           </Card>
@@ -269,7 +274,9 @@ const BotControlPanel: React.FC = () => {
             <CardContent>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-2xl font-bold">{Math.round(stats.averageAdsSavedPerRun)}</span>
+                <span className="text-2xl font-bold">
+                  {Math.round(stats.averageAdsSavedPerRun)}
+                </span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">{t('bot.stats.adsPerRun')}</p>
             </CardContent>
@@ -305,12 +312,13 @@ const BotControlPanel: React.FC = () => {
                       <StopCircle className="h-4 w-4 text-orange-600" />
                     )}
                     <div>
-                      <p className="text-sm font-medium">
-                        {formatDate(run.start_time)}
-                      </p>
+                      <p className="text-sm font-medium">{formatDate(run.start_time)}</p>
                       <p className="text-xs text-muted-foreground">
-                        {run.triggered_by === 'cron' ? t('bot.recentRuns.automated') : t('bot.recentRuns.manual')}
-                        {run.ads_saved !== undefined && ` • ${run.ads_saved} ${t('bot.details.adsSaved').toLowerCase()}`}
+                        {run.triggered_by === 'cron'
+                          ? t('bot.recentRuns.automated')
+                          : t('bot.recentRuns.manual')}
+                        {run.ads_saved !== undefined &&
+                          ` • ${run.ads_saved} ${t('bot.details.adsSaved').toLowerCase()}`}
                       </p>
                     </div>
                   </div>
@@ -319,7 +327,9 @@ const BotControlPanel: React.FC = () => {
                       {formatDuration(run.start_time, run.end_time)}
                     </p>
                     {run.pages_scraped !== undefined && (
-                      <p className="text-xs text-muted-foreground">{run.pages_scraped} {t('bot.details.pages').toLowerCase()}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {run.pages_scraped} {t('bot.details.pages').toLowerCase()}
+                      </p>
                     )}
                   </div>
                 </div>

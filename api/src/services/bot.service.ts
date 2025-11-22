@@ -125,12 +125,10 @@ export class BotServicePrisma implements IBotService {
       stdio: ['ignore', 'pipe', 'pipe'],
     });
 
-    let outputLog = '';
     let errorLog = '';
 
     // Capture stdout
     this.currentProcess.stdout?.on('data', (data) => {
-      outputLog += data.toString();
       console.log(`[Bot ${runId}]: ${data.toString()}`);
     });
 
