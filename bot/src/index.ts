@@ -2,12 +2,16 @@ import cron from 'node-cron';
 import dotenv from 'dotenv';
 import { scrapingTask } from './tasks/scraping-task';
 import { cleanupTask } from './tasks/cleanup-task';
+import { startServer } from './server';
 import { Logger } from './utils/logger';
 
 // Load environment variables
 dotenv.config();
 
 const logger = new Logger('Bot');
+
+// Start HTTP server for manual triggers
+startServer();
 
 // Scraping task - runs every 2 minutes from 5 AM to 10 PM
 const scrapingSchedule = process.env.SCRAPING_INTERVAL || '*/2 5-22 * * *';

@@ -1,8 +1,7 @@
 import { botRepository } from '../repositories/bot.repository';
 import { prisma } from '../lib/prisma';
-import { BotRun, BotRunStatus } from '@prisma/client';
-import { spawn, ChildProcess } from 'child_process';
-import path from 'path';
+import { BotRun } from '@prisma/client';
+import axios from 'axios';
 
 export interface BotStatusDto {
   isRunning: boolean;
@@ -29,10 +28,11 @@ export interface IBotService {
 }
 
 export class BotServicePrisma implements IBotService {
-  private currentProcess: ChildProcess | null = null;
-  private currentRunId: string | null = null;
+  private readonly botUrl: string;
 
-  constructor(private readonly repository = botRepository) {}
+  constructor(private readonly repository = botRepository) {
+    this.botUrl = process.env.BOT_URL || 'http://localhost:3002';
+  }
 
   /**
    * Get current bot status
@@ -43,7 +43,7 @@ export class BotServicePrisma implements IBotService {
     const lastRun = await this.repository.findMostRecent();
 
     return {
-      isRunning: runningRuns.length > 0 || this.currentProcess !== null,
+      isRunning: runningRuns.length > 0,
       currentRun,
       lastRun: currentRun ? undefined : lastRun || undefined,
     };
@@ -78,10 +78,27 @@ export class BotServicePrisma implements IBotService {
 
     // Create a new bot run record
     const botRun = await this.repository.createRun({ triggeredBy });
-    this.currentRunId = botRun.id;
 
-    // Start the bot process
-    this.executeBotProcess(botRun.id);
+    // Trigger scraping via HTTP call to bot service
+    try {
+      await axios.post(
+        `${this.botUrl}/trigger-scrape`,
+        {
+          runId: botRun.id,
+        },
+        {
+          timeout: 5000, // 5 second timeout for the HTTP call itself
+        }
+      );
+    } catch (error) {
+      // If bot service is not reachable, update run as failed
+      await this.repository.updateRun(botRun.id, {
+        status: 'failed',
+        endTime: new Date(),
+        errorMessage: `Failed to connect to bot service: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      });
+      throw new Error('Bot service is not available');
+    }
 
     return botRun;
   }
@@ -90,89 +107,24 @@ export class BotServicePrisma implements IBotService {
    * Stop the bot
    */
   async stopBot(): Promise<boolean> {
-    if (!this.currentProcess || !this.currentRunId) {
+    // Find the currently running bot run
+    const runningRuns = await this.repository.findRunning();
+    if (runningRuns.length === 0) {
       return false;
     }
 
-    // Kill the process
-    this.currentProcess.kill('SIGTERM');
-    this.currentProcess = null;
+    const currentRun = runningRuns[0];
 
-    // Update the bot run status
-    await this.repository.updateRun(this.currentRunId, {
+    // Update the bot run status to stopped
+    await this.repository.updateRun(currentRun.id, {
       status: 'stopped',
       endTime: new Date(),
     });
 
-    this.currentRunId = null;
+    // Note: We can't actually stop the scraping task once it's started
+    // This just marks it as stopped in the database
+    // For production, you'd implement a proper cancellation mechanism
     return true;
-  }
-
-  /**
-   * Execute the bot process
-   */
-  private executeBotProcess(runId: string): void {
-    // Path to the bot executable
-    const botPath = path.join(__dirname, '../../../bot/dist/index.js');
-
-    // Spawn the bot process
-    this.currentProcess = spawn('node', [botPath], {
-      env: {
-        ...process.env,
-        BOT_RUN_ID: runId,
-        NODE_ENV: process.env.NODE_ENV || 'development',
-      },
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-
-    let errorLog = '';
-
-    // Capture stdout
-    this.currentProcess.stdout?.on('data', (data) => {
-      console.log(`[Bot ${runId}]: ${data.toString()}`);
-    });
-
-    // Capture stderr
-    this.currentProcess.stderr?.on('data', (data) => {
-      errorLog += data.toString();
-      console.error(`[Bot ${runId}] Error: ${data.toString()}`);
-    });
-
-    // Handle process exit
-    this.currentProcess.on('exit', async (code, signal) => {
-      console.log(`Bot process exited with code ${code} and signal ${signal}`);
-
-      let status: BotRunStatus = 'completed';
-      if (code !== 0 && signal !== 'SIGTERM') {
-        status = 'failed';
-      } else if (signal === 'SIGTERM') {
-        status = 'stopped';
-      }
-
-      // Update the bot run with final status
-      await this.repository.updateRun(runId, {
-        status,
-        endTime: new Date(),
-        errorMessage: errorLog || undefined,
-      });
-
-      this.currentProcess = null;
-      this.currentRunId = null;
-    });
-
-    // Handle process errors
-    this.currentProcess.on('error', async (error) => {
-      console.error(`Failed to start bot process: ${error.message}`);
-
-      await this.repository.updateRun(runId, {
-        status: 'failed',
-        endTime: new Date(),
-        errorMessage: error.message,
-      });
-
-      this.currentProcess = null;
-      this.currentRunId = null;
-    });
   }
 }
 
