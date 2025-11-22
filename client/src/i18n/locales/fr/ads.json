@@ -1,0 +1,33 @@
+{
+  "search": {
+    "title": "Rechercher un bien immobilier",
+    "description": "Trouvez la propriété de vos rêves en France",
+    "propertyType": "Type de bien",
+    "allTypes": "Tous les types",
+    "appartement": "Appartement",
+    "maison": "Maison",
+    "terrain": "Terrain",
+    "city": "Ville",
+    "cityPlaceholder": "Paris, Lyon, Marseille...",
+    "cityNotFound": "Ville introuvable. Veuillez sélectionner parmi les suggestions.",
+    "cityVerified": "Ville vérifiée ✓",
+    "minPrice": "Prix min (€)",
+    "minPricePlaceholder": "100 000",
+    "maxPrice": "Prix max (€)",
+    "maxPricePlaceholder": "1 000 000",
+    "minSurface": "Surface min (m²)",
+    "minSurfacePlaceholder": "50",
+    "searchButton": "Rechercher",
+    "searching": "Recherche en cours...",
+    "startSearchTitle": "Commencer votre recherche",
+    "startSearchDescription": "Cliquez sur le bouton de recherche pour trouver des annonces immobilières",
+    "results": "Résultats",
+    "resultsCount": "{{count}} Résultats",
+    "searchResults": "Résultats de recherche"
+  },
+  "list": {
+    "noAdsTitle": "Aucune annonce trouvée",
+    "noAdsDescription": "Essayez d'ajuster vos critères de recherche.",
+    "rooms": "pièces"
+  }
+}

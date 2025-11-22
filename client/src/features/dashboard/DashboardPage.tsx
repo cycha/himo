@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -12,6 +13,7 @@ import { useAuth } from '../../context/AuthContext';
 import BotControlPanel from './components/BotControlPanel';
 
 const DashboardPage: React.FC = () => {
+  const { t } = useTranslation('dashboard');
   const { user, logout } = useAuth();
 
   if (!user) {
@@ -22,12 +24,12 @@ const DashboardPage: React.FC = () => {
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, manage your account</p>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('welcome')}</p>
         </div>
         <Button onClick={logout} variant="outline">
           <LogOut className="h-4 w-4 mr-2" />
-          Logout
+          {t('logout')}
         </Button>
       </div>
 
@@ -36,7 +38,7 @@ const DashboardPage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Email
+              {t('email')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -48,7 +50,7 @@ const DashboardPage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Account Created
+              {t('accountCreated')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -63,12 +65,13 @@ const DashboardPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Home className="h-5 w-5" />
-            Welcome to Himo!
+            {t('welcomeTitle')}
           </CardTitle>
-          <CardDescription>Your real estate search platform</CardDescription>
+          <CardDescription>{t('welcomeDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
-          <p>Search for real estate ads and find your dream property.</p>
+          <p>{t('searchMessage')}</p>
+          <p className="text-muted-foreground">{t('comingSoon')}</p>
         </CardContent>
       </Card>
 

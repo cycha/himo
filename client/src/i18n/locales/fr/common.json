@@ -1,0 +1,12 @@
+{
+  "appName": "HIMO",
+  "nav": {
+    "search": "Rechercher",
+    "dashboard": "Tableau de bord"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "signup": "S'inscrire"
+  }
+}

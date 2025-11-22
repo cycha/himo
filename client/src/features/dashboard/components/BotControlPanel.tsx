@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -23,6 +24,7 @@ import { useBotStatus, useBotStats, useStartBot, useStopBot } from '../../../hoo
 import { BotRunStatus } from '../../../types';
 
 const BotControlPanel: React.FC = () => {
+  const { t } = useTranslation('dashboard');
   const { data: status, isLoading: statusLoading } = useBotStatus();
   const { data: stats, isLoading: statsLoading } = useBotStats();
   const startBot = useStartBot();
@@ -43,7 +45,7 @@ const BotControlPanel: React.FC = () => {
       return (
         <Badge variant="default" className="bg-green-600">
           <Activity className="h-3 w-3 mr-1" />
-          Running
+          {t('bot.status.running')}
         </Badge>
       );
     }
@@ -52,7 +54,7 @@ const BotControlPanel: React.FC = () => {
       return (
         <Badge variant="secondary">
           <CheckCircle className="h-3 w-3 mr-1" />
-          Idle
+          {t('bot.status.idle')}
         </Badge>
       );
     }
@@ -61,7 +63,7 @@ const BotControlPanel: React.FC = () => {
       return (
         <Badge variant="destructive">
           <XCircle className="h-3 w-3 mr-1" />
-          Failed
+          {t('bot.status.failed')}
         </Badge>
       );
     }
@@ -69,7 +71,7 @@ const BotControlPanel: React.FC = () => {
     return (
       <Badge variant="outline">
         <Clock className="h-3 w-3 mr-1" />
-        Ready
+        {t('bot.status.ready')}
       </Badge>
     );
   };
@@ -96,9 +98,9 @@ const BotControlPanel: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Scraping Bot Controls
+            {t('bot.title')}
           </CardTitle>
-          <CardDescription>Manage and monitor the real estate scraper</CardDescription>
+          <CardDescription>{t('bot.description')}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center items-center py-8">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -116,9 +118,9 @@ const BotControlPanel: React.FC = () => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Activity className="h-5 w-5" />
-                Scraping Bot Controls
+                {t('bot.title')}
               </CardTitle>
-              <CardDescription>Manage and monitor the real estate scraper</CardDescription>
+              <CardDescription>{t('bot.description')}</CardDescription>
             </div>
             {getStatusBadge()}
           </div>
@@ -135,12 +137,12 @@ const BotControlPanel: React.FC = () => {
                 {startBot.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Starting...
+                    {t('bot.controls.starting')}
                   </>
                 ) : (
                   <>
                     <Play className="h-4 w-4 mr-2" />
-                    Start Bot
+                    {t('bot.controls.start')}
                   </>
                 )}
               </Button>
@@ -153,12 +155,12 @@ const BotControlPanel: React.FC = () => {
                 {stopBot.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Stopping...
+                    {t('bot.controls.stopping')}
                   </>
                 ) : (
                   <>
                     <StopCircle className="h-4 w-4 mr-2" />
-                    Stop Bot
+                    {t('bot.controls.stop')}
                   </>
                 )}
               </Button>
@@ -168,17 +170,17 @@ const BotControlPanel: React.FC = () => {
             {(status?.currentRun || status?.lastRun) && (
               <div className="border rounded-lg p-4 space-y-2 bg-muted/50">
                 <h4 className="font-semibold text-sm">
-                  {status.isRunning ? 'Current Run' : 'Last Run'}
+                  {status.isRunning ? t('bot.currentRun') : t('bot.lastRun')}
                 </h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <span className="text-muted-foreground">Started:</span>
+                    <span className="text-muted-foreground">{t('bot.details.started')}:</span>
                     <p className="font-medium">
                       {formatDate(status.currentRun?.start_time || status.lastRun?.start_time)}
                     </p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Duration:</span>
+                    <span className="text-muted-foreground">{t('bot.details.duration')}:</span>
                     <p className="font-medium">
                       {formatDuration(
                         status.currentRun?.start_time || status.lastRun?.start_time,
@@ -189,11 +191,11 @@ const BotControlPanel: React.FC = () => {
                   {!status.isRunning && (status.lastRun?.ads_saved !== undefined) && (
                     <>
                       <div>
-                        <span className="text-muted-foreground">Ads Saved:</span>
+                        <span className="text-muted-foreground">{t('bot.details.adsSaved')}:</span>
                         <p className="font-medium">{status.lastRun.ads_saved}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Pages:</span>
+                        <span className="text-muted-foreground">{t('bot.details.pages')}:</span>
                         <p className="font-medium">{status.lastRun.pages_scraped || 0}</p>
                       </div>
                     </>
@@ -201,7 +203,7 @@ const BotControlPanel: React.FC = () => {
                 </div>
                 {status.lastRun?.error_message && (
                   <div className="mt-2">
-                    <span className="text-destructive text-sm">Error: {status.lastRun.error_message}</span>
+                    <span className="text-destructive text-sm">{t('bot.details.error')}: {status.lastRun.error_message}</span>
                   </div>
                 )}
               </div>
@@ -216,7 +218,7 @@ const BotControlPanel: React.FC = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Ads in Database
+                {t('bot.stats.totalAds')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -230,7 +232,7 @@ const BotControlPanel: React.FC = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Runs
+                {t('bot.stats.totalRuns')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -239,7 +241,7 @@ const BotControlPanel: React.FC = () => {
                 <span className="text-2xl font-bold">{stats.totalRuns}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {stats.successfulRuns} successful, {stats.failedRuns} failed
+                {stats.successfulRuns} {t('bot.stats.successful')}, {stats.failedRuns} {t('bot.stats.failed')}
               </p>
             </CardContent>
           </Card>
@@ -247,7 +249,7 @@ const BotControlPanel: React.FC = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Ads Scraped
+                {t('bot.stats.totalScraped')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -261,7 +263,7 @@ const BotControlPanel: React.FC = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Average per Run
+                {t('bot.stats.averagePerRun')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -269,7 +271,7 @@ const BotControlPanel: React.FC = () => {
                 <CheckCircle className="h-4 w-4 text-muted-foreground" />
                 <span className="text-2xl font-bold">{Math.round(stats.averageAdsSavedPerRun)}</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">ads per run</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('bot.stats.adsPerRun')}</p>
             </CardContent>
           </Card>
         </div>
@@ -279,8 +281,8 @@ const BotControlPanel: React.FC = () => {
       {stats?.recentRuns && stats.recentRuns.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Recent Runs</CardTitle>
-            <CardDescription>Last 10 bot executions</CardDescription>
+            <CardTitle className="text-lg">{t('bot.recentRuns.title')}</CardTitle>
+            <CardDescription>{t('bot.recentRuns.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -307,8 +309,8 @@ const BotControlPanel: React.FC = () => {
                         {formatDate(run.start_time)}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {run.triggered_by === 'cron' ? 'Automated' : 'Manual'}
-                        {run.ads_saved !== undefined && ` • ${run.ads_saved} ads saved`}
+                        {run.triggered_by === 'cron' ? t('bot.recentRuns.automated') : t('bot.recentRuns.manual')}
+                        {run.ads_saved !== undefined && ` • ${run.ads_saved} ${t('bot.details.adsSaved').toLowerCase()}`}
                       </p>
                     </div>
                   </div>
@@ -317,7 +319,7 @@ const BotControlPanel: React.FC = () => {
                       {formatDuration(run.start_time, run.end_time)}
                     </p>
                     {run.pages_scraped !== undefined && (
-                      <p className="text-xs text-muted-foreground">{run.pages_scraped} pages</p>
+                      <p className="text-xs text-muted-foreground">{run.pages_scraped} {t('bot.details.pages').toLowerCase()}</p>
                     )}
                   </div>
                 </div>

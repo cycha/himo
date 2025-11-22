@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SearchX } from 'lucide-react';
 import type { Ad } from '../../types';
 import AdCard from './AdCard';
@@ -9,6 +10,8 @@ interface AdListProps {
 }
 
 const AdList: React.FC<AdListProps> = ({ ads, loading }) => {
+  const { t } = useTranslation('ads');
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -23,8 +26,8 @@ const AdList: React.FC<AdListProps> = ({ ads, loading }) => {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <SearchX className="h-16 w-16 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No ads found</h3>
-        <p className="text-muted-foreground">Try adjusting your search criteria.</p>
+        <h3 className="text-lg font-semibold mb-2">{t('list.noAdsTitle')}</h3>
+        <p className="text-muted-foreground">{t('list.noAdsDescription')}</p>
       </div>
     );
   }

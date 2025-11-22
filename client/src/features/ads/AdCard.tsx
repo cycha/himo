@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -14,6 +15,7 @@ interface AdCardProps {
 }
 
 const AdCard: React.FC<AdCardProps> = ({ ad }) => {
+  const { t } = useTranslation('ads');
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -61,7 +63,7 @@ const AdCard: React.FC<AdCardProps> = ({ ad }) => {
               {ad.rooms && (
                 <div className="flex items-center gap-1">
                   <Home className="h-4 w-4" />
-                  {ad.rooms} rooms
+                  {ad.rooms} {t('list.rooms')}
                 </div>
               )}
               <div className="flex items-center gap-1">

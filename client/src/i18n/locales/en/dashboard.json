@@ -1,0 +1,51 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome back, manage your account",
+  "email": "Email",
+  "accountCreated": "Account Created",
+  "welcomeTitle": "Welcome to Himo! 🏠",
+  "welcomeDescription": "Your real estate search platform",
+  "searchMessage": "Search for real estate ads and find your dream property.",
+  "comingSoon": "More features coming soon!",
+  "logout": "Logout",
+  "bot": {
+    "title": "Scraping Bot Controls",
+    "description": "Manage and monitor the real estate scraper",
+    "status": {
+      "running": "Running",
+      "idle": "Idle",
+      "failed": "Failed",
+      "ready": "Ready"
+    },
+    "controls": {
+      "start": "Start Bot",
+      "starting": "Starting...",
+      "stop": "Stop Bot",
+      "stopping": "Stopping..."
+    },
+    "currentRun": "Current Run",
+    "lastRun": "Last Run",
+    "details": {
+      "started": "Started",
+      "duration": "Duration",
+      "adsSaved": "Ads Saved",
+      "pages": "Pages",
+      "error": "Error"
+    },
+    "stats": {
+      "totalAds": "Total Ads in Database",
+      "totalRuns": "Total Runs",
+      "totalScraped": "Total Ads Scraped",
+      "averagePerRun": "Average per Run",
+      "successful": "successful",
+      "failed": "failed",
+      "adsPerRun": "ads per run"
+    },
+    "recentRuns": {
+      "title": "Recent Runs",
+      "description": "Last 10 bot executions",
+      "automated": "Automated",
+      "manual": "Manual"
+    }
+  }
+}

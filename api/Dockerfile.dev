@@ -20,8 +20,8 @@ COPY api/package.json ./api/
 COPY commons ./commons
 COPY api ./api
 
-# Install dependencies for api workspace only
-RUN pnpm install --frozen-lockfile --filter api
+# Install dependencies for api workspace (includes commons)
+RUN pnpm install --frozen-lockfile --filter api...
 
 # Rebuild bcrypt for Linux environment
 RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || true

@@ -21,8 +21,8 @@ COPY api/package.json ./api/
 COPY commons ./commons
 COPY api ./api
 
-# Install dependencies for api workspace only
-RUN pnpm install --frozen-lockfile --filter api
+# Install dependencies for api workspace (includes commons)
+RUN pnpm install --frozen-lockfile --filter api...
 
 # Rebuild bcrypt for Linux environment
 RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || true
@@ -30,19 +30,8 @@ RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || tr
 # Generate Prisma Client
 RUN pnpm --filter api exec prisma generate
 
-# Create startup script that resolves failed migrations, runs new ones, then starts the dev server
-RUN echo '#!/bin/sh' > /app/docker-entrypoint.sh && \
-    echo 'cd /app/api' >> /app/docker-entrypoint.sh && \
-    echo 'echo "Checking for failed migrations..."' >> /app/docker-entrypoint.sh && \
-    echo 'npx prisma migrate resolve --rolled-back 20251101124956_init 2>&1 || true' >> /app/docker-entrypoint.sh && \
-    echo 'echo "Running database migrations..."' >> /app/docker-entrypoint.sh && \
-    echo 'npx prisma migrate deploy 2>&1 || true' >> /app/docker-entrypoint.sh && \
-    echo 'cd /app' >> /app/docker-entrypoint.sh && \
-    echo 'echo "Migrations complete, starting API dev server..."' >> /app/docker-entrypoint.sh && \
-    echo 'pnpm --filter api run dev' >> /app/docker-entrypoint.sh && \
-    chmod +x /app/docker-entrypoint.sh
-
 EXPOSE 3000 9229
 
-# Run dev server with migrations
-CMD ["/app/docker-entrypoint.sh"]
+# Start dev server
+WORKDIR /app/api
+CMD pnpm run dev
