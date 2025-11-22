@@ -14,11 +14,7 @@ export const ThemeToggle: React.FC = () => {
       className="h-9 w-9 p-0"
       aria-label="Toggle theme"
     >
-      {theme === 'light' ? (
-        <Moon className="h-4 w-4" />
-      ) : (
-        <Sun className="h-4 w-4" />
-      )}
+      {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
     </Button>
   );
 };

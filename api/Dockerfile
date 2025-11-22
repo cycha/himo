@@ -21,8 +21,8 @@ COPY api/package.json ./api/
 COPY commons ./commons
 COPY api ./api
 
-# Install dependencies for api workspace only
-RUN pnpm install --frozen-lockfile --filter api
+# Install dependencies for api workspace (includes commons)
+RUN pnpm install --frozen-lockfile --filter api...
 
 # Rebuild bcrypt for Linux environment
 RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || true
@@ -30,11 +30,7 @@ RUN cd /app/node_modules/.pnpm/bcrypt@*/node_modules/bcrypt && npm rebuild || tr
 # Generate Prisma Client
 RUN pnpm --filter api exec prisma generate
 
-# Copy and run startup script that resolves failed migrations, runs new ones, then starts the dev server
-COPY api/docker-entrypoint.sh /app/docker-entrypoint.sh
-RUN chmod +x /app/docker-entrypoint.sh
-
 EXPOSE 3000 9229
 
-# Run dev server with migrations
-CMD ["/bin/sh", "/app/docker-entrypoint.sh"]
+# Start dev server (postinstall errors are suppressed, dev server starts normally)
+CMD sh -c "cd /app && pnpm --filter api run dev"

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Home, LogIn, UserPlus, LayoutDashboard, LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './components/ui/button';
 import { Toaster } from './components/ui/toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -15,6 +16,7 @@ import LoginForm from './features/auth/LoginForm';
 import SignupForm from './features/auth/SignupForm';
 import DashboardPage from './features/dashboard/DashboardPage';
 import PrivateRoute from './components/PrivateRoute';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -30,6 +32,7 @@ const queryClient = new QueryClient({
 const AppLayout: React.FC = () => {
   const location = useLocation();
   const { isAuthenticated, logout } = useAuth();
+  const { t } = useTranslation('common');
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -39,7 +42,7 @@ const AppLayout: React.FC = () => {
             {/* Logo */}
             <div className="flex items-center gap-3">
               <Home className="h-6 w-6 text-primary" />
-              <span className="text-foreground text-xl font-bold">HIMO</span>
+              <span className="text-foreground text-xl font-bold">{t('appName')}</span>
             </div>
 
             {/* Navigation */}
@@ -53,7 +56,7 @@ const AppLayout: React.FC = () => {
                 }`}
               >
                 <Home className="h-4 w-4" />
-                Search
+                {t('nav.search')}
               </Link>
               {isAuthenticated && (
                 <Link
@@ -65,7 +68,7 @@ const AppLayout: React.FC = () => {
                   }`}
                 >
                   <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
               )}
             </nav>
@@ -73,23 +76,24 @@ const AppLayout: React.FC = () => {
             {/* Auth Buttons */}
             <div className="flex items-center gap-2">
               <ThemeToggle />
+              <LanguageSwitcher />
               {isAuthenticated ? (
                 <Button onClick={logout} variant="default" size="sm">
                   <LogOut className="h-4 w-4 mr-2" />
-                  Logout
+                  {t('auth.logout')}
                 </Button>
               ) : (
                 <>
                   <Link to="/login">
                     <Button variant="ghost" size="sm">
                       <LogIn className="h-4 w-4 mr-2" />
-                      Login
+                      {t('auth.login')}
                     </Button>
                   </Link>
                   <Link to="/signup">
                     <Button size="sm">
                       <UserPlus className="h-4 w-4 mr-2" />
-                      Sign Up
+                      {t('auth.signup')}
                     </Button>
                   </Link>
                 </>

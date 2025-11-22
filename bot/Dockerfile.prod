@@ -58,9 +58,9 @@ RUN pnpm run build || true
 ENV DISPLAY=:99
 ENV HEADLESS=false
 
-# Copy and run startup script to resolve failed migrations before running bot
-COPY bot/bot-entrypoint.prod.sh /app/bot-entrypoint.sh
-RUN chmod +x /app/bot-entrypoint.sh
-
-# Run with Xvfb, migrations, then bot
-CMD ["/app/bot-entrypoint.sh"]
+# Start Xvfb, run migrations, then start bot
+CMD sh -c "rm -f /tmp/.X99-lock /tmp/.X11-unix/X99 && \
+    Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
+    sleep 3 && \
+    cd /app/api && npx prisma migrate deploy && \
+    cd /app/bot && pnpm start"
