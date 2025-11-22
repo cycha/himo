@@ -176,35 +176,35 @@ const BotControlPanel: React.FC = () => {
                   <div>
                     <span className="text-muted-foreground">{t('bot.details.started')}:</span>
                     <p className="font-medium">
-                      {formatDate(status.currentRun?.start_time || status.lastRun?.start_time)}
+                      {formatDate(status.currentRun?.startTime || status.lastRun?.startTime)}
                     </p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">{t('bot.details.duration')}:</span>
                     <p className="font-medium">
                       {formatDuration(
-                        status.currentRun?.start_time || status.lastRun?.start_time,
-                        status.currentRun?.end_time || status.lastRun?.end_time
+                        status.currentRun?.startTime || status.lastRun?.startTime,
+                        status.currentRun?.endTime || status.lastRun?.endTime
                       )}
                     </p>
                   </div>
-                  {!status.isRunning && status.lastRun?.ads_saved !== undefined && (
+                  {!status.isRunning && status.lastRun?.adsSaved !== undefined && (
                     <>
                       <div>
                         <span className="text-muted-foreground">{t('bot.details.adsSaved')}:</span>
-                        <p className="font-medium">{status.lastRun.ads_saved}</p>
+                        <p className="font-medium">{status.lastRun.adsSaved}</p>
                       </div>
                       <div>
                         <span className="text-muted-foreground">{t('bot.details.pages')}:</span>
-                        <p className="font-medium">{status.lastRun.pages_scraped || 0}</p>
+                        <p className="font-medium">{status.lastRun.pagesScraped || 0}</p>
                       </div>
                     </>
                   )}
                 </div>
-                {status.lastRun?.error_message && (
+                {status.lastRun?.errorMessage && (
                   <div className="mt-2">
                     <span className="text-destructive text-sm">
-                      {t('bot.details.error')}: {status.lastRun.error_message}
+                      {t('bot.details.error')}: {status.lastRun.errorMessage}
                     </span>
                   </div>
                 )}
@@ -312,23 +312,23 @@ const BotControlPanel: React.FC = () => {
                       <StopCircle className="h-4 w-4 text-orange-600" />
                     )}
                     <div>
-                      <p className="text-sm font-medium">{formatDate(run.start_time)}</p>
+                      <p className="text-sm font-medium">{formatDate(run.startTime)}</p>
                       <p className="text-xs text-muted-foreground">
-                        {run.triggered_by === 'cron'
+                        {run.triggeredBy === 'cron'
                           ? t('bot.recentRuns.automated')
                           : t('bot.recentRuns.manual')}
-                        {run.ads_saved !== undefined &&
-                          ` • ${run.ads_saved} ${t('bot.details.adsSaved').toLowerCase()}`}
+                        {run.adsSaved !== undefined &&
+                          ` • ${run.adsSaved} ${t('bot.details.adsSaved').toLowerCase()}`}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium">
-                      {formatDuration(run.start_time, run.end_time)}
+                      {formatDuration(run.startTime, run.endTime)}
                     </p>
-                    {run.pages_scraped !== undefined && (
+                    {run.pagesScraped !== undefined && (
                       <p className="text-xs text-muted-foreground">
-                        {run.pages_scraped} {t('bot.details.pages').toLowerCase()}
+                        {run.pagesScraped} {t('bot.details.pages').toLowerCase()}
                       </p>
                     )}
                   </div>

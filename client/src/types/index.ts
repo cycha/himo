@@ -92,14 +92,14 @@ export enum BotRunStatus {
 export interface BotRun {
   id: string;
   status: BotRunStatus;
-  start_time: string;
-  end_time?: string;
-  ads_saved?: number;
-  pages_scraped?: number;
-  failure_percentage?: number;
-  average_retries_per_request?: number;
-  error_message?: string;
-  triggered_by?: string;
+  startTime: string;
+  endTime?: string;
+  adsSaved?: number;
+  pagesScraped?: number;
+  failurePercentage?: number;
+  averageRetriesPerRequest?: number;
+  errorMessage?: string;
+  triggeredBy?: string;
 }
 
 export interface BotStatus {
