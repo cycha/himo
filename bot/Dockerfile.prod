@@ -68,7 +68,7 @@ RUN echo '#!/bin/sh' > /app/bot-entrypoint.sh && \
     echo 'npx prisma migrate resolve --rolled-back 20251101124956_init 2>/dev/null || true' >> /app/bot-entrypoint.sh && \
     echo 'echo "Running database migrations..."' >> /app/bot-entrypoint.sh && \
     echo 'npx prisma migrate deploy 2>/dev/null || true' >> /app/bot-entrypoint.sh && \
-    echo 'cd /app' >> /app/bot-entrypoint.sh && \
+    echo 'cd /app/bot' >> /app/bot-entrypoint.sh && \
     echo 'pnpm start || { pkill -f Xvfb; exit 1; }' >> /app/bot-entrypoint.sh && \
     chmod +x /app/bot-entrypoint.sh
 
