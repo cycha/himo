@@ -7,6 +7,7 @@ import { BaseScraper, BotAdData } from './base-scraper';
 import { ScraperConfig, ParseResult, RawAdData, ScraperResult } from '../types/scraper.types';
 import { sleep } from '../utils/utils';
 import * as fs from 'fs';
+import * as path from 'path';
 
 // Add stealth plugin to playwright
 chromium.use(StealthPlugin());
@@ -38,6 +39,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   private page: Page | null = null;
   private currentUserAgent: string | null = null; // Persist UA across scraping session
   private hasVisitedHomepage = false; // Track if we've done initial homepage visit
+  private cookieStoragePath = path.join(process.cwd(), '.scraper-storage', 'cookies.json');
   private userAgents = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -57,6 +59,62 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       this.currentUserAgent = this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
     }
     return this.currentUserAgent;
+  }
+
+  /**
+   * Get random referer to simulate traffic from various sources
+   */
+  private getRandomReferer(): string {
+    const referers = [
+      'https://www.google.com/search?q=appartement+vente',
+      'https://www.google.fr/search?q=immobilier',
+      'https://www.bing.com/search?q=leboncoin+immobilier',
+      'https://www.leboncoin.fr/', // Direct navigation
+      '', // No referer (direct URL entry)
+    ];
+    return referers[Math.floor(Math.random() * referers.length)];
+  }
+
+  /**
+   * Load saved cookies from disk
+   */
+  private async loadCookies(): Promise<void> {
+    if (!this.page) return;
+
+    try {
+      if (fs.existsSync(this.cookieStoragePath)) {
+        const cookiesData = fs.readFileSync(this.cookieStoragePath, 'utf-8');
+        const cookies = JSON.parse(cookiesData);
+        await this.page.context().addCookies(cookies);
+        this.logger.info(`🍪 Loaded ${cookies.length} saved cookies (returning user)`);
+      } else {
+        this.logger.info('ℹ️ No saved cookies found (new user)');
+      }
+    } catch (error) {
+      this.logger.warn('⚠️ Failed to load cookies:', error);
+    }
+  }
+
+  /**
+   * Save cookies to disk for next session
+   */
+  private async saveCookies(): Promise<void> {
+    if (!this.page) return;
+
+    try {
+      const cookies = await this.page.context().cookies();
+
+      // Create directory if it doesn't exist
+      const dir = path.dirname(this.cookieStoragePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      fs.writeFileSync(this.cookieStoragePath, JSON.stringify(cookies, null, 2));
+      this.logger.info(`💾 Saved ${cookies.length} cookies for next session`);
+    } catch (error) {
+      this.logger.warn('⚠️ Failed to save cookies:', error);
+    }
   }
 
   /**
@@ -138,8 +196,9 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       javaScriptEnabled: true,
     });
 
-    // Set extra HTTP headers
-    await this.page.setExtraHTTPHeaders({
+    // Set extra HTTP headers with random referer
+    const referer = this.getRandomReferer();
+    const headers: Record<string, string> = {
       Accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
       'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -149,10 +208,18 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       'Upgrade-Insecure-Requests': '1',
       'Sec-Fetch-Dest': 'document',
       'Sec-Fetch-Mode': 'navigate',
-      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-Site': referer ? 'cross-site' : 'none',
       'Sec-Fetch-User': '?1',
       'Cache-Control': 'max-age=0',
-    });
+    };
+
+    // Add referer if present (simulates coming from search engines)
+    if (referer) {
+      headers.Referer = referer;
+      this.logger.info(`   Using referer: ${referer.substring(0, 50)}...`);
+    }
+
+    await this.page.setExtraHTTPHeaders(headers);
 
     // Advanced anti-detection scripts
     const antiDetectionScript = () => {
@@ -255,6 +322,101 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
     this.logger.info('✅ Ultra-stealth browser initialized');
     this.logger.info(`   User-Agent: ${userAgent.substring(0, 50)}...`);
+
+    // Load saved cookies to appear as returning user
+    await this.loadCookies();
+  }
+
+  /**
+   * Handle blocked response with detailed analysis
+   */
+  private async handleBlockedResponse(status: number, response: any): Promise<void> {
+    this.logger.warn(`⚠️ HTTP ${status} response - LIKELY BLOCKED!`);
+
+    const responseText = await response.text();
+    const isDataDomeBlock =
+      responseText.includes('DataDome') ||
+      responseText.includes('captcha') ||
+      responseText.includes('geo.captcha-delivery.com');
+
+    // Save blocked response for debugging
+    if (responseText.length < 50000) {
+      fs.writeFileSync('blocked-response.html', responseText);
+      this.logger.warn(`💾 Saved blocked response to blocked-response.html`);
+    }
+
+    this.logger.warn(`   Response size: ${responseText.length} bytes`);
+    this.logger.warn(`   DataDome detected: ${isDataDomeBlock ? 'YES' : 'NO'}`);
+    this.logger.warn(`   Preview: ${responseText.substring(0, 150)}...`);
+
+    if (status === 403 || status === 429) {
+      this.logger.error('═══════════════════════════════════════════════════');
+      this.logger.error('🚫 ANTI-BOT PROTECTION DETECTED (DataDome)');
+      this.logger.error('═══════════════════════════════════════════════════');
+      this.logger.error('');
+      this.logger.error('Your scraping has been blocked. Here\'s what to do:');
+      this.logger.error('');
+      this.logger.error('1. STOP SCRAPING IMMEDIATELY');
+      this.logger.error('   → Continuing will make the block worse');
+      this.logger.error('');
+      this.logger.error('2. WAIT 6-24 HOURS');
+      this.logger.error('   → Let your IP reputation recover');
+      this.logger.error('');
+      this.logger.error('3. USE RESIDENTIAL PROXIES');
+      this.logger.error('   → Your current IP is flagged');
+      this.logger.error('   → See docs/DATADOME_BYPASS.md for proxy providers');
+      this.logger.error('');
+      this.logger.error('4. REDUCE FREQUENCY');
+      this.logger.error('   → Increase SCRAPING_INTERVAL in .env');
+      this.logger.error('   → Increase waitSuccess in config (current: 15s)');
+      this.logger.error('');
+      this.logger.error('5. CHECK blocked-response.html');
+      this.logger.error('   → Review the blocked page to understand the block type');
+      this.logger.error('');
+      this.logger.error('═══════════════════════════════════════════════════');
+
+      throw new Error(`HTTP ${status} - Anti-bot protection detected. Scraping stopped.`);
+    }
+  }
+
+  /**
+   * Accept cookie consent banner (DataDome tracks this)
+   */
+  private async acceptCookies(): Promise<void> {
+    if (!this.page) return;
+
+    try {
+      this.logger.info('🍪 Looking for cookie consent banner...');
+
+      // LeBonCoin uses Didomi for cookie consent
+      const cookieSelectors = [
+        'button[id*="didomi-notice-agree"]',
+        'button[class*="didomi-agree"]',
+        'button:has-text("Accepter")',
+        'button:has-text("Tout accepter")',
+        '#didomi-notice-agree-button',
+      ];
+
+      for (const selector of cookieSelectors) {
+        try {
+          const button = await this.page.waitForSelector(selector, { timeout: 3000 });
+          if (button) {
+            await sleep(Math.random() * 0.5 + 0.5); // Human delay before clicking
+            await button.click();
+            this.logger.info('✅ Cookie consent accepted');
+            await sleep(1); // Wait for banner to disappear
+            return;
+          }
+        } catch {
+          // Try next selector
+          continue;
+        }
+      }
+
+      this.logger.info('ℹ️ No cookie banner found (might already be accepted)');
+    } catch (error) {
+      this.logger.warn('⚠️ Cookie acceptance failed, continuing anyway:', error);
+    }
   }
 
   /**
@@ -270,6 +432,9 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         timeout: 60000,
       });
       await sleep(Math.random() * 3 + 2);
+
+      // Accept cookies (important for DataDome)
+      await this.acceptCookies();
 
       // Simulate browsing - scroll and move mouse
       await this.page.mouse.move(500 + Math.random() * 500, 300 + Math.random() * 300);
@@ -314,21 +479,12 @@ export class LeBonCoinScraperStealth extends BaseScraper {
         throw new Error('No response from page');
       }
 
-      // Check response status
+      // Check response status and analyze for DataDome
       const status = response.status();
       this.logger.info(`   HTTP Status: ${status}`);
 
       if (status !== 200) {
-        this.logger.warn(`⚠️ HTTP ${status} response - BLOCKED!`);
-        const responseText = await response.text();
-        this.logger.warn(`   Response preview: ${responseText.substring(0, 200)}...`);
-        if (status === 403 || status === 429) {
-          this.logger.error('🚫 DataDome anti-bot detected! Stopping to avoid further blocks.');
-          this.logger.error('💡 Suggestion: Wait 6-12 hours before next scraping attempt.');
-          throw new Error(
-            `HTTP ${status} - Anti-bot protection detected (DataDome). Stop scraping.`
-          );
-        }
+        await this.handleBlockedResponse(status, response);
       }
 
       // Wait for initial render
@@ -616,9 +772,12 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   }
 
   /**
-   * Close browser
+   * Close browser and save cookies
    */
   async close(): Promise<void> {
+    // Save cookies before closing (important for session persistence)
+    await this.saveCookies();
+
     if (this.page) {
       await this.page.close();
       this.page = null;
