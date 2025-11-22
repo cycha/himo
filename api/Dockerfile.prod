@@ -35,4 +35,5 @@ RUN pnpm --filter api exec prisma generate
 RUN pnpm --filter api build
 
 # Start production server
-CMD sh -c "cd /app/api && pnpm exec prisma migrate deploy && node /app/api/dist/server.js"
+WORKDIR /app/api
+CMD sh -c "prisma migrate deploy --skip-generate || true; node dist/server.js"
