@@ -61,19 +61,9 @@ RUN pnpm run build || true
 ENV DISPLAY=:99
 ENV HEADLESS=false
 
-# Create startup script to resolve failed migrations before running bot
-RUN echo '#!/bin/sh' > /app/bot-entrypoint.sh && \
-    echo 'rm -f /tmp/.X99-lock && rm -f /tmp/.X11-unix/X99' >> /app/bot-entrypoint.sh && \
-    echo 'Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp &' >> /app/bot-entrypoint.sh && \
-    echo 'sleep 3' >> /app/bot-entrypoint.sh && \
-    echo 'cd /app/api' >> /app/bot-entrypoint.sh && \
-    echo 'echo "Checking for failed migrations..."' >> /app/bot-entrypoint.sh && \
-    echo 'npx prisma migrate resolve --rolled-back 20251101124956_init 2>/dev/null || true' >> /app/bot-entrypoint.sh && \
-    echo 'echo "Running database migrations..."' >> /app/bot-entrypoint.sh && \
-    echo 'npx prisma migrate deploy 2>/dev/null || true' >> /app/bot-entrypoint.sh && \
-    echo 'cd /app' >> /app/bot-entrypoint.sh && \
-    echo 'pnpm start || { pkill -f Xvfb; exit 1; }' >> /app/bot-entrypoint.sh && \
-    chmod +x /app/bot-entrypoint.sh
+# Copy and run startup script to resolve failed migrations before running bot
+COPY bot/bot-entrypoint.sh /app/bot-entrypoint.sh
+RUN chmod +x /app/bot-entrypoint.sh
 
 # Run with Xvfb, migrations, then bot
 CMD ["/app/bot-entrypoint.sh"]
