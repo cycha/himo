@@ -44,7 +44,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm --filter api run prisma:generate
+        run: pnpm --filter api run prisma:generate && pnpm --filter bot run prisma:generate
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
           PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
@@ -85,13 +85,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm --filter api run prisma:generate
+        run: pnpm --filter api run prisma:generate && pnpm --filter bot run prisma:generate
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
           PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
-
-      - name: Build all packages
-        run: pnpm build
 
       - name: Run TypeScript type check
         run: pnpm type-check
@@ -129,7 +126,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm --filter api run prisma:generate
+        run: pnpm --filter api run prisma:generate && pnpm --filter bot run prisma:generate
         env:
           DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
           PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1
@@ -205,7 +202,7 @@ jobs:
         run: pnpm --filter api exec npm rebuild bcrypt
 
       - name: Generate Prisma Client
-        run: pnpm --filter api run prisma:generate
+        run: pnpm --filter api run prisma:generate && pnpm --filter bot run prisma:generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/himo_test
           PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: 1

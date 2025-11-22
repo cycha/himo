@@ -16,7 +16,7 @@
     "seed": "pnpm --filter api seed",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "type-check": "tsc --noEmit",
+    "type-check": "pnpm clean && tsc --build",
     "test": "pnpm --filter api test"
   },
   "devDependencies": {
