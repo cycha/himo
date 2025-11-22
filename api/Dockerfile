@@ -32,5 +32,5 @@ RUN pnpm --filter api exec prisma generate
 
 EXPOSE 3000 9229
 
-# Run migrations then start dev server
-CMD sh -c "cd /app/api && npx prisma migrate deploy && cd /app && pnpm --filter api run dev"
+# Start dev server (postinstall errors are suppressed, dev server starts normally)
+CMD sh -c "cd /app && pnpm --filter api run dev"
