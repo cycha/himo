@@ -7,5 +7,45 @@
   "welcomeDescription": "Votre plateforme de recherche immobilière",
   "searchMessage": "Recherchez des annonces immobilières et trouvez la propriété de vos rêves.",
   "comingSoon": "Plus de fonctionnalités à venir !",
-  "logout": "Déconnexion"
+  "logout": "Déconnexion",
+  "bot": {
+    "title": "Contrôles du Bot de Scraping",
+    "description": "Gérer et surveiller le scraper immobilier",
+    "status": {
+      "running": "En cours",
+      "idle": "Inactif",
+      "failed": "Échoué",
+      "ready": "Prêt"
+    },
+    "controls": {
+      "start": "Démarrer le Bot",
+      "starting": "Démarrage...",
+      "stop": "Arrêter le Bot",
+      "stopping": "Arrêt..."
+    },
+    "currentRun": "Exécution en cours",
+    "lastRun": "Dernière exécution",
+    "details": {
+      "started": "Démarré",
+      "duration": "Durée",
+      "adsSaved": "Annonces enregistrées",
+      "pages": "Pages",
+      "error": "Erreur"
+    },
+    "stats": {
+      "totalAds": "Total d'annonces dans la base",
+      "totalRuns": "Total d'exécutions",
+      "totalScraped": "Total d'annonces scrapées",
+      "averagePerRun": "Moyenne par exécution",
+      "successful": "réussies",
+      "failed": "échouées",
+      "adsPerRun": "annonces par exécution"
+    },
+    "recentRuns": {
+      "title": "Exécutions récentes",
+      "description": "10 dernières exécutions du bot",
+      "automated": "Automatique",
+      "manual": "Manuel"
+    }
+  }
 }
