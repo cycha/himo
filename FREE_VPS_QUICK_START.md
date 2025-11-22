@@ -22,6 +22,7 @@ The bot is **pre-configured** for free VPS deployment:
 ### 1. Get Free VPS
 
 **Oracle Cloud** (Recommended - Always Free):
+
 1. Sign up: https://www.oracle.com/cloud/free/
 2. Create Ubuntu 22.04 VM (1 GB RAM, Always Free tier)
 3. Choose **France/Paris region** for best results
@@ -181,21 +182,21 @@ pm2 restart himo-bot
 
 ## Results Breakdown
 
-| Metric              | Value      |
-| ------------------- | ---------- |
-| Runs per day        | 8          |
-| Ads per run         | ~50        |
-| **Ads per day**     | **~400**   |
-| **Ads per month**   | **~12,000** |
-| **Cost**            | **$0**     |
-| Block risk          | ~5%        |
-| Sustainability      | Months     |
+| Metric            | Value       |
+| ----------------- | ----------- |
+| Runs per day      | 8           |
+| Ads per run       | ~50         |
+| **Ads per day**   | **~400**    |
+| **Ads per month** | **~12,000** |
+| **Cost**          | **$0**      |
+| Block risk        | ~5%         |
+| Sustainability    | Months      |
 
 ## Comparison
 
 | Strategy        | Ads/Day | Cost/Month | Sustainability |
 | --------------- | ------- | ---------- | -------------- |
-| **Free VPS** ⭐  | **400** | **$0**     | **Months**     |
+| **Free VPS** ⭐ | **400** | **$0**     | **Months**     |
 | Home IP         | 100     | $0         | Weeks          |
 | Budget proxies  | 1000    | $50        | Indefinite     |
 | Premium proxies | 3000    | $300       | Indefinite     |
@@ -203,6 +204,7 @@ pm2 restart himo-bot
 ## When to Upgrade
 
 Stay on free VPS until:
+
 - ❌ VPS IP gets permanently blocked
 - ❌ Need > 500 ads/day consistently
 - ❌ Building commercial product
@@ -265,6 +267,7 @@ pm2 restart himo-bot
 ## Full Documentation
 
 For detailed guides, see:
+
 - **`docs/VPS_FREE_STRATEGY.md`** - Complete VPS deployment guide
 - **`docs/FREE_SCRAPING_STRATEGY.md`** - Free scraping strategies
 - **`docs/DATADOME_BYPASS.md`** - DataDome bypass techniques

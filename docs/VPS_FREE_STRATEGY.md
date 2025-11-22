@@ -18,12 +18,14 @@ This guide shows how to deploy the Himo bot on a **free VPS** and scrape LeBonCo
 #### 1. **Oracle Cloud Free Tier** (Best Option) ⭐
 
 **What you get:**
+
 - 2 AMD-based compute VMs (1/8 OCPU, 1 GB RAM each)
 - OR 4 Arm-based VMs (1 OCPU, 6 GB RAM each)
 - 200 GB total storage
 - **ALWAYS FREE** (not a trial)
 
 **Perfect for scraping:**
+
 - 1 GB RAM sufficient for our bot
 - Residential-looking datacenter IPs
 - Multiple regions available (choose France/EU)
@@ -33,11 +35,13 @@ This guide shows how to deploy the Himo bot on a **free VPS** and scrape LeBonCo
 #### 2. **Google Cloud Platform Free Tier**
 
 **What you get:**
+
 - 1 e2-micro VM (0.25 vCPU, 1 GB RAM)
 - 30 GB storage
 - **Always free** in US regions
 
 **Limitations:**
+
 - US IPs only (not ideal for LeBonCoin)
 - 1 GB RAM might be tight
 
@@ -46,11 +50,13 @@ This guide shows how to deploy the Himo bot on a **free VPS** and scrape LeBonCo
 #### 3. **AWS Free Tier** (First 12 Months)
 
 **What you get:**
+
 - t2.micro instance (1 vCPU, 1 GB RAM)
 - 30 GB storage
 - **Free for 12 months** then paid
 
 **After 12 months:**
+
 - ~$10/month for t2.micro
 - Can switch to Oracle Cloud
 
@@ -59,6 +65,7 @@ This guide shows how to deploy the Himo bot on a **free VPS** and scrape LeBonCo
 #### 4. **Azure Free Tier** (First 12 Months)
 
 **What you get:**
+
 - B1S VM (1 vCPU, 1 GB RAM)
 - 64 GB storage
 - **Free for 12 months** then paid
@@ -336,20 +343,20 @@ LIMIT 7;
 
 ### With Conservative Settings (Default)
 
-| Metric                  | Value             |
-| ----------------------- | ----------------- |
-| Frequency               | Every 2 hours     |
-| Runs per day            | 8                 |
-| Pages per run           | 5                 |
-| Ads per run             | ~50               |
-| **Total ads per day**   | **~400**          |
-| **Ads per month**       | **~12,000**       |
-| **Ads per year**        | **~146,000**      |
-| Block probability       | ~5%               |
-| Sustainability          | Months            |
-| Cost                    | **$0**            |
-| VPS uptime              | 99.9%             |
-| Maintenance             | Minimal (monthly) |
+| Metric                | Value             |
+| --------------------- | ----------------- |
+| Frequency             | Every 2 hours     |
+| Runs per day          | 8                 |
+| Pages per run         | 5                 |
+| Ads per run           | ~50               |
+| **Total ads per day** | **~400**          |
+| **Ads per month**     | **~12,000**       |
+| **Ads per year**      | **~146,000**      |
+| Block probability     | ~5%               |
+| Sustainability        | Months            |
+| Cost                  | **$0**            |
+| VPS uptime            | 99.9%             |
+| Maintenance           | Minimal (monthly) |
 
 ### Comparison with Other Strategies
 

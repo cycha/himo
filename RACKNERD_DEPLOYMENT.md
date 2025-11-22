@@ -218,11 +218,11 @@ top
 
 ### Typical RackNerd Plans
 
-| Plan | RAM | Disk | CPU | Price | Himo Bot? |
-|------|-----|------|-----|-------|-----------|
-| Basic | 512 MB | 10 GB | 1 Core | $10/yr | ⚠️ Tight |
-| Standard | 1 GB | 20 GB | 1 Core | $15/yr | ✅ Perfect |
-| Plus | 2 GB | 35 GB | 2 Cores | $25/yr | ✅ Great |
+| Plan     | RAM    | Disk  | CPU     | Price  | Himo Bot?  |
+| -------- | ------ | ----- | ------- | ------ | ---------- |
+| Basic    | 512 MB | 10 GB | 1 Core  | $10/yr | ⚠️ Tight   |
+| Standard | 1 GB   | 20 GB | 1 Core  | $15/yr | ✅ Perfect |
+| Plus     | 2 GB   | 35 GB | 2 Cores | $25/yr | ✅ Great   |
 
 **Minimum recommended:** 1 GB RAM
 
@@ -287,19 +287,20 @@ pm2 logs himo-bot --lines 20
 
 ### With Your RackNerd VPS
 
-| Metric | Value |
-|--------|-------|
-| Runs per day | 8 (every 2 hours) |
-| Pages per run | 5 |
-| Ads per run | ~50 |
-| **Ads per day** | **~400** |
-| **Ads per month** | **~12,000** |
-| Block probability | ~5% |
-| Sustainability | Months |
+| Metric            | Value             |
+| ----------------- | ----------------- |
+| Runs per day      | 8 (every 2 hours) |
+| Pages per run     | 5                 |
+| Ads per run       | ~50               |
+| **Ads per day**   | **~400**          |
+| **Ads per month** | **~12,000**       |
+| Block probability | ~5%               |
+| Sustainability    | Months            |
 
 ### RackNerd IP Advantage
 
 RackNerd IPs are often clean (not flagged) because:
+
 - Less commonly used than major cloud providers
 - Good IP reputation in their datacenters
 - Not as heavily associated with bots
@@ -349,6 +350,7 @@ See `docs/DATADOME_BYPASS.md` for proxy provider recommendations.
 ### Option 3: New RackNerd IP
 
 RackNerd allows you to:
+
 1. Create new VPS instance (different IP)
 2. Migrate to new server
 3. Request IP change (contact support)
@@ -533,15 +535,16 @@ pm2 restart himo-bot
 
 ### RackNerd vs Other Options
 
-| Option | Cost/Year | Ads/Day | Maintenance |
-|--------|-----------|---------|-------------|
+| Option           | Cost/Year  | Ads/Day | Maintenance  |
+| ---------------- | ---------- | ------- | ------------ |
 | **RackNerd VPS** | **$15-25** | **400** | **Very Low** |
-| Oracle Free Tier | $0 | 400 | Low |
-| AWS t2.micro | $120 | 400 | Low |
-| Budget Proxies | $600 | 1000 | Very Low |
-| Premium Proxies | $3600 | 3000 | Very Low |
+| Oracle Free Tier | $0         | 400     | Low          |
+| AWS t2.micro     | $120       | 400     | Low          |
+| Budget Proxies   | $600       | 1000    | Very Low     |
+| Premium Proxies  | $3600      | 3000    | Very Low     |
 
 **Your RackNerd VPS:** Best value! ✅
+
 - Already paid for
 - Great performance
 - Clean IP reputation
@@ -552,6 +555,7 @@ pm2 restart himo-bot
 ✅ **RackNerd VPS is perfect for this!**
 
 **What you get:**
+
 - 400 ads/day for free (already paying for VPS)
 - Clean IP (good reputation)
 - 24/7 automated scraping
@@ -603,6 +607,7 @@ psql -U himo_user -d himo -c "SELECT COUNT(*) FROM ads;"
 ---
 
 **Questions?**
+
 - Check logs: `pm2 logs himo-bot`
 - Read troubleshooting section above
 - Review docs/VPS_FREE_STRATEGY.md for details
