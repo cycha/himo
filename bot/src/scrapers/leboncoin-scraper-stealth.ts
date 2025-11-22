@@ -14,8 +14,8 @@ chromium.use(StealthPlugin());
 const DEFAULT_CONFIG: ScraperConfig = {
   maxPages: 30,
   maxRetries: 0, // No retries - if blocked, stop immediately to avoid detection
-  waitSuccess: 8, // Longer wait between pages (8-16 seconds)
-  waitError: 30, // Much longer wait on errors (30+ seconds)
+  waitSuccess: 15, // INCREASED: Longer wait between pages (15-30 seconds) for DataDome
+  waitError: 60, // INCREASED: Much longer wait on errors (60+ seconds)
   baseUrl: 'https://www.leboncoin.fr/recherche?category=9',
   provider: 'leboncoin',
 };
@@ -36,11 +36,13 @@ const DEFAULT_CONFIG: ScraperConfig = {
 export class LeBonCoinScraperStealth extends BaseScraper {
   private browser: Browser | null = null;
   private page: Page | null = null;
+  private currentUserAgent: string | null = null; // Persist UA across scraping session
+  private hasVisitedHomepage = false; // Track if we've done initial homepage visit
   private userAgents = [
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
   ];
 
   constructor(config: Partial<ScraperConfig> = {}) {
@@ -48,10 +50,13 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   }
 
   /**
-   * Get random user agent
+   * Get random user agent (persistent across session for consistency)
    */
   private getRandomUserAgent(): string {
-    return this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
+    if (!this.currentUserAgent) {
+      this.currentUserAgent = this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
+    }
+    return this.currentUserAgent;
   }
 
   /**
@@ -105,16 +110,22 @@ export class LeBonCoinScraperStealth extends BaseScraper {
       };
     }
 
-    // Launch browser with stealth plugin
+    // Launch browser with stealth plugin and persistent context for cookies
     this.browser = await chromium.launch(launchOptions);
 
-    // Create stealth page
+    // Common viewport sizes (more realistic than random)
+    const viewports = [
+      { width: 1920, height: 1080 },
+      { width: 1366, height: 768 },
+      { width: 1536, height: 864 },
+      { width: 1440, height: 900 },
+    ];
+    const viewport = viewports[Math.floor(Math.random() * viewports.length)];
+
+    // Create stealth page with persistent storage
     const userAgent = this.getRandomUserAgent();
     this.page = await this.browser.newPage({
-      viewport: {
-        width: 1920 + Math.floor(Math.random() * 100),
-        height: 1080 + Math.floor(Math.random() * 100),
-      },
+      viewport,
       userAgent,
       locale: 'fr-FR',
       timezoneId: 'Europe/Paris',
@@ -247,6 +258,31 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   }
 
   /**
+   * Visit homepage first to establish session (looks more human)
+   */
+  private async visitHomepage(): Promise<void> {
+    if (!this.page) return;
+
+    try {
+      this.logger.info('🏠 Visiting homepage first (human behavior)...');
+      await this.page.goto('https://www.leboncoin.fr', {
+        waitUntil: 'domcontentloaded',
+        timeout: 60000,
+      });
+      await sleep(Math.random() * 3 + 2);
+
+      // Simulate browsing - scroll and move mouse
+      await this.page.mouse.move(500 + Math.random() * 500, 300 + Math.random() * 300);
+      await this.page.evaluate(() => window.scrollBy(0, Math.random() * 200 + 100));
+      await sleep(Math.random() * 2 + 1);
+
+      this.logger.info('✅ Homepage visit complete');
+    } catch (error) {
+      this.logger.warn('⚠️ Homepage visit failed, continuing anyway:', error);
+    }
+  }
+
+  /**
    * Fetch page with advanced human simulation
    */
   async fetchPage(url: string, _userAgent: string): Promise<string> {
@@ -254,6 +290,12 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
     if (!this.page) {
       throw new Error('Browser page not initialized');
+    }
+
+    // Visit homepage on first request to establish cookies/session
+    if (!this.hasVisitedHomepage) {
+      await this.visitHomepage();
+      this.hasVisitedHomepage = true;
     }
 
     try {

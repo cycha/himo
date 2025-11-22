@@ -9,8 +9,8 @@ dotenv.config();
 
 const logger = new Logger('Bot');
 
-// Scraping task - runs every 2 minutes from 5 AM to 10 PM
-const scrapingSchedule = process.env.SCRAPING_INTERVAL || '*/2 5-22 * * *';
+// Scraping task - runs every 15 minutes from 5 AM to 10 PM (reduced for DataDome protection)
+const scrapingSchedule = process.env.SCRAPING_INTERVAL || '*/15 5-22 * * *';
 const scrapingJob = cron.schedule(
   scrapingSchedule,
   async () => {
