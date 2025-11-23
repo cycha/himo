@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import dotenv from 'dotenv';
 import { scrapingTask } from './tasks/scraping-task';
 import { cleanupTask } from './tasks/cleanup-task';
-import { startServer } from './server';
+import { startServer, setJobs } from './server';
 import { Logger } from './utils/logger';
 
 // Load environment variables
@@ -10,7 +10,7 @@ dotenv.config();
 
 const logger = new Logger('Bot');
 
-// Start HTTP server for manual triggers
+// Start HTTP server for manual triggers and bot control
 startServer();
 
 // Scraping task - runs every 2 minutes from 5 AM to 10 PM
@@ -25,6 +25,7 @@ const scrapingJob = cron.schedule(
     }
   },
   {
+    scheduled: true,  // Auto-start on boot
     timezone: 'Europe/Paris',
   }
 );
@@ -40,16 +41,20 @@ const cleanupJob = cron.schedule(
     }
   },
   {
+    scheduled: true,  // Auto-start on boot
     timezone: 'Europe/Paris',
   }
 );
+
+// Set jobs in server so they can be controlled via HTTP
+setJobs(scrapingJob, cleanupJob);
 
 logger.info('========================================');
 logger.info('🤖 Himo Bot v2.0.0');
 logger.info(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 logger.info(`📅 Scraping schedule: ${scrapingSchedule}`);
 logger.info(`🗑️  Cleanup schedule: 0 0 1 * *`);
-logger.info(`✅ Bot started successfully`);
+logger.info(`✅ Bot service started (cron jobs enabled by default)`);
 logger.info('========================================');
 
 // Handle exit events

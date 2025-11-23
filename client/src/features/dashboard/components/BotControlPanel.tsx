@@ -19,19 +19,31 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
+  Circle,
+  AlertCircle,
 } from 'lucide-react';
-import { useBotStatus, useBotStats, useStartBot, useStopBot } from '../../../hooks/api/useBot';
+import { useBotStatus, useBotStats, useStartBotCron, useStopBotCron, useTriggerBotScrape, useStopBot } from '../../../hooks/api/useBot';
 import { BotRunStatus } from '../../../types';
 
 const BotControlPanel: React.FC = () => {
   const { t } = useTranslation('dashboard');
   const { data: status, isLoading: statusLoading } = useBotStatus();
   const { data: stats, isLoading: statsLoading } = useBotStats();
-  const startBot = useStartBot();
+  const startBotCron = useStartBotCron();
+  const stopBotCron = useStopBotCron();
+  const triggerScrape = useTriggerBotScrape();
   const stopBot = useStopBot();
 
-  const handleStart = () => {
-    startBot.mutate();
+  const handleStartCron = () => {
+    startBotCron.mutate();
+  };
+
+  const handleStopCron = () => {
+    stopBotCron.mutate();
+  };
+
+  const handleTriggerScrape = () => {
+    triggerScrape.mutate();
   };
 
   const handleStop = () => {
@@ -114,53 +126,136 @@ const BotControlPanel: React.FC = () => {
       {/* Bot Status & Controls */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5" />
-                {t('bot.title')}
-              </CardTitle>
-              <CardDescription>{t('bot.description')}</CardDescription>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5" />
+                  {t('bot.title')}
+                </CardTitle>
+                <CardDescription>{t('bot.description')}</CardDescription>
+              </div>
             </div>
-            {getStatusBadge()}
+
+            {/* Status Indicators Row */}
+            <div className="flex items-center gap-6 text-sm border-t pt-4">
+              {/* Bot Service Status */}
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground font-medium">{t('bot.indicators.service')}:</span>
+                {status?.serviceHealthy ? (
+                  <Badge variant="outline" className="gap-1.5 bg-green-50 text-green-700 border-green-200">
+                    <Circle className="h-2 w-2 fill-green-500 text-green-500" />
+                    {t('bot.indicators.online')}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1.5 bg-red-50 text-red-700 border-red-200">
+                    <AlertCircle className="h-3 w-3" />
+                    {t('bot.indicators.offline')}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Scheduler Status */}
+              {status?.serviceHealthy && (
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground font-medium">{t('bot.indicators.scheduler')}:</span>
+                  {status.cronSchedulerActive ? (
+                    <Badge variant="outline" className="gap-1.5 bg-blue-50 text-blue-700 border-blue-200">
+                      <Circle className="h-2 w-2 fill-blue-500 text-blue-500 animate-pulse" />
+                      {t('bot.indicators.running')}
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="gap-1.5">
+                      <Circle className="h-2 w-2 fill-gray-400 text-gray-400" />
+                      {t('bot.indicators.stopped')}
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              {/* Current Task Status */}
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground font-medium">{t('bot.indicators.task')}:</span>
+                {status?.isRunning ? (
+                  <Badge variant="outline" className="gap-1.5 bg-orange-50 text-orange-700 border-orange-200">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    {t('bot.indicators.scraping')}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1.5">
+                    <CheckCircle className="h-3 w-3 text-muted-foreground" />
+                    {t('bot.indicators.idle')}
+                  </Badge>
+                )}
+              </div>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* Control Buttons */}
-            <div className="flex gap-2">
+            {/* Cron Scheduler Control */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold">{t('bot.cron.title')}</h4>
+              {status?.cronSchedulerActive ? (
+                <Button
+                  onClick={handleStopCron}
+                  disabled={stopBotCron.isPending}
+                  variant="outline"
+                  className="w-full"
+                  size="sm"
+                >
+                  {stopBotCron.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {t('bot.cron.stopping')}
+                    </>
+                  ) : (
+                    <>
+                      <StopCircle className="h-4 w-4 mr-2" />
+                      {t('bot.cron.stop')}
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleStartCron}
+                  disabled={startBotCron.isPending || !status?.serviceHealthy}
+                  className="w-full"
+                  size="sm"
+                >
+                  {startBotCron.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {t('bot.cron.starting')}
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-4 w-4 mr-2" />
+                      {t('bot.cron.start')}
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+
+            {/* Manual Trigger */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold">{t('bot.manual.title')}</h4>
               <Button
-                onClick={handleStart}
-                disabled={status?.isRunning || startBot.isPending}
-                className="flex-1"
+                onClick={handleTriggerScrape}
+                disabled={status?.isRunning || triggerScrape.isPending}
+                variant="secondary"
+                className="w-full"
               >
-                {startBot.isPending ? (
+                {triggerScrape.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    {t('bot.controls.starting')}
+                    {t('bot.manual.triggering')}
                   </>
                 ) : (
                   <>
                     <Play className="h-4 w-4 mr-2" />
-                    {t('bot.controls.start')}
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={handleStop}
-                disabled={!status?.isRunning || stopBot.isPending}
-                variant="destructive"
-                className="flex-1"
-              >
-                {stopBot.isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    {t('bot.controls.stopping')}
-                  </>
-                ) : (
-                  <>
-                    <StopCircle className="h-4 w-4 mr-2" />
-                    {t('bot.controls.stop')}
+                    {t('bot.manual.trigger')}
                   </>
                 )}
               </Button>

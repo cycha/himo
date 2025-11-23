@@ -7,6 +7,8 @@ export interface BotStatusDto {
   isRunning: boolean;
   currentRun?: BotRun;
   lastRun?: BotRun;
+  serviceHealthy: boolean;
+  cronSchedulerActive: boolean;
 }
 
 export interface BotStatsDto {
@@ -23,7 +25,9 @@ export interface BotStatsDto {
 export interface IBotService {
   getStatus(): Promise<BotStatusDto>;
   getStats(): Promise<BotStatsDto>;
-  startBot(triggeredBy?: string): Promise<BotRun>;
+  startCron(): Promise<boolean>;
+  stopCron(): Promise<boolean>;
+  triggerScrape(triggeredBy?: string): Promise<BotRun>;
   stopBot(): Promise<boolean>;
 }
 
@@ -42,10 +46,25 @@ export class BotServicePrisma implements IBotService {
     const currentRun = runningRuns[0] || undefined;
     const lastRun = await this.repository.findMostRecent();
 
+    // Check if bot service is healthy and get cron scheduler status
+    let serviceHealthy = false;
+    let cronSchedulerActive = false;
+
+    try {
+      const response = await axios.get(`${this.botUrl}/status`, { timeout: 3000 });
+      serviceHealthy = true;
+      cronSchedulerActive = response.data.scrapingJobRunning || false;
+    } catch (error) {
+      // Bot service is not reachable
+      serviceHealthy = false;
+    }
+
     return {
       isRunning: runningRuns.length > 0,
       currentRun,
       lastRun: currentRun ? undefined : lastRun || undefined,
+      serviceHealthy,
+      cronSchedulerActive,
     };
   }
 
@@ -67,9 +86,33 @@ export class BotServicePrisma implements IBotService {
   }
 
   /**
-   * Start the bot (manual trigger)
+   * Start the bot cron scheduler
    */
-  async startBot(triggeredBy: string = 'manual'): Promise<BotRun> {
+  async startCron(): Promise<boolean> {
+    try {
+      await axios.post(`${this.botUrl}/start`, {}, { timeout: 5000 });
+      return true;
+    } catch (error) {
+      throw new Error('Bot service is not available');
+    }
+  }
+
+  /**
+   * Stop the bot cron scheduler
+   */
+  async stopCron(): Promise<boolean> {
+    try {
+      await axios.post(`${this.botUrl}/stop`, {}, { timeout: 5000 });
+      return true;
+    } catch (error) {
+      throw new Error('Bot service is not available');
+    }
+  }
+
+  /**
+   * Trigger a manual scraping task
+   */
+  async triggerScrape(triggeredBy: string = 'manual'): Promise<BotRun> {
     // Check if bot is already running
     const runningRuns = await this.repository.findRunning();
     if (runningRuns.length > 0) {

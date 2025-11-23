@@ -106,6 +106,8 @@ export interface BotStatus {
   isRunning: boolean;
   currentRun?: BotRun;
   lastRun?: BotRun;
+  serviceHealthy: boolean;
+  cronSchedulerActive: boolean;
 }
 
 export interface BotStats {

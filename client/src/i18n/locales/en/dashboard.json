@@ -17,11 +17,28 @@
       "failed": "Failed",
       "ready": "Ready"
     },
-    "controls": {
-      "start": "Start Bot",
+    "indicators": {
+      "service": "Bot Service",
+      "scheduler": "Scheduler",
+      "task": "Current Task",
+      "online": "Online",
+      "offline": "Offline",
+      "running": "Running",
+      "stopped": "Stopped",
+      "scraping": "Scraping",
+      "idle": "Idle"
+    },
+    "cron": {
+      "title": "Scheduled Scraping",
+      "start": "Start Scheduler",
       "starting": "Starting...",
-      "stop": "Stop Bot",
+      "stop": "Stop Scheduler",
       "stopping": "Stopping..."
+    },
+    "manual": {
+      "title": "Manual Trigger",
+      "trigger": "Run Scrape Now",
+      "triggering": "Starting..."
     },
     "currentRun": "Current Run",
     "lastRun": "Last Run",

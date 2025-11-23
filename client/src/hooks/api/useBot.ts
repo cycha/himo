@@ -40,24 +40,70 @@ export const useBotStats = (): UseQueryResult<BotStats, Error> => {
 };
 
 /**
- * Hook to start the bot
+ * Hook to start the bot cron scheduler
  */
-export const useStartBot = (): UseMutationResult<BotRun, Error, void> => {
+export const useStartBotCron = (): UseMutationResult<void, Error, void> => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
-      const response = await api.startBot();
-      return response.data;
+      await api.startBotCron();
     },
     onSuccess: () => {
-      toast.success('Bot started successfully!');
+      toast.success('Bot scheduler started successfully!');
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['bot', 'status'] });
       queryClient.invalidateQueries({ queryKey: ['bot', 'stats'] });
     },
     onError: (error: any) => {
-      const message = error.response?.data?.error || error.message || 'Failed to start bot';
+      const message = error.response?.data?.error || error.message || 'Failed to start scheduler';
+      toast.error(message);
+    },
+  });
+};
+
+/**
+ * Hook to stop the bot cron scheduler
+ */
+export const useStopBotCron = (): UseMutationResult<void, Error, void> => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      await api.stopBotCron();
+    },
+    onSuccess: () => {
+      toast.success('Bot scheduler stopped successfully!');
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['bot', 'status'] });
+      queryClient.invalidateQueries({ queryKey: ['bot', 'stats'] });
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.error || error.message || 'Failed to stop scheduler';
+      toast.error(message);
+    },
+  });
+};
+
+/**
+ * Hook to trigger a manual scraping task
+ */
+export const useTriggerBotScrape = (): UseMutationResult<BotRun, Error, void> => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.triggerBotScrape();
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Scraping task started successfully!');
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['bot', 'status'] });
+      queryClient.invalidateQueries({ queryKey: ['bot', 'stats'] });
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.error || error.message || 'Failed to trigger scrape';
       toast.error(message);
     },
   });

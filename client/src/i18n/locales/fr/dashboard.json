@@ -17,11 +17,28 @@
       "failed": "Échoué",
       "ready": "Prêt"
     },
-    "controls": {
-      "start": "Démarrer le Bot",
+    "indicators": {
+      "service": "Service Bot",
+      "scheduler": "Planificateur",
+      "task": "Tâche en cours",
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "running": "En marche",
+      "stopped": "Arrêté",
+      "scraping": "En scraping",
+      "idle": "Inactif"
+    },
+    "cron": {
+      "title": "Scraping Planifié",
+      "start": "Démarrer le Planificateur",
       "starting": "Démarrage...",
-      "stop": "Arrêter le Bot",
+      "stop": "Arrêter le Planificateur",
       "stopping": "Arrêt..."
+    },
+    "manual": {
+      "title": "Déclenchement Manuel",
+      "trigger": "Lancer le Scraping",
+      "triggering": "Démarrage..."
     },
     "currentRun": "Exécution en cours",
     "lastRun": "Dernière exécution",

@@ -49,17 +49,55 @@ export class BotController {
   }
 
   /**
-   * POST /api/bot/start
-   * Start the bot (manual trigger)
+   * POST /api/bot/cron/start
+   * Start the bot cron scheduler
    */
-  async start(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async startCron(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const botRun = await this.service.startBot('manual');
+      await this.service.startCron();
+
+      const response: BotStopResponseDto = {
+        success: true,
+        message: 'Bot cron scheduler started successfully',
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/bot/cron/stop
+   * Stop the bot cron scheduler
+   */
+  async stopCron(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await this.service.stopCron();
+
+      const response: BotStopResponseDto = {
+        success: true,
+        message: 'Bot cron scheduler stopped successfully',
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/bot/trigger
+   * Trigger a manual scraping task
+   */
+  async trigger(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const botRun = await this.service.triggerScrape('manual');
 
       const response: BotStartResponseDto = {
         success: true,
         data: botRun,
-        message: 'Bot started successfully',
+        message: 'Scraping task started successfully',
       };
 
       res.status(200).json(response);

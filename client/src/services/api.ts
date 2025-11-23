@@ -102,8 +102,18 @@ class ApiClient {
     return response.data;
   }
 
-  async startBot(): Promise<BotStartResponse> {
-    const response = await this.client.post<BotStartResponse>('/bot/start');
+  async startBotCron(): Promise<BotStopResponse> {
+    const response = await this.client.post<BotStopResponse>('/bot/cron/start');
+    return response.data;
+  }
+
+  async stopBotCron(): Promise<BotStopResponse> {
+    const response = await this.client.post<BotStopResponse>('/bot/cron/stop');
+    return response.data;
+  }
+
+  async triggerBotScrape(): Promise<BotStartResponse> {
+    const response = await this.client.post<BotStartResponse>('/bot/trigger');
     return response.data;
   }
 
