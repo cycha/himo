@@ -7,5 +7,62 @@
   "welcomeDescription": "Votre plateforme de recherche immobilière",
   "searchMessage": "Recherchez des annonces immobilières et trouvez la propriété de vos rêves.",
   "comingSoon": "Plus de fonctionnalités à venir !",
-  "logout": "Déconnexion"
+  "logout": "Déconnexion",
+  "bot": {
+    "title": "Contrôles du Bot de Scraping",
+    "description": "Gérer et surveiller le scraper immobilier",
+    "status": {
+      "running": "En cours",
+      "idle": "Inactif",
+      "failed": "Échoué",
+      "ready": "Prêt"
+    },
+    "indicators": {
+      "service": "Service Bot",
+      "scheduler": "Planificateur",
+      "task": "Tâche en cours",
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "running": "En marche",
+      "stopped": "Arrêté",
+      "scraping": "En scraping",
+      "idle": "Inactif"
+    },
+    "cron": {
+      "title": "Scraping Planifié",
+      "start": "Démarrer le Planificateur",
+      "starting": "Démarrage...",
+      "stop": "Arrêter le Planificateur",
+      "stopping": "Arrêt..."
+    },
+    "manual": {
+      "title": "Déclenchement Manuel",
+      "trigger": "Lancer le Scraping",
+      "triggering": "Démarrage..."
+    },
+    "currentRun": "Exécution en cours",
+    "lastRun": "Dernière exécution",
+    "details": {
+      "started": "Démarré",
+      "duration": "Durée",
+      "adsSaved": "Annonces enregistrées",
+      "pages": "Pages",
+      "error": "Erreur"
+    },
+    "stats": {
+      "totalAds": "Total d'annonces dans la base",
+      "totalRuns": "Total d'exécutions",
+      "totalScraped": "Total d'annonces scrapées",
+      "averagePerRun": "Moyenne par exécution",
+      "successful": "réussies",
+      "failed": "échouées",
+      "adsPerRun": "annonces par exécution"
+    },
+    "recentRuns": {
+      "title": "Exécutions récentes",
+      "description": "10 dernières exécutions du bot",
+      "automated": "Automatique",
+      "manual": "Manuel"
+    }
+  }
 }

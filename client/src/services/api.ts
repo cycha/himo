@@ -6,6 +6,10 @@ import type {
   LoginForm,
   SignupForm,
   User,
+  BotStatusResponse,
+  BotStatsResponse,
+  BotStartResponse,
+  BotStopResponse,
 } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -84,6 +88,37 @@ class ApiClient {
   // Health check
   async healthCheck(): Promise<{ success: boolean; message: string }> {
     const response = await this.client.get('/health');
+    return response.data;
+  }
+
+  // Bot endpoints
+  async getBotStatus(): Promise<BotStatusResponse> {
+    const response = await this.client.get<BotStatusResponse>('/bot/status');
+    return response.data;
+  }
+
+  async getBotStats(): Promise<BotStatsResponse> {
+    const response = await this.client.get<BotStatsResponse>('/bot/stats');
+    return response.data;
+  }
+
+  async startBotCron(): Promise<BotStopResponse> {
+    const response = await this.client.post<BotStopResponse>('/bot/cron/start');
+    return response.data;
+  }
+
+  async stopBotCron(): Promise<BotStopResponse> {
+    const response = await this.client.post<BotStopResponse>('/bot/cron/stop');
+    return response.data;
+  }
+
+  async triggerBotScrape(): Promise<BotStartResponse> {
+    const response = await this.client.post<BotStartResponse>('/bot/trigger');
+    return response.data;
+  }
+
+  async stopBot(): Promise<BotStopResponse> {
+    const response = await this.client.post<BotStopResponse>('/bot/stop');
     return response.data;
   }
 

@@ -86,3 +86,34 @@ enum Provider {
   pap
   bienici
 }
+
+// Bot Run Model (Scraper execution tracking)
+model BotRun {
+  id                       String       @id @default(uuid())
+  status                   BotRunStatus @default(running)
+  startTime                DateTime     @default(now()) @map("start_time") @db.Timestamptz
+  endTime                  DateTime?    @map("end_time") @db.Timestamptz
+
+  // Statistics
+  adsSaved                 Int?         @map("ads_saved") @db.Integer
+  pagesScraped             Int?         @map("pages_scraped") @db.Integer
+  failurePercentage        Float?       @map("failure_percentage") @db.Real
+  averageRetriesPerRequest Float?       @map("average_retries_per_request") @db.Real
+
+  // Error tracking
+  errorMessage             String?      @map("error_message") @db.Text
+
+  // Metadata
+  triggeredBy              String?      @map("triggered_by") @db.VarChar(50) // 'cron' or 'manual'
+
+  @@map("bot_runs")
+  @@index([startTime(sort: Desc)])
+  @@index([status])
+}
+
+enum BotRunStatus {
+  running
+  completed
+  failed
+  stopped
+}

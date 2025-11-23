@@ -1,6 +1,7 @@
 import { Router, type Router as RouterType } from 'express';
 import adRoutes from './ad.routes';
 import userRoutes from './user.routes';
+import botRoutes from './bot.routes';
 
 const router: RouterType = Router();
 
@@ -17,6 +18,7 @@ router.get('/health', (req, res) => {
 // API routes
 router.use('/ads', adRoutes);
 router.use('/users', userRoutes);
+router.use('/bot', botRoutes);
 
 // Legacy routes for backward compatibility
 router.post('/search', adRoutes);
