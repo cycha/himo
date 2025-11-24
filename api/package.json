@@ -21,7 +21,7 @@
     "@himo/commons": "file:../commons",
     "@prisma/client": "^6.19.0",
     "axios": "^1.13.2",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^5.1.0",
@@ -33,7 +33,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.5",
     "@types/jest": "^29.5.11",
