@@ -85,7 +85,7 @@ jobs:
           target: "/home/deploy/himo"
 
       - name: Pull images and start containers on VPS
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
