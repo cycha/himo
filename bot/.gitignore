@@ -23,3 +23,8 @@ Thumbs.db
 
 # Test files
 /mock/
+
+# Bot scraper storage and debug files
+.scraper-storage/
+blocked-response.html
+failed-scrape.html

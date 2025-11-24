@@ -3,6 +3,7 @@
 /himo.iml
 .vscode/
 .claude/
+.run/
 *.swp
 *.swo
 *~
@@ -18,11 +19,17 @@ yarn.lock
 .pnpm-debug.log
 
 # Environment variables
+# Ignore all .env files
 .env
 .env.local
 .env.*.local
-*.env
+.env.production
+.env.deploy
+
+# Except example files (committed as templates)
 !.env.example
+!.env.production.example
+!.env.deploy.example
 
 # Build output
 dist/
@@ -49,3 +56,8 @@ coverage/
 *.pid
 *.seed
 *.pid.lock
+
+# Bot scraper storage and debug files
+.scraper-storage/
+blocked-response.html
+failed-scrape.html

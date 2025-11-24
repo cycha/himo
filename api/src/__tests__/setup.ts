@@ -1,10 +1,10 @@
-import { prisma } from '../lib/prisma';
-
-// Set test environment
+// Set test environment BEFORE importing prisma
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-jwt-secret';
 process.env.DATABASE_URL =
   process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/himo_test';
+
+import { prisma } from '../lib/prisma';
 
 // Global test timeout
 jest.setTimeout(10000);

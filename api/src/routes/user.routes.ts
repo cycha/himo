@@ -6,11 +6,7 @@ import { authenticate } from '../middleware/auth';
 
 const router: RouterType = Router();
 
-/**
- * @route   POST /api/users/signup
- * @desc    Register a new user
- * @access  Public
- */
+// POST /api/users/signup - Register a new user
 router.post(
   '/signup',
   signupValidation,
@@ -18,11 +14,7 @@ router.post(
   userController.signup.bind(userController)
 );
 
-/**
- * @route   POST /api/users/login
- * @desc    Login user
- * @access  Public
- */
+// POST /api/users/login - Login user
 router.post(
   '/login',
   loginValidation,
@@ -30,11 +22,7 @@ router.post(
   userController.login.bind(userController)
 );
 
-/**
- * @route   GET /api/users/profile
- * @desc    Get user profile
- * @access  Private
- */
+// GET /api/users/profile - Get user profile (private)
 router.get('/profile', authenticate, userController.getProfile.bind(userController));
 
 export default router;

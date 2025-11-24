@@ -5,22 +5,13 @@ import { handleValidationErrors } from '../middleware/error-handler';
 
 const router: RouterType = Router();
 
-/**
- * @route   GET/POST /api/ads/search
- * @desc    Search for ads with filters
- * @access  Public
- * @note    GET is primary (RESTful), POST for backward compatibility
- */
+// GET/POST /api/ads/search - Search for ads with filters
 router
   .route('/search')
   .get(searchValidation, handleValidationErrors, adController.search.bind(adController))
   .post(searchValidation, handleValidationErrors, adController.search.bind(adController));
 
-/**
- * @route   GET /api/ads/:id
- * @desc    Get ad by ID
- * @access  Public
- */
+// GET /api/ads/:id - Get ad by ID
 router.get('/:id', adController.getById.bind(adController));
 
 export default router;

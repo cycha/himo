@@ -9,9 +9,6 @@ import { toast } from '../../components/ui/toast';
 import api from '../../services/api';
 import type { BotStatus, BotStats, BotRun } from '../../types';
 
-/**
- * Hook to get bot status
- */
 export const useBotStatus = (): UseQueryResult<BotStatus, Error> => {
   return useQuery({
     queryKey: ['bot', 'status'],
@@ -24,9 +21,6 @@ export const useBotStatus = (): UseQueryResult<BotStatus, Error> => {
   });
 };
 
-/**
- * Hook to get bot statistics
- */
 export const useBotStats = (): UseQueryResult<BotStats, Error> => {
   return useQuery({
     queryKey: ['bot', 'stats'],
@@ -39,9 +33,6 @@ export const useBotStats = (): UseQueryResult<BotStats, Error> => {
   });
 };
 
-/**
- * Hook to start the bot cron scheduler
- */
 export const useStartBotCron = (): UseMutationResult<void, Error, void> => {
   const queryClient = useQueryClient();
 
@@ -62,9 +53,6 @@ export const useStartBotCron = (): UseMutationResult<void, Error, void> => {
   });
 };
 
-/**
- * Hook to stop the bot cron scheduler
- */
 export const useStopBotCron = (): UseMutationResult<void, Error, void> => {
   const queryClient = useQueryClient();
 
@@ -85,9 +73,6 @@ export const useStopBotCron = (): UseMutationResult<void, Error, void> => {
   });
 };
 
-/**
- * Hook to trigger a manual scraping task
- */
 export const useTriggerBotScrape = (): UseMutationResult<BotRun, Error, void> => {
   const queryClient = useQueryClient();
 
@@ -109,9 +94,6 @@ export const useTriggerBotScrape = (): UseMutationResult<BotRun, Error, void> =>
   });
 };
 
-/**
- * Hook to stop the bot
- */
 export const useStopBot = (): UseMutationResult<void, Error, void> => {
   const queryClient = useQueryClient();
 
