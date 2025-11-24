@@ -138,6 +138,35 @@ export const mockLeBonCoinAds = [
     },
     attributes: [{ key: 'real_estate_type', value: '4', value_label: 'Parking' }],
   },
+  {
+    subject: 'Appartement T2 - 44m² - Centre ville',
+    body: 'Bel appartement T2 de 44m² situé en centre ville. Comprend 1 chambre, séjour, cuisine équipée. Bien neuf avec prestations de qualité.',
+    url: '/annonces/offres/grand_est/occasions/2483412117',
+    price: '311 124', // Price with space separator (real-world format from LeBonCoin)
+    first_publication_date: '2025-11-02T19:00:00.000Z',
+    index_date: '2025-11-02T19:00:00.000Z',
+    images: {
+      urls: [
+        'https://img.leboncoin.fr/api/v1/lbcpb1/images/63/63/ea/6363ea6a85e201591692b8bc9f4c43745d34cb27.jpg',
+        'https://img.leboncoin.fr/api/v1/lbcpb1/images/c1/24/aa/c124aa265fa3ce6b8cc3b184354523faf42f465c.jpg',
+      ],
+    },
+    location: {
+      region_name: 'Grand Est',
+      department_id: '57',
+      department_name: 'Moselle',
+      city: 'Metz',
+      zipcode: '57000',
+      lat: 49.1193,
+      lng: 6.1757,
+    },
+    attributes: [
+      { key: 'real_estate_type', value: '1', value_label: 'Appartement' },
+      { key: 'rooms', value: '2' },
+      { key: 'square', value: '44' },
+      { key: 'immo_sell_type', value: 'new', value_label: 'Neuf' },
+    ],
+  },
 ];
 
 /**

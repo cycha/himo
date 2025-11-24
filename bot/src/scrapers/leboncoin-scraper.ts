@@ -80,7 +80,7 @@ export class LeBonCoinScraper extends BaseScraper {
       description: rawAd.body || '',
       thumb_urls: rawAd.images?.urls || [],
       url: rawAd.url.startsWith('http') ? rawAd.url : `https://www.leboncoin.fr/${rawAd.url}`,
-      price: typeof rawAd.price === 'string' ? parseInt(rawAd.price) : rawAd.price,
+      price: this.parsePrice(rawAd.price),
       provider: 'leboncoin',
       location: {
         region_name: rawAd.location?.region_name,
@@ -94,6 +94,18 @@ export class LeBonCoinScraper extends BaseScraper {
 
     this.parseAdAttributes(ad, rawAd.attributes);
     return ad;
+  }
+
+  /**
+   * Parse price safely: removes all non-digit characters
+   * Handles formats like "311 124" (with space separator)
+   */
+  private parsePrice(price?: string | number): number {
+    if (typeof price === 'string') {
+      // Remove all non-digit characters (spaces, commas, dots, etc.)
+      return parseInt(price.replace(/\D/g, ''), 10) || 0;
+    }
+    return typeof price === 'number' ? price : 0;
   }
 
   /**
