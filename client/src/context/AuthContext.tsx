@@ -48,19 +48,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await api.login({ email, password });
-    setUser({
-      id: response.data.id,
-      email: response.data.email,
-    });
+    await api.login({ email, password });
+    // Fetch full profile with all fields including created_at
+    const profileResponse = await api.getProfile();
+    setUser(profileResponse.data);
   };
 
   const signup = async (email: string, password: string) => {
-    const response = await api.signup({ email, password });
-    setUser({
-      id: response.data.id,
-      email: response.data.email,
-    });
+    await api.signup({ email, password });
+    // Fetch full profile with all fields including created_at
+    const profileResponse = await api.getProfile();
+    setUser(profileResponse.data);
   };
 
   const logout = () => {
