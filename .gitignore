@@ -56,3 +56,8 @@ coverage/
 *.pid
 *.seed
 *.pid.lock
+
+# Bot scraper storage and debug files
+.scraper-storage/
+blocked-response.html
+failed-scrape.html
