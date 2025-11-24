@@ -42,10 +42,10 @@ importers:
     dependencies:
       '@himo/commons':
         specifier: file:../commons
-        version: link:../commons
+        version: file:commons
       '@prisma/client':
-        specifier: ^6.19.0
-        version: 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+        specifier: ^7.0.0
+        version: 7.0.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -133,10 +133,10 @@ importers:
     dependencies:
       '@himo/commons':
         specifier: file:../commons
-        version: link:../commons
+        version: file:commons
       '@prisma/client':
-        specifier: ^6.19.0
-        version: 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
+        specifier: ^7.0.0
+        version: 7.0.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -672,6 +672,9 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@himo/commons@file:commons':
+    resolution: {directory: commons, type: directory}
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -801,12 +804,15 @@ packages:
   '@paralleldrive/cuid2@2.3.1':
     resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
 
-  '@prisma/client@6.19.0':
-    resolution: {integrity: sha512-QXFT+N/bva/QI2qoXmjBzL7D6aliPffIwP+81AdTGq0FXDoLxLkWivGMawG8iM5B9BKfxLIXxfWWAF6wbuJU6g==}
-    engines: {node: '>=18.18'}
+  '@prisma/client-runtime-utils@7.0.0':
+    resolution: {integrity: sha512-PAiFgMBPrLSaakBwUpML5NevipuKSL3rtNr8pZ8CZ3OBXo0BFcdeGcBIKw/CxJP6H4GNa4+l5bzJPrk8Iq6tDw==}
+
+  '@prisma/client@7.0.0':
+    resolution: {integrity: sha512-FM1NtJezl0zH3CybLxcbJwShJt7xFGSRg+1tGhy3sCB8goUDnxnBR+RC/P35EAW8gjkzx7kgz7bvb0MerY2VSw==}
+    engines: {node: ^20.19 || ^22.12 || ^24.0}
     peerDependencies:
       prisma: '*'
-      typescript: '>=5.1.0'
+      typescript: '>=5.4.0'
     peerDependenciesMeta:
       prisma:
         optional: true
@@ -3536,6 +3542,9 @@ packages:
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
+  zod@4.1.13:
+    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -3865,6 +3874,13 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
+  '@himo/commons@file:commons':
+    dependencies:
+      bcrypt: 6.0.0
+      dotenv: 17.2.3
+      jsonwebtoken: 9.0.2
+      zod: 4.1.13
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.7':
@@ -4100,7 +4116,11 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
 
-  '@prisma/client@6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)':
+  '@prisma/client-runtime-utils@7.0.0': {}
+
+  '@prisma/client@7.0.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)':
+    dependencies:
+      '@prisma/client-runtime-utils': 7.0.0
     optionalDependencies:
       prisma: 6.19.0(typescript@5.9.3)
       typescript: 5.9.3
@@ -6983,3 +7003,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@4.1.12: {}
+
+  zod@4.1.13: {}
