@@ -4,12 +4,10 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
-  engineType      = "library"
 }
 
 datasource db {
   provider   = "postgresql"
-  url        = env("DATABASE_URL")
   extensions = [postgis(schema: "public")]
 }
 
@@ -72,7 +70,7 @@ enum RealEstateType {
   maison
   terrain
   parking
-  local_commercial @map("local-commercial")
+  local_commercial
 }
 
 enum ImmoSellType {

@@ -84,7 +84,7 @@ describe('AdService', () => {
     });
 
     it('should handle hyphenated real estate type', async () => {
-      // Create a local-commercial ad
+      // Create a local_commercial ad
       await createTestAd({
         url: 'https://example.com/ad4',
         realEstateType: RealEstateType.local_commercial,
@@ -349,7 +349,7 @@ describe('AdService', () => {
     });
 
     it('should convert type with hyphens to underscores', async () => {
-      // Create a local commercial ad
+      // Create a local_commercial ad
       await createTestAd({
         realEstateType: RealEstateType.local_commercial,
       });
