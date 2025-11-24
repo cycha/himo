@@ -239,7 +239,7 @@ const BotControlPanel: React.FC = () => {
                       )}
                     </p>
                   </div>
-                  {!status.isRunning && status.lastRun?.adsSaved !== undefined && (
+                  {!status.isRunning && status.lastRun?.adsSaved != null && (
                     <>
                       <div>
                         <span className="text-muted-foreground">{t('bot.details.adsSaved')}:</span>
@@ -368,7 +368,7 @@ const BotControlPanel: React.FC = () => {
                         {run.triggeredBy === 'cron'
                           ? t('bot.recentRuns.automated')
                           : t('bot.recentRuns.manual')}
-                        {run.adsSaved !== undefined &&
+                        {run.adsSaved != null &&
                           ` • ${run.adsSaved} ${t('bot.details.adsSaved').toLowerCase()}`}
                       </p>
                     </div>
@@ -377,7 +377,7 @@ const BotControlPanel: React.FC = () => {
                     <p className="text-sm font-medium">
                       {formatDuration(run.startTime, run.endTime)}
                     </p>
-                    {run.pagesScraped !== undefined && (
+                    {run.pagesScraped != null && (
                       <p className="text-xs text-muted-foreground">
                         {run.pagesScraped} {t('bot.details.pages').toLowerCase()}
                       </p>
