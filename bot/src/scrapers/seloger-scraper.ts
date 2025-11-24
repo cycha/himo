@@ -116,7 +116,7 @@ export class SeLogerScraper extends BaseScraper {
     return { ads, isUpToDate };
   }
 
-  private parseXmlAd($: cheerio.CheerioAPI, element: cheerio.AnyNode): SeLogerAd {
+  private parseXmlAd($: cheerio.CheerioAPI, element: any): SeLogerAd {
     const ad: SeLogerAd = {};
 
     $(element)
@@ -151,7 +151,7 @@ export class SeLogerScraper extends BaseScraper {
     return ad;
   }
 
-  private parseLocation($: cheerio.CheerioAPI, element: cheerio.AnyNode): SeLogerLocation {
+  private parseLocation($: cheerio.CheerioAPI, element: any): SeLogerLocation {
     const location: SeLogerLocation = {};
 
     $(element)
@@ -288,7 +288,7 @@ export class SeLogerScraper extends BaseScraper {
 
         return new Date(year, month, day, hour, minute, second);
       }
-    } catch (error) {
+    } catch {
       this.logger.warn(`Failed to parse date: ${dateStr}`);
     }
 

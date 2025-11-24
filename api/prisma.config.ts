@@ -2,7 +2,7 @@ import { defineConfig, env } from 'prisma/config';
 
 // Try to load dotenv if available (for development)
 try {
-  require('dotenv/config');
+  await import('dotenv/config');
 } catch {
   // dotenv not available, environment variables should be set externally
 }
