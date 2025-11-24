@@ -1,0 +1,930 @@
+openapi: 3.0.3
+info:
+  title: Himo API
+  description: |
+    REST API for Himo real estate aggregator. This API provides endpoints for:
+    - User authentication (signup, login, profile)
+    - Real estate ad search and retrieval
+    - Bot management (scraper control and monitoring)
+
+    ## Authentication
+    Most endpoints require JWT authentication. After logging in, include the JWT token in the Authorization header:
+    ```
+    Authorization: Bearer <your-token>
+    ```
+  version: 2.0.0
+  contact:
+    name: Himo API Support
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://api.himo.example.com/api
+    description: Production server
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Users
+    description: User authentication and profile management
+  - name: Ads
+    description: Real estate advertisement search and retrieval
+  - name: Bot
+    description: Web scraper bot management and monitoring
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check if the API is running
+      operationId: healthCheck
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: API is running
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: '2025-01-15T10:30:00.000Z'
+
+  /users/signup:
+    post:
+      tags:
+        - Users
+      summary: Register a new user
+      description: Create a new user account with email and password
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupDto'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid input or user already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Login user
+      description: Authenticate user and receive JWT token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      description: Get authenticated user's profile information
+      operationId: getProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /ads/search:
+    get:
+      tags:
+        - Ads
+      summary: Search for ads (GET)
+      description: Search for real estate ads with filters. GET method is the primary RESTful approach.
+      operationId: searchAdsGet
+      parameters:
+        - name: title
+          in: query
+          description: Filter by title (partial match)
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Filter by real estate type
+          schema:
+            $ref: '#/components/schemas/RealEstateType'
+        - name: sellType
+          in: query
+          description: Filter by sell type (new or old)
+          schema:
+            $ref: '#/components/schemas/ImmoSellType'
+        - name: priceMin
+          in: query
+          description: Minimum price filter
+          schema:
+            type: number
+            minimum: 0
+        - name: priceMax
+          in: query
+          description: Maximum price filter
+          schema:
+            type: number
+            minimum: 0
+        - name: surfaceMin
+          in: query
+          description: Minimum surface area filter (m²)
+          schema:
+            type: number
+            minimum: 0
+        - name: surfaceMax
+          in: query
+          description: Maximum surface area filter (m²)
+          schema:
+            type: number
+            minimum: 0
+        - name: city
+          in: query
+          description: Filter by city name
+          schema:
+            type: string
+        - name: zipcode
+          in: query
+          description: Filter by zipcode
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination (0-indexed)
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+    post:
+      tags:
+        - Ads
+      summary: Search for ads (POST)
+      description: Search for real estate ads with filters. POST method provided for backward compatibility with complex search queries.
+      operationId: searchAdsPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchAdDto'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+
+  /ads/{id}:
+    get:
+      tags:
+        - Ads
+      summary: Get ad by ID
+      description: Retrieve a single real estate ad by its ID
+      operationId: getAdById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Ad ID (UUID)
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ad retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Ad'
+        '404':
+          description: Ad not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /bot/status:
+    get:
+      tags:
+        - Bot
+      summary: Get bot status
+      description: Get current status of the web scraper bot
+      operationId: getBotStatus
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Bot status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotStatusResponse'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /bot/stats:
+    get:
+      tags:
+        - Bot
+      summary: Get bot statistics
+      description: Get detailed statistics about bot runs and performance
+      operationId: getBotStats
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Bot statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotStatsResponse'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /bot/cron/start:
+    post:
+      tags:
+        - Bot
+      summary: Start bot cron scheduler
+      description: Start the automated cron scheduler for periodic scraping
+      operationId: startBotCron
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Cron scheduler started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotMessageResponse'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /bot/cron/stop:
+    post:
+      tags:
+        - Bot
+      summary: Stop bot cron scheduler
+      description: Stop the automated cron scheduler
+      operationId: stopBotCron
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Cron scheduler stopped successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotMessageResponse'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /bot/trigger:
+    post:
+      tags:
+        - Bot
+      summary: Trigger manual scraping
+      description: Manually trigger a scraping task
+      operationId: triggerBot
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Scraping task started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotStartResponse'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Bot is already running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /bot/stop:
+    post:
+      tags:
+        - Bot
+      summary: Stop the bot
+      description: Stop the currently running bot scraping task
+      operationId: stopBot
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Bot stopped successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotMessageResponse'
+        '400':
+          description: Bot is not running
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token authentication. Obtain token via /users/login endpoint.
+
+  schemas:
+    SignupDto:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          minLength: 6
+          description: User password (min 6 characters)
+          example: securePassword123
+
+    LoginDto:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          description: User password
+          example: securePassword123
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: User created successfully
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: 550e8400-e29b-41d4-a716-446655440000
+            email:
+              type: string
+              format: email
+              example: user@example.com
+            token:
+              type: string
+              description: JWT authentication token
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    ProfileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: 550e8400-e29b-41d4-a716-446655440000
+            email:
+              type: string
+              format: email
+              example: user@example.com
+            created_at:
+              type: string
+              format: date-time
+              example: '2025-01-15T10:30:00.000Z'
+
+    SearchAdDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Filter by title (partial match)
+          example: appartement Paris
+        type:
+          $ref: '#/components/schemas/RealEstateType'
+        sellType:
+          $ref: '#/components/schemas/ImmoSellType'
+        priceMin:
+          type: number
+          minimum: 0
+          description: Minimum price filter
+          example: 100000
+        priceMax:
+          type: number
+          minimum: 0
+          description: Maximum price filter
+          example: 500000
+        surfaceMin:
+          type: number
+          minimum: 0
+          description: Minimum surface area filter (m²)
+          example: 50
+        surfaceMax:
+          type: number
+          minimum: 0
+          description: Maximum surface area filter (m²)
+          example: 150
+        city:
+          type: string
+          description: Filter by city name
+          example: Paris
+        zipcode:
+          type: string
+          description: Filter by zipcode
+          example: '75001'
+        location:
+          type: object
+          description: Location filter with coordinates
+          properties:
+            address_components:
+              type: array
+              items:
+                type: object
+                properties:
+                  types:
+                    type: array
+                    items:
+                      type: string
+                  short_name:
+                    type: string
+            coordinates:
+              type: array
+              description: GPS coordinates [longitude, latitude]
+              items:
+                type: number
+              minItems: 2
+              maxItems: 2
+              example: [2.3522, 48.8566]
+        page:
+          type: integer
+          minimum: 0
+          default: 0
+          description: Page number for pagination (0-indexed)
+          example: 0
+
+    Ad:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: uuid
+          description: Ad unique identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+        title:
+          type: string
+          description: Ad title
+          example: Appartement 3 pièces Paris 15ème
+        description:
+          type: string
+          description: Ad description
+          example: Bel appartement de 3 pièces situé dans le 15ème arrondissement...
+        thumb_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: Thumbnail image URLs
+          example: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg']
+        url:
+          type: string
+          format: uri
+          description: Original ad URL
+          example: https://www.leboncoin.fr/ad/12345
+        real_estate_type:
+          $ref: '#/components/schemas/RealEstateType'
+        rooms:
+          type: integer
+          minimum: 0
+          description: Number of rooms
+          example: 3
+        surface:
+          type: integer
+          minimum: 0
+          description: Surface area in m²
+          example: 75
+        immo_sell_type:
+          $ref: '#/components/schemas/ImmoSellType'
+        price:
+          type: number
+          description: Price in euros
+          example: 350000
+        provider:
+          $ref: '#/components/schemas/Provider'
+        location:
+          type: object
+          properties:
+            region_name:
+              type: string
+              example: Île-de-France
+            department_id:
+              type: string
+              example: '75'
+            department_name:
+              type: string
+              example: Paris
+            city:
+              type: string
+              example: Paris
+            zipcode:
+              type: string
+              example: '75015'
+            coordinates:
+              type: array
+              description: GPS coordinates [longitude, latitude]
+              items:
+                type: number
+              minItems: 2
+              maxItems: 2
+              example: [2.3522, 48.8566]
+        release_date:
+          type: string
+          format: date-time
+          description: When the ad was published
+          example: '2025-01-15T10:30:00.000Z'
+        created_at:
+          type: string
+          format: date-time
+          description: When the ad was added to database
+          example: '2025-01-15T10:30:00.000Z'
+
+    SearchResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ad'
+        page:
+          type: integer
+          description: Current page number (0-indexed)
+          example: 0
+        count:
+          type: integer
+          description: Number of results in current page
+          example: 20
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 5
+
+    BotRun:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        status:
+          $ref: '#/components/schemas/BotRunStatus'
+        startTime:
+          type: string
+          format: date-time
+          example: '2025-01-15T10:30:00.000Z'
+        endTime:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2025-01-15T11:30:00.000Z'
+        adsSaved:
+          type: integer
+          nullable: true
+          description: Number of ads saved during this run
+          example: 150
+        pagesScraped:
+          type: integer
+          nullable: true
+          description: Number of pages scraped
+          example: 10
+        failurePercentage:
+          type: number
+          nullable: true
+          description: Percentage of failed requests
+          example: 2.5
+        averageRetriesPerRequest:
+          type: number
+          nullable: true
+          description: Average number of retries per request
+          example: 1.2
+        errorMessage:
+          type: string
+          nullable: true
+          description: Error message if run failed
+        triggeredBy:
+          type: string
+          enum: [cron, manual]
+          nullable: true
+          description: How the run was triggered
+          example: manual
+
+    BotStatusResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            isRunning:
+              type: boolean
+              description: Whether bot is currently running
+              example: true
+            currentRun:
+              allOf:
+                - $ref: '#/components/schemas/BotRun'
+              nullable: true
+              description: Currently running bot task
+            lastRun:
+              allOf:
+                - $ref: '#/components/schemas/BotRun'
+              nullable: true
+              description: Last completed bot task
+
+    BotStatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            totalRuns:
+              type: integer
+              description: Total number of bot runs
+              example: 45
+            successfulRuns:
+              type: integer
+              description: Number of successful runs
+              example: 42
+            failedRuns:
+              type: integer
+              description: Number of failed runs
+              example: 3
+            totalAdsSaved:
+              type: integer
+              description: Total ads saved across all runs
+              example: 6750
+            averageAdsSavedPerRun:
+              type: number
+              description: Average ads saved per run
+              example: 150.5
+            lastRunTime:
+              type: string
+              format: date-time
+              nullable: true
+              description: Timestamp of last run
+              example: '2025-01-15T10:30:00.000Z'
+            totalAdsInDatabase:
+              type: integer
+              description: Total number of ads in database
+              example: 10000
+            recentRuns:
+              type: array
+              description: List of recent bot runs
+              items:
+                $ref: '#/components/schemas/BotRun'
+
+    BotStartResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/BotRun'
+        message:
+          type: string
+          example: Scraping task started successfully
+
+    BotMessageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Bot cron scheduler started successfully
+
+    RealEstateType:
+      type: string
+      enum:
+        - appartement
+        - maison
+        - terrain
+        - parking
+        - local-commercial
+      description: Type of real estate property
+
+    ImmoSellType:
+      type: string
+      enum:
+        - neuf
+        - ancien
+      description: Property condition (new or old)
+
+    Provider:
+      type: string
+      enum:
+        - leboncoin
+        - seloger
+        - pap
+        - bienici
+      description: Source provider of the ad
+
+    BotRunStatus:
+      type: string
+      enum:
+        - running
+        - completed
+        - failed
+        - stopped
+      description: Status of a bot run
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+          example: Invalid credentials
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: email
+              message:
+                type: string
+                example: Invalid email format

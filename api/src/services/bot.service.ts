@@ -54,7 +54,7 @@ export class BotServicePrisma implements IBotService {
       const response = await axios.get(`${this.botUrl}/status`, { timeout: 3000 });
       serviceHealthy = true;
       cronSchedulerActive = response.data.scrapingJobRunning || false;
-    } catch (error) {
+    } catch {
       // Bot service is not reachable
       serviceHealthy = false;
     }
@@ -92,7 +92,7 @@ export class BotServicePrisma implements IBotService {
     try {
       await axios.post(`${this.botUrl}/start`, {}, { timeout: 5000 });
       return true;
-    } catch (error) {
+    } catch {
       throw new Error('Bot service is not available');
     }
   }
@@ -104,7 +104,7 @@ export class BotServicePrisma implements IBotService {
     try {
       await axios.post(`${this.botUrl}/stop`, {}, { timeout: 5000 });
       return true;
-    } catch (error) {
+    } catch {
       throw new Error('Bot service is not available');
     }
   }

@@ -15,14 +15,13 @@ import {
   Activity,
   Database,
   TrendingUp,
-  Clock,
   CheckCircle,
   XCircle,
   Loader2,
   Circle,
   AlertCircle,
 } from 'lucide-react';
-import { useBotStatus, useBotStats, useStartBotCron, useStopBotCron, useTriggerBotScrape, useStopBot } from '../../../hooks/api/useBot';
+import { useBotStatus, useBotStats, useStartBotCron, useStopBotCron, useTriggerBotScrape } from '../../../hooks/api/useBot';
 import { BotRunStatus } from '../../../types';
 
 const BotControlPanel: React.FC = () => {
@@ -32,7 +31,6 @@ const BotControlPanel: React.FC = () => {
   const startBotCron = useStartBotCron();
   const stopBotCron = useStopBotCron();
   const triggerScrape = useTriggerBotScrape();
-  const stopBot = useStopBot();
 
   const handleStartCron = () => {
     startBotCron.mutate();
@@ -44,48 +42,6 @@ const BotControlPanel: React.FC = () => {
 
   const handleTriggerScrape = () => {
     triggerScrape.mutate();
-  };
-
-  const handleStop = () => {
-    stopBot.mutate();
-  };
-
-  const getStatusBadge = () => {
-    if (!status) return null;
-
-    if (status.isRunning) {
-      return (
-        <Badge variant="default" className="bg-green-600">
-          <Activity className="h-3 w-3 mr-1" />
-          {t('bot.status.running')}
-        </Badge>
-      );
-    }
-
-    if (status.lastRun?.status === BotRunStatus.Completed) {
-      return (
-        <Badge variant="secondary">
-          <CheckCircle className="h-3 w-3 mr-1" />
-          {t('bot.status.idle')}
-        </Badge>
-      );
-    }
-
-    if (status.lastRun?.status === BotRunStatus.Failed) {
-      return (
-        <Badge variant="destructive">
-          <XCircle className="h-3 w-3 mr-1" />
-          {t('bot.status.failed')}
-        </Badge>
-      );
-    }
-
-    return (
-      <Badge variant="outline">
-        <Clock className="h-3 w-3 mr-1" />
-        {t('bot.status.ready')}
-      </Badge>
-    );
   };
 
   const formatDate = (dateString?: string) => {

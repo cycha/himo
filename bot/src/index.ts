@@ -26,7 +26,6 @@ const scrapingJob = cron.schedule(
     }
   },
   {
-    scheduled: true,  // Auto-start on boot
     timezone: 'Europe/Paris',
   }
 );
@@ -42,10 +41,13 @@ const cleanupJob = cron.schedule(
     }
   },
   {
-    scheduled: true,  // Auto-start on boot
     timezone: 'Europe/Paris',
   }
 );
+
+// Start jobs immediately (auto-start on boot)
+scrapingJob.start();
+cleanupJob.start();
 
 // Set jobs in server so they can be controlled via HTTP
 setJobs(scrapingJob, cleanupJob);
