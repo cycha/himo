@@ -6,7 +6,7 @@ FROM node:25-alpine
 RUN apk add --no-cache python3 make g++
 
 # Install pnpm (pinned to match lockfile)
-RUN npm install -g pnpm@10.22.0
+RUN npm cache clean --force && npm install -g pnpm@10.22.0
 
 # Set working directory
 WORKDIR /app
