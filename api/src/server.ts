@@ -1,14 +1,17 @@
+// Load environment variables FIRST before any other imports
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load .env from project root (works when running from monorepo root)
+dotenv.config({ path: path.join(process.cwd(), '.env') });
+
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
 import { connect, disconnect } from './lib/prisma';
 import router from './routes';
 import { errorHandler } from './middleware/error-handler';
-
-// Load environment variables
-dotenv.config();
 
 // Initialize Express app
 const app: Application = express();
@@ -45,7 +48,7 @@ app.set('trust proxy', 1);
 if (process.env.NODE_ENV === 'development') {
   app.use((req: Request, res: Response, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    if (Object.keys(req.body).length > 0) {
+    if (req.body && Object.keys(req.body).length > 0) {
       console.log('Body:', JSON.stringify(req.body, null, 2));
     }
     next();

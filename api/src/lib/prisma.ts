@@ -2,22 +2,36 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
+// Ensure environment variables are loaded (idempotent - safe to call multiple times)
+import 'dotenv/config';
+
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
 const globalForPrisma = global as unknown as { prisma: PrismaClient; pool: Pool };
 
-// Ensure DATABASE_URL is defined
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is not defined');
+// Parse DATABASE_URL to ensure password is properly handled as string
+function parseConnectionConfig() {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error('DATABASE_URL environment variable is required');
+  }
+
+  // Parse the connection URL
+  const url = new URL(connectionString);
+
+  return {
+    host: url.hostname,
+    port: parseInt(url.port, 10),
+    database: url.pathname.slice(1), // Remove leading slash
+    user: url.username,
+    password: url.password, // Explicitly extract password as string
+    max: process.env.NODE_ENV === 'test' ? 5 : 20,
+    ssl: false,
+  };
 }
 
 // Create PostgreSQL connection pool with appropriate limits
-const pool = globalForPrisma.pool || new Pool({
-  connectionString: process.env.DATABASE_URL,
-  max: process.env.NODE_ENV === 'test' ? 5 : 20, // Limit connections in test environment
-  // Ensure password is treated as string
-  ssl: false,
-});
+const pool = globalForPrisma.pool || new Pool(parseConnectionConfig());
 
 // Create PostgreSQL adapter for Prisma v7
 const adapter = new PrismaPg(pool);
