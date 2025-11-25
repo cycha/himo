@@ -5,6 +5,29 @@ import { Logger } from '../utils/logger';
 
 const logger = new Logger('ScrappingTask');
 
+interface ScraperResult {
+  adsSaved: number;
+  pagesScraped: number;
+  failurePercentage: number;
+  averageRetriesPerRequest: number;
+}
+
+interface Scraper {
+  scrape(): Promise<ScraperResult>;
+}
+
+async function runScraper(name: string, scraper: Scraper): Promise<ScraperResult> {
+  logger.info('========================================');
+  logger.info(`Starting ${name} scraper...`);
+  logger.info('========================================');
+  const results = await scraper.scrape();
+  logger.info(`✅ ${name} scraping completed`);
+  logger.info(`   Ads saved: ${results.adsSaved}`);
+  logger.info(`   Pages scraped: ${results.pagesScraped}`);
+  logger.info('');
+  return results;
+}
+
 export async function scrapingTask(): Promise<void> {
   const startTime = Date.now();
   let botRunId: string | null = null;
@@ -35,44 +58,31 @@ export async function scrapingTask(): Promise<void> {
       logger.info(`Created new bot run: ${botRunId}`);
     }
 
-    // Run LeBonCoin scraper
+    // Run scrapers
     logger.info('');
-    logger.info('========================================');
-    logger.info('Starting LeBonCoin scraper...');
-    logger.info('========================================');
-    const leboncoinResults = await leboncoinScraper.scrape();
-    logger.info('✅ LeBonCoin scraping completed');
-    logger.info(`   Ads saved: ${leboncoinResults.adsSaved}`);
-    logger.info(`   Pages scraped: ${leboncoinResults.pagesScraped}`);
-    logger.info('');
+    const scrapers = [
+      { name: 'LeBonCoin', scraper: leboncoinScraper },
+      { name: 'SeLoger', scraper: selogerScraper },
+    ];
 
-    // Run SeLoger scraper
-    logger.info('========================================');
-    logger.info('Starting SeLoger scraper...');
-    logger.info('========================================');
-    const selogerResults = await selogerScraper.scrape();
-    logger.info('✅ SeLoger scraping completed');
-    logger.info(`   Ads saved: ${selogerResults.adsSaved}`);
-    logger.info(`   Pages scraped: ${selogerResults.pagesScraped}`);
-    logger.info('');
+    const results = await Promise.all(
+      scrapers.map(({ name, scraper }) => runScraper(name, scraper))
+    );
 
     // Aggregate results
-    const totalAdsSaved = leboncoinResults.adsSaved + selogerResults.adsSaved;
-    const totalPagesScraped = leboncoinResults.pagesScraped + selogerResults.pagesScraped;
-    const avgFailureRate =
-      (leboncoinResults.failurePercentage + selogerResults.failurePercentage) / 2;
-    const avgRetries =
-      (leboncoinResults.averageRetriesPerRequest + selogerResults.averageRetriesPerRequest) / 2;
+    const totalAdsSaved = results.reduce((sum, r) => sum + r.adsSaved, 0);
+    const totalPagesScraped = results.reduce((sum, r) => sum + r.pagesScraped, 0);
+    const avgFailureRate = results.reduce((sum, r) => sum + r.failurePercentage, 0) / results.length;
+    const avgRetries = results.reduce((sum, r) => sum + r.averageRetriesPerRequest, 0) / results.length;
 
     logger.info('##################################################################');
     logger.info('## SCRAPING TASK COMPLETED');
     logger.info(`## Total ads saved: ${totalAdsSaved}`);
-    logger.info(
-      `##   - LeBonCoin: ${leboncoinResults.adsSaved} ads, ${leboncoinResults.pagesScraped} pages`
-    );
-    logger.info(
-      `##   - SeLoger: ${selogerResults.adsSaved} ads, ${selogerResults.pagesScraped} pages`
-    );
+    results.forEach((result, index) => {
+      logger.info(
+        `##   - ${scrapers[index].name}: ${result.adsSaved} ads, ${result.pagesScraped} pages`
+      );
+    });
     logger.info(`## Total pages scraped: ${totalPagesScraped}`);
     logger.info(`## Avg failure rate: ${avgFailureRate.toFixed(2)}%`);
     logger.info(`## Avg retries per failed request: ${avgRetries.toFixed(2)}`);
