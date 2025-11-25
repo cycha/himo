@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import dotenv from 'dotenv';
 import { scrapingTask } from './tasks/scraping-task';
 import { cleanupTask } from './tasks/cleanup-task';
+import { fixStuckRunsTask } from './tasks/fix-stuck-runs-task';
 import { startServer, setJobs } from './server';
 import { Logger } from './utils/logger';
 
@@ -45,9 +46,25 @@ const cleanupJob = cron.schedule(
   }
 );
 
+// Fix stuck runs task - runs daily at 3 AM
+const fixStuckRunsJob = cron.schedule(
+  '0 3 * * *',
+  async () => {
+    try {
+      await fixStuckRunsTask();
+    } catch (error) {
+      logger.error('Fix stuck runs job failed', error);
+    }
+  },
+  {
+    timezone: 'Europe/Paris',
+  }
+);
+
 // Start jobs immediately (auto-start on boot)
 scrapingJob.start();
 cleanupJob.start();
+fixStuckRunsJob.start();
 
 // Set jobs in server so they can be controlled via HTTP
 setJobs(scrapingJob, cleanupJob);
@@ -57,6 +74,7 @@ logger.info('🤖 Himo Bot v2.0.0');
 logger.info(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 logger.info(`📅 Scraping schedule: ${scrapingSchedule}`);
 logger.info(`🗑️  Cleanup schedule: 0 0 1 * *`);
+logger.info(`🔧 Fix stuck runs: 0 3 * * *`);
 logger.info(`✅ Bot service started (cron jobs enabled by default)`);
 logger.info('========================================');
 
@@ -68,6 +86,7 @@ exitEvents.forEach((eventType) => {
 
     scrapingJob.stop();
     cleanupJob.stop();
+    fixStuckRunsJob.stop();
 
     try {
       const { disconnect } = await import('./lib/prisma');
@@ -81,4 +100,4 @@ exitEvents.forEach((eventType) => {
 });
 
 // Export for testing or manual execution
-export { scrapingTask, cleanupTask };
+export { scrapingTask, cleanupTask, fixStuckRunsTask };
