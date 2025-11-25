@@ -82,7 +82,9 @@ pnpm --filter api test
 pnpm --filter api test -- <pattern>
 ```
 
-## Git Commits
+## Git & PR Workflow
+- When creating pull requests, ALWAYS target the "develop" branch (e.g., use `gh pr create --base develop`).
+- Do not create PRs against "master" or "main" unless explicitly requested.
 
 When creating commits:
 - Write clear, concise commit messages
