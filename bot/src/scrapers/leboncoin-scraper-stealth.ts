@@ -682,7 +682,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   /**
    * Parse price safely - handles multiple formats (string, number, array, object)
    */
-  private parsePrice(price?: any): number {
+  private parsePrice(price?: unknown): number {
     // Handle undefined/null
     if (!price) return 0;
 
