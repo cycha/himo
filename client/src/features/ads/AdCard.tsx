@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../../components/ui/card';
-import { MapPin, Calendar, Home, Ruler } from 'lucide-react';
+import { MapPin, Calendar, Home, Ruler, Globe } from 'lucide-react';
 import type { Ad } from '../../types';
 
 interface AdCardProps {
@@ -73,6 +73,10 @@ const AdCard: React.FC<AdCardProps> = ({ ad }) => {
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
                 {new Date(ad.release_date).toLocaleDateString()}
+              </div>
+              <div className="flex items-center gap-1">
+                <Globe className="h-4 w-4" />
+                {t(`providers.${ad.provider}`)}
               </div>
             </div>
           </CardContent>

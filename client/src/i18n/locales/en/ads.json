@@ -28,6 +28,13 @@
   "list": {
     "noAdsTitle": "No ads found",
     "noAdsDescription": "Try adjusting your search criteria.",
-    "rooms": "rooms"
+    "rooms": "rooms",
+    "source": "Source"
+  },
+  "providers": {
+    "leboncoin": "LeBonCoin",
+    "seloger": "SeLoger",
+    "pap": "PAP",
+    "bienici": "Bien'ici"
   }
 }
