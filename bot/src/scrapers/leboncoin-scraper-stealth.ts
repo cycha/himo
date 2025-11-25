@@ -646,12 +646,21 @@ export class LeBonCoinScraperStealth extends BaseScraper {
    * Transform raw ad data
    */
   private transformRawAd(rawAd: RawAdData, releaseDate: Date): Partial<BotAdData> {
+    const parsedPrice = this.parsePrice(rawAd.price);
+
+    // Debug logging for price extraction
+    if (parsedPrice === 0 && rawAd.price !== undefined && rawAd.price !== 0) {
+      this.logger.warn(`⚠️ Price parsing issue for ad "${rawAd.subject?.substring(0, 50)}"`);
+      this.logger.warn(`   Raw price value: ${JSON.stringify(rawAd.price)}`);
+      this.logger.warn(`   Raw price type: ${typeof rawAd.price}`);
+    }
+
     const ad: Partial<BotAdData> = {
       title: rawAd.subject?.substring(0, 200) || 'Sans titre',
       description: rawAd.body?.substring(0, 10000) || '',
       thumb_urls: rawAd.images?.urls?.slice(0, 10) || [],
       url: this.buildAdUrl(rawAd.url),
-      price: this.parsePrice(rawAd.price),
+      price: parsedPrice,
       provider: 'leboncoin',
       location: this.buildLocation(rawAd.location),
       release_date: releaseDate,
@@ -671,13 +680,35 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   }
 
   /**
-   * Parse price safely
+   * Parse price safely - handles multiple formats (string, number, array, object)
    */
-  private parsePrice(price?: string | number): number {
-    if (typeof price === 'string') {
-      return parseInt(price.replace(/\D/g, '')) || 0;
+  private parsePrice(price?: any): number {
+    // Handle undefined/null
+    if (!price) return 0;
+
+    // Handle array format (e.g., [123000])
+    if (Array.isArray(price) && price.length > 0) {
+      return this.parsePrice(price[0]);
     }
-    return typeof price === 'number' ? price : 0;
+
+    // Handle object format (e.g., {value: 123000})
+    if (typeof price === 'object' && price.value !== undefined) {
+      return this.parsePrice(price.value);
+    }
+
+    // Handle string format
+    if (typeof price === 'string') {
+      const cleaned = price.replace(/\D/g, '');
+      return parseInt(cleaned) || 0;
+    }
+
+    // Handle number format
+    if (typeof price === 'number') {
+      return price;
+    }
+
+    // Fallback
+    return 0;
   }
 
   /**

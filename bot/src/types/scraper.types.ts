@@ -25,7 +25,7 @@ export interface RawAdData {
   list_id: string;
   subject: string;
   body: string;
-  price: number | string;
+  price: number | string | number[] | string[] | { value: number };
   images: {
     urls: string[];
   };
