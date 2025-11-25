@@ -58,7 +58,7 @@ export async function scrapingTask(): Promise<void> {
       logger.info(`Created new bot run: ${botRunId}`);
     }
 
-    // Run scrapers
+    // Run scrapers with individual error handling
     logger.info('');
     const scrapers = [
       { name: 'LeBonCoin', scraper: leboncoinScraper },
@@ -66,7 +66,20 @@ export async function scrapingTask(): Promise<void> {
     ];
 
     const results = await Promise.all(
-      scrapers.map(({ name, scraper }) => runScraper(name, scraper))
+      scrapers.map(async ({ name, scraper }) => {
+        try {
+          return await runScraper(name, scraper);
+        } catch (error) {
+          logger.error(`${name} scraper failed:`, error);
+          // Return empty result on failure so other scrapers can continue
+          return {
+            adsSaved: 0,
+            pagesScraped: 0,
+            failurePercentage: 100,
+            averageRetriesPerRequest: 0,
+          };
+        }
+      })
     );
 
     // Aggregate results
