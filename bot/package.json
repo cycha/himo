@@ -32,7 +32,9 @@
     "pg": "^8.11.3",
     "playwright": "^1.40.1",
     "playwright-extra": "^4.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-core": "^24.31.0",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "puppeteer-real-browser": "^1.4.4"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",
