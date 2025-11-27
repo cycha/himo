@@ -33,7 +33,9 @@
   },
   "pnpm": {
     "overrides": {
-      "hono": ">=4.10.3"
+      "hono": ">=4.10.3",
+      "valibot": ">=1.2.0",
+      "body-parser": ">=2.2.1"
     }
   },
   "engines": {
