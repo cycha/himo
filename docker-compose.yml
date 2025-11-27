@@ -45,18 +45,6 @@ services:
       - himo-network
     restart: unless-stopped
 
-  tor:
-    image: dperson/torproxy
-    container_name: himo-tor
-    restart: unless-stopped
-    ports:
-      - "9050:9050"  # SOCKS5 proxy
-      - "9051:9051"  # Control port for IP rotation
-    networks:
-      - himo-network
-    volumes:
-      - ./torrc:/etc/tor/torrc:ro
-
   bot:
     image: himo-bot
     container_name: himo-bot
@@ -69,14 +57,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      tor:
-        condition: service_started
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/himo?schema=public
       SCRAPING_INTERVAL: ${SCRAPING_INTERVAL:-0 0 */6 * * *}  # Every 6 hours to avoid DataDome
-      TOR_PROXY: socks5://tor:9050
-      TOR_CONTROL: tor:9051
       DISPLAY: :99
       HEADLESS: "false"
     networks:

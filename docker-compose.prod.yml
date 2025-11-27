@@ -35,15 +35,6 @@ services:
       - /etc/letsencrypt/live/himo.myddns.me:/etc/letsencrypt/live/himo.myddns.me:ro
       - /etc/letsencrypt/archive/himo.myddns.me:/etc/letsencrypt/archive/himo.myddns.me:ro
 
-  tor:
-    image: dperson/torproxy
-    container_name: himo-tor
-    restart: unless-stopped
-    networks:
-      - himo-network
-    environment:
-      TOR_ControlPort: "9051"
-
   bot:
     image: ghcr.io/cycha/himo-bot:latest
     pull_policy: always
@@ -52,14 +43,11 @@ services:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
-      TOR_PROXY: socks5://tor:9050
-      TOR_CONTROL: tor:9051
     restart: unless-stopped
     networks:
       - himo-network
     depends_on:
       - api
-      - tor
 
   db:
     image: postgis/postgis:16-3.4-alpine
