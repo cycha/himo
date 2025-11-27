@@ -14,9 +14,9 @@ const logger = new Logger('Bot');
 // Start HTTP server for manual triggers and bot control
 startServer();
 
-// Scraping task - Free VPS Strategy: Every 2 hours from 5 AM to 10 PM
-// Conservative approach for free VPS without proxies (~400 ads/day)
-const scrapingSchedule = process.env.SCRAPING_INTERVAL || '0 */2 5-22 * * *';
+// Scraping task - Bot-friendly: Every 6 hours at 6 AM, 12 PM, 6 PM, 12 AM
+// Very conservative to avoid detection (~60-100 ads/day, 4 runs/day)
+const scrapingSchedule = process.env.SCRAPING_INTERVAL || '0 0 */6 * * *';
 const scrapingJob = cron.schedule(
   scrapingSchedule,
   async () => {

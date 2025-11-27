@@ -60,9 +60,12 @@ services:
   bot:
     image: himo-bot
     container_name: himo-bot
+    platform: linux/amd64
     build:
       context: .
       dockerfile: bot/Dockerfile
+      platforms:
+        - linux/amd64
     depends_on:
       postgres:
         condition: service_healthy

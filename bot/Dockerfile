@@ -54,6 +54,12 @@ RUN pnpm --filter api exec prisma generate
 WORKDIR /app/bot
 RUN pnpm exec playwright install chromium --with-deps || echo "Playwright installation attempted"
 
+# Install BotBrowser
+COPY bot/botbrowser/botbrowser.deb /tmp/botbrowser.deb
+RUN dpkg -i /tmp/botbrowser.deb || apt-get install -f -y && \
+    rm /tmp/botbrowser.deb && \
+    echo "BotBrowser installed successfully"
+
 # Build TypeScript (optional for dev - can run as tsx)
 RUN pnpm run build || true
 
