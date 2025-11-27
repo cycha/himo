@@ -4,7 +4,6 @@
   "description": "Web scraper bot for French real estate websites",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "prisma generate --schema=../api/prisma/schema.prisma || true",
     "build": "tsc",
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
