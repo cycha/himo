@@ -67,7 +67,7 @@ cleanupJob.start();
 fixStuckRunsJob.start();
 
 // Set jobs in server so they can be controlled via HTTP
-setJobs(scrapingJob, cleanupJob);
+setJobs(scrapingJob, cleanupJob, fixStuckRunsJob);
 
 logger.info('========================================');
 logger.info('🤖 Himo Bot v2.0.0');

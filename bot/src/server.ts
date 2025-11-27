@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { scrapingTask } from './tasks/scraping-task';
+import { fixStuckRunsTask } from './tasks/fix-stuck-runs-task';
 import { Logger } from './utils/logger';
 import type { ScheduledTask } from 'node-cron';
 
@@ -10,6 +11,7 @@ const port = process.env.BOT_PORT || 3002;
 // Store cron jobs so we can start/stop them
 let scrapingJob: ScheduledTask | null = null;
 let cleanupJob: ScheduledTask | null = null;
+let fixStuckRunsJob: ScheduledTask | null = null;
 let isSchedulerRunning = false;
 
 app.use(express.json());
@@ -25,13 +27,15 @@ app.get('/status', (_req: Request, res: Response) => {
     scrapingJobActive: !!scrapingJob,
     scrapingJobRunning: isSchedulerRunning,
     cleanupJobActive: !!cleanupJob,
-    cleanupJobRunning: isSchedulerRunning
+    cleanupJobRunning: isSchedulerRunning,
+    fixStuckRunsJobActive: !!fixStuckRunsJob,
+    fixStuckRunsJobRunning: isSchedulerRunning
   });
 });
 
 // Start cron jobs
 app.post('/start', (_req: Request, res: Response) => {
-  if (!scrapingJob || !cleanupJob) {
+  if (!scrapingJob || !cleanupJob || !fixStuckRunsJob) {
     return res.status(500).json({ error: 'Cron jobs not initialized' });
   }
 
@@ -39,6 +43,7 @@ app.post('/start', (_req: Request, res: Response) => {
 
   scrapingJob.start();
   cleanupJob.start();
+  fixStuckRunsJob.start();
   isSchedulerRunning = true;
 
   res.json({ message: 'Bot cron jobs started' });
@@ -46,7 +51,7 @@ app.post('/start', (_req: Request, res: Response) => {
 
 // Stop cron jobs
 app.post('/stop', (_req: Request, res: Response) => {
-  if (!scrapingJob || !cleanupJob) {
+  if (!scrapingJob || !cleanupJob || !fixStuckRunsJob) {
     return res.status(500).json({ error: 'Cron jobs not initialized' });
   }
 
@@ -54,6 +59,7 @@ app.post('/stop', (_req: Request, res: Response) => {
 
   scrapingJob.stop();
   cleanupJob.stop();
+  fixStuckRunsJob.stop();
   isSchedulerRunning = false;
 
   res.json({ message: 'Bot cron jobs stopped' });
@@ -85,9 +91,27 @@ app.post('/trigger-scrape', async (req: Request, res: Response) => {
   res.json({ message: 'Scraping task started', runId });
 });
 
-export function setJobs(scraping: ScheduledTask, cleanup: ScheduledTask): void {
+// Trigger fix stuck runs manually
+app.post('/trigger-fix-stuck-runs', async (_req: Request, res: Response) => {
+  logger.info('Received manual fix stuck runs request');
+
+  // Execute fix stuck runs task asynchronously (don't wait for completion)
+  fixStuckRunsTask()
+    .then(() => {
+      logger.info('Fix stuck runs task completed');
+    })
+    .catch((error) => {
+      logger.error('Fix stuck runs task failed', error);
+    });
+
+  // Respond immediately
+  res.json({ message: 'Fix stuck runs task started' });
+});
+
+export function setJobs(scraping: ScheduledTask, cleanup: ScheduledTask, fixStuckRuns: ScheduledTask): void {
   scrapingJob = scraping;
   cleanupJob = cleanup;
+  fixStuckRunsJob = fixStuckRuns;
   // Jobs are started by default (scheduled: true in index.ts)
   isSchedulerRunning = true;
 }

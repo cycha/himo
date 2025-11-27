@@ -117,9 +117,6 @@ export async function scrapingTask(): Promise<void> {
       });
       logger.info(`Updated bot run ${botRunId} with results`);
     }
-
-    // Close database connection
-    await disconnect();
   } catch (error) {
     logger.error('Scraping task failed', error);
 
@@ -134,11 +131,19 @@ export async function scrapingTask(): Promise<void> {
             errorMessage: error instanceof Error ? error.message : 'Unknown error',
           },
         });
+        logger.info(`Updated bot run ${botRunId} with error status`);
       } catch (updateError) {
         logger.error('Failed to update bot run with error status', updateError);
       }
     }
 
     throw error;
+  } finally {
+    // Always close database connection, even if there were errors
+    try {
+      await disconnect();
+    } catch (disconnectError) {
+      logger.error('Failed to disconnect from database', disconnectError);
+    }
   }
 }
