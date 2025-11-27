@@ -2,7 +2,7 @@ import { chromium } from 'playwright-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Browser, Page } from 'playwright';
 import { BaseScraper, BotAdData } from './base-scraper';
-import { ScraperConfig, ParseResult } from '../types/scraper.types';
+import { ScraperConfig, ParseResult, ScraperResult } from '../types/scraper.types';
 import { sleep } from '../utils/utils';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -178,11 +178,10 @@ export class PAPScraper extends BaseScraper {
       previousAdCount = currentAdCount;
 
       // Scroll down smoothly
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await this.page.evaluate(() => {
-        // @ts-ignore - window is available in browser context
+        // @ts-expect-error - window is available in browser context
         window.scrollBy({
-          // @ts-ignore - window is available in browser context
+          // @ts-expect-error - window is available in browser context
           top: window.innerHeight * 0.8,
           left: 0,
           behavior: 'smooth',
@@ -229,13 +228,13 @@ export class PAPScraper extends BaseScraper {
           const locationText = el.querySelector('.item-title .h1')?.textContent?.trim() || '';
 
           // Extract tags (rooms, surface, etc)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const tags = Array.from(tagsEls).map((tag: any) => tag.textContent?.trim() || '');
+          // @ts-expect-error - tag is HTMLElement in browser context
+          const tags = Array.from(tagsEls).map((tag) => tag.textContent?.trim() || '');
 
           // Extract images
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const images = Array.from(imgEls)
-            .map((img: any) => img.getAttribute('src'))
+            // @ts-expect-error - img is HTMLImageElement in browser context
+            .map((img) => img.getAttribute('src'))
             .filter((src) => src && src.startsWith('http'));
 
           return {
@@ -354,7 +353,7 @@ export class PAPScraper extends BaseScraper {
     }
   }
 
-  async scrape(customUrl?: string): Promise<any> {
+  async scrape(customUrl?: string): Promise<ScraperResult> {
     try {
       return await super.scrape(customUrl);
     } finally {

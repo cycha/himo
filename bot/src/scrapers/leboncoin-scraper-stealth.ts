@@ -118,6 +118,108 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   }
 
   /**
+   * Get anti-detection script to inject into page
+   */
+  private getAntiDetectionScript() {
+    return () => {
+      // 1. Hide webdriver property
+      Object.defineProperty(navigator, 'webdriver', {
+        get: () => undefined,
+      });
+
+      // 2. Override permissions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const originalQuery = (window as any).navigator.permissions.query;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).navigator.permissions.query = (parameters: any) =>
+        parameters.name === 'notifications'
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            Promise.resolve({ state: 'denied' } as any)
+          : originalQuery(parameters);
+
+      // 3. Add chrome object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).chrome = {
+        runtime: {},
+        loadTimes: function () {},
+        csi: function () {},
+        app: {},
+      };
+
+      // 4. Override plugins
+      Object.defineProperty(navigator, 'plugins', {
+        get: () => [
+          {
+            name: 'Chrome PDF Plugin',
+            description: 'Portable Document Format',
+            filename: 'internal-pdf-viewer',
+          },
+          {
+            name: 'Chrome PDF Viewer',
+            description: '',
+            filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai',
+          },
+          { name: 'Native Client', description: '', filename: 'internal-nacl-plugin' },
+        ],
+      });
+
+      // 5. Override languages
+      Object.defineProperty(navigator, 'languages', {
+        get: () => ['fr-FR', 'fr', 'en-US', 'en'],
+      });
+
+      // 6. Override platform
+      Object.defineProperty(navigator, 'platform', {
+        get: () => 'MacIntel',
+      });
+
+      // 7. Override vendor
+      Object.defineProperty(navigator, 'vendor', {
+        get: () => 'Google Inc.',
+      });
+
+      // 8. Mock battery API
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigator as any).getBattery = () =>
+        Promise.resolve({
+          charging: true,
+          chargingTime: 0,
+          dischargingTime: Infinity,
+          level: 1,
+          onchargingchange: null,
+          onchargingtimechange: null,
+          ondischargingtimechange: null,
+          onlevelchange: null,
+        });
+
+      // 9. Add realistic connection
+      Object.defineProperty(navigator, 'connection', {
+        get: () => ({
+          effectiveType: '4g',
+          rtt: 50,
+          downlink: 10,
+          saveData: false,
+        }),
+      });
+
+      // 10. Override hardwareConcurrency
+      Object.defineProperty(navigator, 'hardwareConcurrency', {
+        get: () => 8,
+      });
+
+      // 11. Override deviceMemory
+      Object.defineProperty(navigator, 'deviceMemory', {
+        get: () => 8,
+      });
+
+      // 12. Override maxTouchPoints
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        get: () => 0,
+      });
+    };
+  }
+
+  /**
    * Initialize browser with MAXIMUM stealth
    */
   private async initBrowser(): Promise<void> {
@@ -221,104 +323,8 @@ export class LeBonCoinScraperStealth extends BaseScraper {
 
     await this.page.setExtraHTTPHeaders(headers);
 
-    // Advanced anti-detection scripts
-    const antiDetectionScript = () => {
-      // 1. Hide webdriver property
-      Object.defineProperty(navigator, 'webdriver', {
-        get: () => undefined,
-      });
-
-      // 2. Override permissions
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const originalQuery = (window as any).navigator.permissions.query;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).navigator.permissions.query = (parameters: any) =>
-        parameters.name === 'notifications'
-          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            Promise.resolve({ state: 'denied' } as any)
-          : originalQuery(parameters);
-
-      // 3. Add chrome object
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).chrome = {
-        runtime: {},
-        loadTimes: function () {},
-        csi: function () {},
-        app: {},
-      };
-
-      // 4. Override plugins
-      Object.defineProperty(navigator, 'plugins', {
-        get: () => [
-          {
-            name: 'Chrome PDF Plugin',
-            description: 'Portable Document Format',
-            filename: 'internal-pdf-viewer',
-          },
-          {
-            name: 'Chrome PDF Viewer',
-            description: '',
-            filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai',
-          },
-          { name: 'Native Client', description: '', filename: 'internal-nacl-plugin' },
-        ],
-      });
-
-      // 5. Override languages
-      Object.defineProperty(navigator, 'languages', {
-        get: () => ['fr-FR', 'fr', 'en-US', 'en'],
-      });
-
-      // 6. Override platform
-      Object.defineProperty(navigator, 'platform', {
-        get: () => 'MacIntel',
-      });
-
-      // 7. Override vendor
-      Object.defineProperty(navigator, 'vendor', {
-        get: () => 'Google Inc.',
-      });
-
-      // 8. Mock battery API
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).getBattery = () =>
-        Promise.resolve({
-          charging: true,
-          chargingTime: 0,
-          dischargingTime: Infinity,
-          level: 1,
-          onchargingchange: null,
-          onchargingtimechange: null,
-          ondischargingtimechange: null,
-          onlevelchange: null,
-        });
-
-      // 9. Add realistic connection
-      Object.defineProperty(navigator, 'connection', {
-        get: () => ({
-          effectiveType: '4g',
-          rtt: 50,
-          downlink: 10,
-          saveData: false,
-        }),
-      });
-
-      // 10. Override hardwareConcurrency
-      Object.defineProperty(navigator, 'hardwareConcurrency', {
-        get: () => 8,
-      });
-
-      // 11. Override deviceMemory
-      Object.defineProperty(navigator, 'deviceMemory', {
-        get: () => 8,
-      });
-
-      // 12. Override maxTouchPoints
-      Object.defineProperty(navigator, 'maxTouchPoints', {
-        get: () => 0,
-      });
-    };
-    await this.page.addInitScript(antiDetectionScript);
+    // Apply anti-detection scripts
+    await this.page.addInitScript(this.getAntiDetectionScript());
 
     this.logger.info('✅ Ultra-stealth browser initialized');
     this.logger.info(`   User-Agent: ${userAgent.substring(0, 50)}...`);
@@ -330,7 +336,7 @@ export class LeBonCoinScraperStealth extends BaseScraper {
   /**
    * Handle blocked response with detailed analysis
    */
-  private async handleBlockedResponse(status: number, response: any): Promise<void> {
+  private async handleBlockedResponse(status: number, response: Response): Promise<void> {
     this.logger.warn(`⚠️ HTTP ${status} response - LIKELY BLOCKED!`);
 
     const responseText = await response.text();
