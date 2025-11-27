@@ -1,6 +1,6 @@
 import { connect, disconnect, prisma } from '../lib/prisma';
 import { leboncoinScraper } from '../scrapers/leboncoin-scraper-stealth';
-import { selogerScraper } from '../scrapers/seloger-scraper';
+import { papScraper } from '../scrapers/pap-scraper';
 import { Logger } from '../utils/logger';
 
 const logger = new Logger('ScrappingTask');
@@ -62,7 +62,7 @@ export async function scrapingTask(): Promise<void> {
     logger.info('');
     const scrapers = [
       { name: 'LeBonCoin', scraper: leboncoinScraper },
-      { name: 'SeLoger', scraper: selogerScraper },
+      { name: 'PAP', scraper: papScraper },
     ];
 
     const results = await Promise.all(

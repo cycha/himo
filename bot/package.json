@@ -6,15 +6,9 @@
   "scripts": {
     "postinstall": "prisma generate --schema=../api/prisma/schema.prisma || true",
     "build": "tsc",
-    "build:watch": "tsc --watch",
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "clean": "rm -rf dist",
-    "lbc": "tsx src/scrapers/leboncoin.ts",
-    "test": "jest",
-    "test:scraper": "tsx tests/scraper.test.ts",
-    "test:debug": "tsx tests/debug.test.ts",
-    "test:mock": "tsx tests/scraper-mock.test.ts",
     "prisma:generate": "prisma generate --schema=../api/prisma/schema.prisma"
   },
   "author": "Charly Joulie",
@@ -23,18 +17,13 @@
     "@himo/commons": "file:../commons",
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^7.0.0",
-    "axios": "^1.13.2",
-    "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
     "express": "^5.1.0",
-    "https-proxy-agent": "^7.0.2",
     "node-cron": "^4.2.1",
     "pg": "^8.11.3",
     "playwright": "^1.40.1",
     "playwright-extra": "^4.3.6",
-    "puppeteer-core": "^24.31.0",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "puppeteer-real-browser": "^1.4.4"
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",

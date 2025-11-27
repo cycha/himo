@@ -28,6 +28,3 @@ Thumbs.db
 .scraper-storage/
 blocked-response.html
 failed-scrape.html
-
-# BotBrowser binary (too large for git, download separately)
-botbrowser/*.deb
