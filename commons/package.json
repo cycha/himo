@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.3",
     "bcrypt": "^6.0.0",
     "zod": "^4.1.13"
   },
