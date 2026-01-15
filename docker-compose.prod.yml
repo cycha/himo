@@ -32,8 +32,8 @@ services:
     depends_on:
       - api
     volumes:
-      - /etc/letsencrypt/live/himo.myddns.me:/etc/letsencrypt/live/himo.myddns.me:ro
-      - /etc/letsencrypt/archive/himo.myddns.me:/etc/letsencrypt/archive/himo.myddns.me:ro
+      - /etc/letsencrypt/live/himoapp.duckdns.org:/etc/letsencrypt/live/himoapp.duckdns.org:ro
+      - /etc/letsencrypt/archive/himoapp.duckdns.org:/etc/letsencrypt/archive/himoapp.duckdns.org:ro
 
   bot:
     image: ghcr.io/cycha/himo-bot:latest
