@@ -65,22 +65,22 @@ export async function scrapingTask(): Promise<void> {
       { name: 'PAP', scraper: papScraper },
     ];
 
-    const results = await Promise.all(
-      scrapers.map(async ({ name, scraper }) => {
-        try {
-          return await runScraper(name, scraper);
-        } catch (error) {
-          logger.error(`${name} scraper failed:`, error);
-          // Return empty result on failure so other scrapers can continue
-          return {
-            adsSaved: 0,
-            pagesScraped: 0,
-            failurePercentage: 100,
-            averageRetriesPerRequest: 0,
-          };
-        }
-      })
-    );
+    // Run scrapers sequentially to reduce peak memory (only one browser at a time)
+    const results: ScraperResult[] = [];
+    for (const { name, scraper } of scrapers) {
+      try {
+        const result = await runScraper(name, scraper);
+        results.push(result);
+      } catch (error) {
+        logger.error(`${name} scraper failed:`, error);
+        results.push({
+          adsSaved: 0,
+          pagesScraped: 0,
+          failurePercentage: 100,
+          averageRetriesPerRequest: 0,
+        });
+      }
+    }
 
     // Aggregate results
     const totalAdsSaved = results.reduce((sum, r) => sum + r.adsSaved, 0);

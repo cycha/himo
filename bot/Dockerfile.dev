@@ -1,27 +1,10 @@
-FROM node:25-bullseye
+FROM node:25-slim
 
-# Install build tools and Xvfb + Chromium dependencies for Playwright
+# Install build tools and Playwright's Chromium dependencies (no Xvfb)
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    xvfb \
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libdbus-1-3 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libatspi2.0-0 \
-    libxshmfence1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
@@ -52,9 +35,5 @@ RUN pnpm --filter api exec prisma generate
 WORKDIR /app/bot
 RUN pnpm exec playwright install chromium --with-deps || echo "Playwright installation attempted"
 
-# Set display for Xvfb
-ENV DISPLAY=:99
-ENV HEADLESS=false
-
-# Run with Xvfb (cleanup any stale locks, start virtual display, then run app)
-CMD ["sh", "-c", "rm -f /tmp/.X99-lock && rm -f /tmp/.X11-unix/X99 && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & sleep 3 && pnpm start || { pkill -f Xvfb; exit 1; }"]
+# Start bot directly (headless Chromium, no Xvfb needed)
+CMD ["pnpm", "start"]

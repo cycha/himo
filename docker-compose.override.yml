@@ -19,8 +19,6 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/himo?schema=public
-      DISPLAY: :99
-      HEADLESS: "false"
     # Expose debug port
     ports:
       - "8889:8889"
