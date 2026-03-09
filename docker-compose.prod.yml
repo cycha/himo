@@ -1,7 +1,6 @@
 services:
   api:
     image: ghcr.io/cycha/himo-api:latest
-    pull_policy: always
     container_name: himo-api
     ports:
       - "3000:3000"
@@ -19,7 +18,6 @@ services:
 
   client:
     image: ghcr.io/cycha/himo-client:latest
-    pull_policy: always
     container_name: himo-client
     ports:
       - "80:80"
@@ -39,7 +37,6 @@ services:
 
   bot:
     image: ghcr.io/cycha/himo-bot:latest
-    pull_policy: always
     container_name: himo-bot
     environment:
       NODE_ENV: production
