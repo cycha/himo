@@ -59,5 +59,6 @@ coverage/
 
 # Bot scraper storage and debug files
 .scraper-storage/
+storage/
 blocked-response.html
 failed-scrape.html
