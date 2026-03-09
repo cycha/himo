@@ -40,8 +40,10 @@ export async function scrapingTask(): Promise<void> {
     // Ensure database connection
     await connect();
 
-    // Check for existing bot run ID from environment (manual trigger)
+    // Check for existing bot run ID from environment (manual trigger via API)
     const existingRunId = process.env.BOT_RUN_ID;
+    // Clear immediately so subsequent cron runs don't reuse it
+    delete process.env.BOT_RUN_ID;
 
     if (existingRunId) {
       botRunId = existingRunId;
