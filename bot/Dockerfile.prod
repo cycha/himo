@@ -1,7 +1,8 @@
 FROM node:22-slim
 
-# Install only Playwright's Chromium dependencies (no Xvfb, no X11)
+# Install Playwright's Chromium dependencies + procps (needed by Crawlee for memory snapshots)
 RUN apt-get update && \
+    apt-get install -y procps && \
     npx playwright install --with-deps chromium && \
     rm -rf /var/lib/apt/lists/*
 
