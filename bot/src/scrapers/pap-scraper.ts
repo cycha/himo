@@ -154,6 +154,7 @@ export class PAPCrawleeScraper {
       requestList,
       launchContext: {
         launcher: chromium,
+        useIncognitoPages: true,
         launchOptions: {
           headless: true,
           args: [

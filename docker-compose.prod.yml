@@ -42,6 +42,8 @@ services:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
+      CRAWLEE_MEMORY_MBYTES: 400
+      CRAWLEE_AVAILABLE_MEMORY_RATIO: "0.9"
     restart: unless-stopped
     networks:
       - himo-network
