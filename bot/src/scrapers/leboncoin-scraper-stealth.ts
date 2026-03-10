@@ -6,7 +6,7 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { BotAdData } from './base-scraper';
 import { ScraperConfig, ScraperResult, RawAdData } from '../types/scraper.types';
 import { Logger } from '../utils/logger';
-import { sleep, calculateStatistics, getRandomUserAgent } from '../utils/utils';
+import { sleep, calculateStatistics } from '../utils/utils';
 
 // Add stealth plugin to playwright
 chromium.use(StealthPlugin());
@@ -335,7 +335,6 @@ export class LeBonCoinCrawleeScraper {
             '--accept-lang=fr-FR,fr',
           ],
         },
-        userAgent: getRandomUserAgent(),
       },
       browserPoolOptions: {
         maxOpenPagesPerBrowser: 1,
