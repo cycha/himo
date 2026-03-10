@@ -343,6 +343,11 @@ export class LeBonCoinCrawleeScraper {
       },
       useSessionPool: true,
       persistCookiesPerSession: true,
+      sessionPoolOptions: {
+        // Remove 403 from blocked status codes — DataDome serves a challenge page
+        // on 403 that we need to process, not treat as a hard block
+        blockedStatusCodes: [401, 429],
+      },
       maxRequestRetries: config.maxRetries,
       requestHandlerTimeoutSecs: 120,
       maxConcurrency: 1,
@@ -368,7 +373,7 @@ export class LeBonCoinCrawleeScraper {
         },
       ],
 
-      async requestHandler({ request, page, session, log }) {
+      async requestHandler({ request, page, session, log, response }) {
         if (shouldStop) {
           log.info('Skipping — already up to date or stopped');
           return;
@@ -391,13 +396,18 @@ export class LeBonCoinCrawleeScraper {
         log.info(`Processing search page: ${request.url}`);
         await sleep(Math.random() * 3 + 2);
 
-        // Check for blocks
+        // Check for blocks — HTTP status or page content
+        const statusCode = response?.status();
         const title = await page.title();
-        if (title.toLowerCase().includes('captcha') || title.toLowerCase().includes('blocked')) {
-          log.warning('CAPTCHA/block detected');
+        const isBlocked =
+          statusCode === 403 ||
+          title.toLowerCase().includes('captcha') ||
+          title.toLowerCase().includes('blocked') ||
+          title.toLowerCase().includes('datadome');
+        if (isBlocked) {
+          log.warning(`Block detected (status=${statusCode}, title="${title}")`);
           session?.retire();
-          shouldStop = true;
-          throw new Error('Anti-bot protection detected');
+          throw new Error(`Anti-bot protection detected (status=${statusCode})`);
         }
 
         // Wait for JavaScript render
