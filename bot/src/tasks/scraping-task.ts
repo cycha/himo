@@ -1,5 +1,5 @@
 import { connect, disconnect, prisma } from '../lib/prisma';
-import { leboncoinScraper } from '../scrapers/leboncoin-scraper-stealth';
+import { leboncoinScraper } from '../scrapers/leboncoin-scraper-api';
 import { papScraper } from '../scrapers/pap-scraper';
 import { Logger } from '../utils/logger';
 

@@ -35,9 +35,9 @@ RUN pnpm exec playwright install --with-deps chromium
 # Build TypeScript
 RUN pnpm run build || true
 
-# Node.js memory limit for safety
-ENV NODE_OPTIONS="--max-old-space-size=384"
-ENV CRAWLEE_MEMORY_MBYTES="600"
+# Node.js memory limit for safety (only PAP uses Chromium now, LeBonCoin uses API)
+ENV NODE_OPTIONS="--max-old-space-size=256"
+ENV CRAWLEE_MEMORY_MBYTES="400"
 
 # Start: run migrations then start bot (no Xvfb needed)
 CMD sh -c "cd /app/api && npx prisma migrate deploy && cd /app/bot && pnpm start"
