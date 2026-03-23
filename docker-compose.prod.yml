@@ -62,10 +62,23 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1.0
     shm_size: 256m
     restart: unless-stopped
     networks:
       - himo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+      - /run/postgresql:size=16m
 
 volumes:
   postgres_data:
