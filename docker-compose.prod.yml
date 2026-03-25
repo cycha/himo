@@ -2,19 +2,23 @@ services:
   api:
     image: ghcr.io/cycha/himo-api:latest
     container_name: himo-api
+    entrypoint: ["/bin/sh", "/app/api/docker-entrypoint.prod.sh"]
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: ${CORS_ORIGIN}
       BOT_URL: http://bot:3002
     restart: unless-stopped
     networks:
       - himo-network
     mem_limit: 256m
-    volumes:
-      - ./api/.env.production:/app/.env
+    depends_on:
+      db:
+        condition: service_healthy
 
   client:
     image: ghcr.io/cycha/himo-client:latest
@@ -50,7 +54,10 @@ services:
     mem_limit: 512m
     shm_size: 128m
     depends_on:
-      - api
+      api:
+        condition: service_started
+      db:
+        condition: service_healthy
 
   db:
     image: postgis/postgis:16-3.4-alpine
