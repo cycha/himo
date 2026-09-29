@@ -1,53 +1,56 @@
 services:
   api:
     image: ghcr.io/cycha/himo-api:latest
-    pull_policy: always
     container_name: himo-api
+    entrypoint: ["/bin/sh", "/app/api/docker-entrypoint.prod.sh"]
+    # Loopback only: the edge Caddy (host network) is the sole public entry.
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: ${CORS_ORIGIN}
       BOT_URL: http://bot:3002
     restart: unless-stopped
     networks:
       - himo-network
-    volumes:
-      - ./api/.env.production:/app/.env
+    mem_limit: 256m
+    depends_on:
+      db:
+        condition: service_healthy
 
   client:
     image: ghcr.io/cycha/himo-client:latest
-    pull_policy: always
     container_name: himo-client
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      NODE_ENV: production
-      VITE_API_URL: ${VITE_API_URL}
-    restart: unless-stopped
-    networks:
-      - himo-network
-    depends_on:
-      - api
+    # One-shot: copies the built SPA into /srv/himo-client, served by the
+    # shared edge Caddy (/opt/edge on the VPS), then exits.
+    restart: "no"
+    network_mode: none
     volumes:
-      - /etc/letsencrypt/live/himoapp.duckdns.org:/etc/letsencrypt/live/himoapp.duckdns.org:ro
-      - /etc/letsencrypt/archive/himoapp.duckdns.org:/etc/letsencrypt/archive/himoapp.duckdns.org:ro
+      - /srv/himo-client:/out
+    mem_limit: 32m
 
   bot:
     image: ghcr.io/cycha/himo-bot:latest
-    pull_policy: always
     container_name: himo-bot
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
+      CRAWLEE_MEMORY_MBYTES: 400
+      CRAWLEE_AVAILABLE_MEMORY_RATIO: "0.9"
     restart: unless-stopped
     networks:
       - himo-network
+    mem_limit: 512m
+    shm_size: 128m
     depends_on:
-      - api
+      api:
+        condition: service_started
+      db:
+        condition: service_healthy
 
   db:
     image: postgis/postgis:16-3.4-alpine
@@ -58,9 +61,24 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1.0
+    shm_size: 256m
     restart: unless-stopped
     networks:
       - himo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+      - /run/postgresql:size=16m
 
 volumes:
   postgres_data:

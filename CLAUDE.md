@@ -29,6 +29,7 @@ pnpm type-check
 ## Architecture
 
 ### Backend (Clean Architecture)
+
 ```
 Controllers → Services → Repositories → Database
 ```
@@ -39,6 +40,7 @@ Controllers → Services → Repositories → Database
 - **DTOs**: Data contracts between layers
 
 ### Frontend (Feature-based)
+
 ```
 client/src/
 ├── features/      # Feature modules (auth, ads, dashboard)
@@ -50,6 +52,7 @@ client/src/
 ```
 
 ### Key Patterns
+
 - TanStack Query for server state
 - Custom hooks for API calls (useAuth, useAds, useBot)
 - shadcn/ui for component library
@@ -68,6 +71,7 @@ pnpm --filter api prisma:studio
 ## Environment
 
 Required in `.env`:
+
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
@@ -83,10 +87,12 @@ pnpm --filter api test -- <pattern>
 ```
 
 ## Git & PR Workflow
+
 - When creating pull requests, ALWAYS target the "develop" branch (e.g., use `gh pr create --base develop`).
 - Do not create PRs against "master" or "main" unless explicitly requested.
 
 When creating commits:
+
 - Write clear, concise commit messages
 - Use conventional commit format: `type: description`
 - **DO NOT** add Claude Code footer or co-authorship tags

@@ -1,29 +1,12 @@
-# Development Dockerfile for bot with Xvfb support
+# Development Dockerfile for bot (headless Chromium, no Xvfb)
 
-FROM node:25-bullseye
+FROM node:25-slim
 
-# Install build tools and Xvfb + Chromium dependencies for Playwright
+# Install build tools and Playwright's Chromium dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    xvfb \
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libdbus-1-3 \
-    libxkbcommon0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libatspi2.0-0 \
-    libxshmfence1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm (pinned to match lockfile)
@@ -54,22 +37,8 @@ RUN pnpm --filter api exec prisma generate
 WORKDIR /app/bot
 RUN pnpm exec playwright install chromium --with-deps || echo "Playwright installation attempted"
 
-# Install BotBrowser
-COPY bot/botbrowser/botbrowser.deb /tmp/botbrowser.deb
-RUN dpkg -i /tmp/botbrowser.deb || apt-get install -f -y && \
-    rm /tmp/botbrowser.deb && \
-    echo "BotBrowser installed successfully"
-
 # Build TypeScript (optional for dev - can run as tsx)
 RUN pnpm run build || true
 
-# Set display for Xvfb
-ENV DISPLAY=:99
-ENV HEADLESS=false
-
-# Start Xvfb, run migrations, then start bot
-CMD sh -c "rm -f /tmp/.X99-lock /tmp/.X11-unix/X99 && \
-    Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
-    sleep 3 && \
-    cd /app/api && npx prisma migrate deploy && \
-    cd /app/bot && pnpm start"
+# Start: run migrations then start bot (no Xvfb needed)
+CMD sh -c "cd /app/api && npx prisma migrate deploy && cd /app/bot && pnpm start"

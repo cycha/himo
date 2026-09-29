@@ -21,7 +21,13 @@ import {
   Circle,
   AlertCircle,
 } from 'lucide-react';
-import { useBotStatus, useBotStats, useStartBotCron, useStopBotCron, useTriggerBotScrape } from '../../../hooks/api/useBot';
+import {
+  useBotStatus,
+  useBotStats,
+  useStartBotCron,
+  useStopBotCron,
+  useTriggerBotScrape,
+} from '../../../hooks/api/useBot';
 import { BotRunStatus } from '../../../types';
 
 const BotControlPanel: React.FC = () => {
@@ -97,14 +103,22 @@ const BotControlPanel: React.FC = () => {
             <div className="flex items-center gap-6 text-sm border-t pt-4">
               {/* Bot Service Status */}
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground font-medium">{t('bot.indicators.service')}:</span>
+                <span className="text-muted-foreground font-medium">
+                  {t('bot.indicators.service')}:
+                </span>
                 {status?.serviceHealthy ? (
-                  <Badge variant="outline" className="gap-1.5 bg-green-50 text-green-700 border-green-200">
+                  <Badge
+                    variant="outline"
+                    className="gap-1.5 bg-green-50 text-green-700 border-green-200"
+                  >
                     <Circle className="h-2 w-2 fill-green-500 text-green-500" />
                     {t('bot.indicators.online')}
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="gap-1.5 bg-red-50 text-red-700 border-red-200">
+                  <Badge
+                    variant="outline"
+                    className="gap-1.5 bg-red-50 text-red-700 border-red-200"
+                  >
                     <AlertCircle className="h-3 w-3" />
                     {t('bot.indicators.offline')}
                   </Badge>
@@ -114,9 +128,14 @@ const BotControlPanel: React.FC = () => {
               {/* Scheduler Status */}
               {status?.serviceHealthy && (
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground font-medium">{t('bot.indicators.scheduler')}:</span>
+                  <span className="text-muted-foreground font-medium">
+                    {t('bot.indicators.scheduler')}:
+                  </span>
                   {status.cronSchedulerActive ? (
-                    <Badge variant="outline" className="gap-1.5 bg-blue-50 text-blue-700 border-blue-200">
+                    <Badge
+                      variant="outline"
+                      className="gap-1.5 bg-blue-50 text-blue-700 border-blue-200"
+                    >
                       <Circle className="h-2 w-2 fill-blue-500 text-blue-500 animate-pulse" />
                       {t('bot.indicators.running')}
                     </Badge>
@@ -131,9 +150,14 @@ const BotControlPanel: React.FC = () => {
 
               {/* Current Task Status */}
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground font-medium">{t('bot.indicators.task')}:</span>
+                <span className="text-muted-foreground font-medium">
+                  {t('bot.indicators.task')}:
+                </span>
                 {status?.isRunning ? (
-                  <Badge variant="outline" className="gap-1.5 bg-orange-50 text-orange-700 border-orange-200">
+                  <Badge
+                    variant="outline"
+                    className="gap-1.5 bg-orange-50 text-orange-700 border-orange-200"
+                  >
                     <Loader2 className="h-3 w-3 animate-spin" />
                     {t('bot.indicators.scraping')}
                   </Badge>

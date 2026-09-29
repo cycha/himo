@@ -29,7 +29,7 @@ app.get('/status', (_req: Request, res: Response) => {
     cleanupJobActive: !!cleanupJob,
     cleanupJobRunning: isSchedulerRunning,
     fixStuckRunsJobActive: !!fixStuckRunsJob,
-    fixStuckRunsJobRunning: isSchedulerRunning
+    fixStuckRunsJobRunning: isSchedulerRunning,
   });
 });
 
@@ -108,7 +108,11 @@ app.post('/trigger-fix-stuck-runs', async (_req: Request, res: Response) => {
   res.json({ message: 'Fix stuck runs task started' });
 });
 
-export function setJobs(scraping: ScheduledTask, cleanup: ScheduledTask, fixStuckRuns: ScheduledTask): void {
+export function setJobs(
+  scraping: ScheduledTask,
+  cleanup: ScheduledTask,
+  fixStuckRuns: ScheduledTask
+): void {
   scrapingJob = scraping;
   cleanupJob = cleanup;
   fixStuckRunsJob = fixStuckRuns;
