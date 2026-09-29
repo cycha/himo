@@ -24,6 +24,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -40,7 +43,9 @@ jobs:
           context: .
           file: ./api/Dockerfile.prod
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-api:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-api:latest
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-api:sha-${{ env.SHORT_SHA }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -50,7 +55,9 @@ jobs:
           context: .
           file: ./client/Dockerfile.prod
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-client:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-client:latest
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-client:sha-${{ env.SHORT_SHA }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -60,7 +67,9 @@ jobs:
           context: .
           file: ./bot/Dockerfile.prod
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-bot:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-bot:latest
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/himo-bot:sha-${{ env.SHORT_SHA }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

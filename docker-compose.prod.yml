@@ -3,8 +3,9 @@ services:
     image: ghcr.io/cycha/himo-api:latest
     container_name: himo-api
     entrypoint: ["/bin/sh", "/app/api/docker-entrypoint.prod.sh"]
+    # Loopback only: the edge Caddy (host network) is the sole public entry.
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
@@ -23,21 +24,13 @@ services:
   client:
     image: ghcr.io/cycha/himo-client:latest
     container_name: himo-client
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      NODE_ENV: production
-      VITE_API_URL: ${VITE_API_URL}
-    restart: unless-stopped
-    networks:
-      - himo-network
-    depends_on:
-      - api
+    # One-shot: copies the built SPA into /srv/himo-client, served by the
+    # shared edge Caddy (/opt/edge on the VPS), then exits.
+    restart: "no"
+    network_mode: none
     volumes:
-      - /etc/letsencrypt/live/himoapp.duckdns.org:/etc/letsencrypt/live/himoapp.duckdns.org:ro
-      - /etc/letsencrypt/archive/himoapp.duckdns.org:/etc/letsencrypt/archive/himoapp.duckdns.org:ro
-    mem_limit: 128m
+      - /srv/himo-client:/out
+    mem_limit: 32m
 
   bot:
     image: ghcr.io/cycha/himo-bot:latest
