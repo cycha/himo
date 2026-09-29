@@ -18,7 +18,7 @@
     "prisma:reset": "prisma migrate reset"
   },
   "dependencies": {
-    "@himo/commons": "file:../commons",
+    "@himo/commons": "workspace:*",
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^7.4.2",
     "axios": "^1.13.6",

@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@crawlee/playwright": "^3.16.0",
-    "@himo/commons": "file:../commons",
+    "@himo/commons": "workspace:*",
     "@prisma/adapter-pg": "^7.0.1",
     "@prisma/client": "^7.4.2",
     "crawlee": "^3.16.0",
