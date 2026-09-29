@@ -2,8 +2,9 @@ import { prisma } from '../lib/prisma';
 import { Provider, Prisma, RealEstateType, ImmoSellType } from '@prisma/client';
 import { BotAdData } from './base-scraper';
 import { Logger } from '../utils/logger';
+import { LatestAd } from './latest-ad';
 
-export async function getLatestAdInDb(provider: string): Promise<{ date: Date; title: string }> {
+export async function getLatestAdInDb(provider: string): Promise<LatestAd> {
   const latestAd = await prisma.ad.findFirst({
     where: { provider: provider as Provider },
     orderBy: { releaseDate: 'desc' },

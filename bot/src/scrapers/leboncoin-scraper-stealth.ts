@@ -7,9 +7,17 @@ import { BotAdData } from './base-scraper';
 import { ScraperConfig, ScraperResult, RawAdData } from '../types/scraper.types';
 import { Logger } from '../utils/logger';
 import { sleep, calculateStatistics } from '../utils/utils';
+import { takeNewAds } from './latest-ad';
 
 // Add stealth plugin to playwright
 chromium.use(StealthPlugin());
+
+const BLOCK_MARKERS = ['captcha', 'blocked', 'datadome'];
+
+function isBlockedPage(statusCode: number | undefined, title: string): boolean {
+  const lowerTitle = title.toLowerCase();
+  return statusCode === 403 || BLOCK_MARKERS.some((marker) => lowerTitle.includes(marker));
+}
 
 const DEFAULT_CONFIG: ScraperConfig = {
   maxPages: 5,
@@ -51,8 +59,16 @@ export class LeBonCoinCrawleeScraper {
 
       Object.defineProperty(navigator, 'plugins', {
         get: () => [
-          { name: 'Chrome PDF Plugin', description: 'Portable Document Format', filename: 'internal-pdf-viewer' },
-          { name: 'Chrome PDF Viewer', description: '', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' },
+          {
+            name: 'Chrome PDF Plugin',
+            description: 'Portable Document Format',
+            filename: 'internal-pdf-viewer',
+          },
+          {
+            name: 'Chrome PDF Viewer',
+            description: '',
+            filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai',
+          },
           { name: 'Native Client', description: '', filename: 'internal-nacl-plugin' },
         ],
       });
@@ -92,9 +108,12 @@ export class LeBonCoinCrawleeScraper {
     }
 
     for (let i = 0; i < 3; i++) {
-      await page.evaluate((scroll: number) => {
-        window.scrollBy({ top: scroll, left: 0, behavior: 'smooth' });
-      }, Math.floor(Math.random() * 300 + 100));
+      await page.evaluate(
+        (scroll: number) => {
+          window.scrollBy({ top: scroll, left: 0, behavior: 'smooth' });
+        },
+        Math.floor(Math.random() * 300 + 100)
+      );
       await sleep(Math.random() * 1 + 0.5);
     }
   }
@@ -398,12 +417,7 @@ export class LeBonCoinCrawleeScraper {
         // Check for blocks — HTTP status or page content
         const statusCode = response?.status();
         const title = await page.title();
-        const isBlocked =
-          statusCode === 403 ||
-          title.toLowerCase().includes('captcha') ||
-          title.toLowerCase().includes('blocked') ||
-          title.toLowerCase().includes('datadome');
-        if (isBlocked) {
+        if (isBlockedPage(statusCode, title)) {
           log.warning(`Block detected (status=${statusCode}, title="${title}")`);
           session?.retire();
           throw new Error(`Anti-bot protection detected (status=${statusCode})`);
@@ -435,22 +449,17 @@ export class LeBonCoinCrawleeScraper {
         log.info(`Found ${rawAds.length} raw ads`);
 
         // Process ads and check for up-to-date
-        const newAds: Partial<BotAdData>[] = [];
-        for (const rawAd of rawAds) {
-          const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
-          if (
-            releaseDate < latestDate ||
-            (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)
-          ) {
-            log.info('Reached latest ad in DB, stopping...');
-            shouldStop = true;
-            break;
-          }
-          newAds.push(transformRawAd(rawAd));
+        const { newAds, reachedLatest } = takeNewAds(rawAds, {
+          date: latestDate,
+          title: latestTitle,
+        });
+        if (reachedLatest) {
+          log.info('Reached latest ad in DB, stopping...');
+          shouldStop = true;
         }
 
         if (newAds.length > 0) {
-          const savedCount = await saveAds(newAds, logger);
+          const savedCount = await saveAds(newAds.map(transformRawAd), logger);
           totalAdsSaved += savedCount;
         }
 
@@ -472,7 +481,9 @@ export class LeBonCoinCrawleeScraper {
     await crawler.run();
 
     const stats = calculateStatistics(retryArray);
-    this.logger.info(`LeBonCoin scraping completed: ${totalAdsSaved} ads saved, ${pagesScraped} pages`);
+    this.logger.info(
+      `LeBonCoin scraping completed: ${totalAdsSaved} ads saved, ${pagesScraped} pages`
+    );
 
     return {
       adsSaved: totalAdsSaved,

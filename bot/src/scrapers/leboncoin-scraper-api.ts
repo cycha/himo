@@ -2,6 +2,15 @@ import { BotAdData } from './base-scraper';
 import { ScraperConfig, ScraperResult, RawAdData } from '../types/scraper.types';
 import { Logger } from '../utils/logger';
 import { sleep } from '../utils/utils';
+import { LatestAd, getReleaseDate, takeNewAds } from './latest-ad';
+
+type SaveAds = typeof import('./scraper-utils').saveAds;
+
+interface PageOutcome {
+  saved: number;
+  /** No more new ads to fetch: last page, or the latest stored ad was reached. */
+  done: boolean;
+}
 
 const API_URL = 'https://api.leboncoin.fr/finder/search';
 const API_KEY = 'ba0c2dad52b3ec';
@@ -98,8 +107,35 @@ export class LeBonCoinCrawleeScraper {
     return sellTypeMap[label?.toLowerCase() || ''] || undefined;
   }
 
+  private buildLocation(location: RawAdData['location'] = {}): BotAdData['location'] {
+    return {
+      region_name: location.region_name?.substring(0, 100),
+      department_id: location.department_id?.substring(0, 10),
+      department_name: location.department_name?.substring(0, 100),
+      city: location.city?.substring(0, 100),
+      zipcode: location.zipcode?.substring(0, 10) || 'unknown',
+      coordinates: [location.lng || null, location.lat || null] as unknown as number[],
+    };
+  }
+
+  private applyAttribute(ad: Partial<BotAdData>, attr: RawAdData['attributes'][number]): void {
+    switch (attr.key) {
+      case 'real_estate_type':
+        ad.real_estate_type = this.mapRealEstateType(attr.value_label);
+        break;
+      case 'rooms':
+        ad.rooms = this.parseIntegerAttribute(attr.value);
+        break;
+      case 'square':
+        ad.surface = this.parseIntegerAttribute(attr.value);
+        break;
+      case 'immo_sell_type':
+        ad.immo_sell_type = this.mapImmoSellType(attr.value_label);
+        break;
+    }
+  }
+
   private transformRawAd(rawAd: RawAdData): Partial<BotAdData> {
-    const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
     const ad: Partial<BotAdData> = {
       title: rawAd.subject?.substring(0, 200) || 'Sans titre',
       description: rawAd.body?.substring(0, 10000) || '',
@@ -107,139 +143,121 @@ export class LeBonCoinCrawleeScraper {
       url: this.buildAdUrl(rawAd.url),
       price: this.parsePrice(rawAd.price),
       provider: 'leboncoin',
-      location: {
-        region_name: rawAd.location?.region_name?.substring(0, 100),
-        department_id: rawAd.location?.department_id?.substring(0, 10),
-        department_name: rawAd.location?.department_name?.substring(0, 100),
-        city: rawAd.location?.city?.substring(0, 100),
-        zipcode: rawAd.location?.zipcode?.substring(0, 10) || 'unknown',
-        coordinates: [
-          rawAd.location?.lng || null,
-          rawAd.location?.lat || null,
-        ] as unknown as number[],
-      },
-      release_date: releaseDate,
+      location: this.buildLocation(rawAd.location),
+      release_date: getReleaseDate(rawAd),
     };
 
-    if (rawAd.attributes) {
-      for (const attr of rawAd.attributes) {
-        switch (attr.key) {
-          case 'real_estate_type':
-            ad.real_estate_type = this.mapRealEstateType(attr.value_label);
-            break;
-          case 'rooms':
-            ad.rooms = this.parseIntegerAttribute(attr.value);
-            break;
-          case 'square':
-            ad.surface = this.parseIntegerAttribute(attr.value);
-            break;
-          case 'immo_sell_type':
-            ad.immo_sell_type = this.mapImmoSellType(attr.value_label);
-            break;
+    for (const attr of rawAd.attributes ?? []) {
+      this.applyAttribute(ad, attr);
+    }
+
+    return ad;
+  }
+
+  private async fetchAds(offset: number): Promise<RawAdData[]> {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: API_HEADERS,
+      body: JSON.stringify(this.buildRequestBody(offset)),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const rawAds: RawAdData[] = data.ads || [];
+    this.logger.info(`  Got ${rawAds.length} ads (total available: ${data.total})`);
+    return rawAds;
+  }
+
+  private async scrapePage(page: number, latest: LatestAd, saveAds: SaveAds): Promise<PageOutcome> {
+    const rawAds = await this.fetchAds(page * ADS_PER_PAGE);
+    if (rawAds.length === 0) {
+      this.logger.info('  No more ads, stopping');
+      return { saved: 0, done: true };
+    }
+
+    const { newAds, reachedLatest } = takeNewAds(rawAds, latest);
+    if (reachedLatest) {
+      this.logger.info('  Reached latest ad in DB, stopping...');
+    }
+
+    const saved =
+      newAds.length > 0
+        ? await saveAds(
+            newAds.map((rawAd) => this.transformRawAd(rawAd)),
+            this.logger
+          )
+        : 0;
+
+    return { saved, done: reachedLatest || rawAds.length < ADS_PER_PAGE };
+  }
+
+  /** Returns null once every attempt for this page has failed. */
+  private async scrapePageWithRetries(
+    page: number,
+    latest: LatestAd,
+    saveAds: SaveAds
+  ): Promise<PageOutcome | null> {
+    const attempts = this.config.maxRetries + 1;
+
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        return await this.scrapePage(page, latest, saveAds);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        this.logger.error(`  Page ${page + 1} attempt ${attempt} failed: ${message}`);
+
+        if (attempt < attempts) {
+          const delay = this.config.waitError + Math.random() * this.config.waitError;
+          this.logger.info(`  Retrying in ${delay.toFixed(1)}s...`);
+          await sleep(delay);
         }
       }
     }
 
-    return ad;
+    this.logger.error(`  Giving up on page ${page + 1} after ${attempts} attempts`);
+    return null;
   }
 
   async scrape(): Promise<ScraperResult> {
     this.logger.info('Starting LeBonCoin scraping via API...');
 
     const { getLatestAdInDb, saveAds } = await import('./scraper-utils');
-    const { date: latestDate, title: latestTitle } = await getLatestAdInDb(this.config.provider);
-    this.logger.info(`Latest ad in DB: ${latestTitle} (${latestDate.toISOString()})`);
+    const latest = await getLatestAdInDb(this.config.provider);
+    this.logger.info(`Latest ad in DB: ${latest.title} (${latest.date.toISOString()})`);
 
     let totalAdsSaved = 0;
     let pagesScraped = 0;
     let failedPages = 0;
 
     for (let page = 0; page < this.config.maxPages; page++) {
-      const offset = page * ADS_PER_PAGE;
-      this.logger.info(`Fetching page ${page + 1}/${this.config.maxPages} (offset=${offset})...`);
+      this.logger.info(
+        `Fetching page ${page + 1}/${this.config.maxPages} (offset=${page * ADS_PER_PAGE})...`
+      );
 
-      let retries = 0;
-      let success = false;
-
-      while (retries <= this.config.maxRetries && !success) {
-        try {
-          const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: API_HEADERS,
-            body: JSON.stringify(this.buildRequestBody(offset)),
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status} ${response.statusText}`);
-          }
-
-          const data = await response.json();
-          const rawAds: RawAdData[] = data.ads || [];
-          this.logger.info(`  Got ${rawAds.length} ads (total available: ${data.total})`);
-
-          if (rawAds.length === 0) {
-            this.logger.info('  No more ads, stopping');
-            success = true;
-            pagesScraped++;
-            break;
-          }
-
-          // Transform and filter new ads
-          const newAds: Partial<BotAdData>[] = [];
-          let reachedLatest = false;
-
-          for (const rawAd of rawAds) {
-            const releaseDate = new Date(
-              rawAd.first_publication_date || rawAd.index_date || Date.now()
-            );
-            if (
-              releaseDate < latestDate ||
-              (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)
-            ) {
-              this.logger.info('  Reached latest ad in DB, stopping...');
-              reachedLatest = true;
-              break;
-            }
-            newAds.push(this.transformRawAd(rawAd));
-          }
-
-          if (newAds.length > 0) {
-            const savedCount = await saveAds(newAds, this.logger);
-            totalAdsSaved += savedCount;
-          }
-
-          pagesScraped++;
-          success = true;
-
-          if (reachedLatest || rawAds.length < ADS_PER_PAGE) {
-            break;
-          }
-
-          // Delay between pages
-          const delay = this.config.waitSuccess + Math.random() * this.config.waitSuccess;
-          this.logger.info(`  Waiting ${delay.toFixed(1)}s before next page...`);
-          await sleep(delay);
-        } catch (error) {
-          retries++;
-          const message = error instanceof Error ? error.message : String(error);
-          this.logger.error(`  Page ${page + 1} attempt ${retries} failed: ${message}`);
-
-          if (retries > this.config.maxRetries) {
-            failedPages++;
-            this.logger.error(`  Giving up on page ${page + 1} after ${retries} attempts`);
-          } else {
-            const delay = this.config.waitError + Math.random() * this.config.waitError;
-            this.logger.info(`  Retrying in ${delay.toFixed(1)}s...`);
-            await sleep(delay);
-          }
-        }
+      const outcome = await this.scrapePageWithRetries(page, latest, saveAds);
+      if (!outcome) {
+        failedPages++;
+        continue;
       }
+
+      pagesScraped++;
+      totalAdsSaved += outcome.saved;
+      if (outcome.done) break;
+
+      const delay = this.config.waitSuccess + Math.random() * this.config.waitSuccess;
+      this.logger.info(`  Waiting ${delay.toFixed(1)}s before next page...`);
+      await sleep(delay);
     }
 
     const totalRequests = pagesScraped + failedPages;
     const failurePercentage = totalRequests > 0 ? (failedPages / totalRequests) * 100 : 0;
 
-    this.logger.info(`LeBonCoin API scraping completed: ${totalAdsSaved} ads saved, ${pagesScraped} pages`);
+    this.logger.info(
+      `LeBonCoin API scraping completed: ${totalAdsSaved} ads saved, ${pagesScraped} pages`
+    );
 
     return {
       adsSaved: totalAdsSaved,
