@@ -13,13 +13,13 @@ Full-stack TypeScript real estate platform aggregating listings from multiple Fr
 
 ## Tech Stack
 
-| Layer | Technologies |
-|-------|-------------|
+| Layer        | Technologies                                              |
+| ------------ | --------------------------------------------------------- |
 | **Frontend** | React 19, Vite 7, TanStack Query, shadcn/ui, Tailwind CSS |
-| **Backend** | Express 5, Prisma 7, PostgreSQL + PostGIS |
-| **Scraper** | Playwright, node-cron |
-| **Auth** | JWT + bcrypt |
-| **Infra** | pnpm workspaces, Docker, GitHub Actions |
+| **Backend**  | Express 5, Prisma 7, PostgreSQL + PostGIS                 |
+| **Scraper**  | Playwright, node-cron                                     |
+| **Auth**     | JWT + bcrypt                                              |
+| **Infra**    | pnpm workspaces, Docker, GitHub Actions                   |
 
 ## Prerequisites
 
@@ -59,11 +59,13 @@ himo/
 ## Architecture
 
 **Backend** follows Clean Architecture:
+
 ```
 Controllers → Services → Repositories → Prisma → PostgreSQL
 ```
 
 **Frontend** uses feature-based organization:
+
 ```
 features/    # Feature modules (auth, ads, dashboard)
 components/  # Shared UI (shadcn/ui)
@@ -122,6 +124,7 @@ See `.env.example`, `.env.production.example`, and `.env.deploy.example` for ful
 ## CI/CD
 
 GitHub Actions workflows handle:
+
 - **CI** - Lint, type-check, build, test on push/PR
 - **Security** - Dependency audit, CodeQL analysis, secret scanning
 - **CD** - Automated deployment

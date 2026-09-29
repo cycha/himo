@@ -59,14 +59,14 @@ Bot Container (node:22-slim, ~200-350MB RAM)
 
 Simplified — Crawlee handles retry and fetch logic:
 
-| Current (BaseScraper)   | New (Crawlee)                           |
-|-------------------------|-----------------------------------------|
-| `fetchWithRetry()`      | Built-in `maxRequestRetries`            |
-| `humanDelay()`          | Manual delays in requestHandler         |
-| Page loop               | `RequestList` with page URLs            |
-| `saveAds()`             | Keep as-is (Prisma createMany)          |
-| `getLatestAdInDb()`     | Keep as-is                              |
-| Error detection         | `failedRequestHandler`                  |
+| Current (BaseScraper) | New (Crawlee)                   |
+| --------------------- | ------------------------------- |
+| `fetchWithRetry()`    | Built-in `maxRequestRetries`    |
+| `humanDelay()`        | Manual delays in requestHandler |
+| Page loop             | `RequestList` with page URLs    |
+| `saveAds()`           | Keep as-is (Prisma createMany)  |
+| `getLatestAdInDb()`   | Keep as-is                      |
+| Error detection       | `failedRequestHandler`          |
 
 ## Unchanged Components
 
@@ -91,12 +91,12 @@ Simplified — Crawlee handles retry and fetch logic:
 
 Add memory limits to all services:
 
-| Service  | mem_limit | shm_size |
-|----------|-----------|----------|
-| api      | 256m      | -        |
-| client   | 128m      | -        |
-| bot      | 512m      | 256m     |
-| db       | 512m      | 256m     |
+| Service | mem_limit | shm_size |
+| ------- | --------- | -------- |
+| api     | 256m      | -        |
+| client  | 128m      | -        |
+| bot     | 512m      | 256m     |
+| db      | 512m      | 256m     |
 
 Total hard cap: ~1.4GB (leaves ~2.6GB for OS + Docker + buffer on 4GB VPS).
 
@@ -120,11 +120,11 @@ Total hard cap: ~1.4GB (leaves ~2.6GB for OS + Docker + buffer on 4GB VPS).
 
 ## RAM Budget (4GB VPS)
 
-| Service              | Current        | New            |
-|----------------------|----------------|----------------|
-| PostgreSQL + PostGIS | 300-500MB      | 300-500MB      |
-| API (Express)        | 100-200MB      | 100-200MB      |
-| Client (Nginx)       | 30-50MB        | 30-50MB        |
-| Bot                  | **800-1500MB** | **200-350MB**  |
-| OS + Docker          | ~500MB         | ~500MB         |
-| **Total**            | 1.7-2.7GB+     | **1.1-1.6GB**  |
+| Service              | Current        | New           |
+| -------------------- | -------------- | ------------- |
+| PostgreSQL + PostGIS | 300-500MB      | 300-500MB     |
+| API (Express)        | 100-200MB      | 100-200MB     |
+| Client (Nginx)       | 30-50MB        | 30-50MB       |
+| Bot                  | **800-1500MB** | **200-350MB** |
+| OS + Docker          | ~500MB         | ~500MB        |
+| **Total**            | 1.7-2.7GB+     | **1.1-1.6GB** |

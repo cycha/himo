@@ -87,8 +87,10 @@ export async function scrapingTask(): Promise<void> {
     // Aggregate results
     const totalAdsSaved = results.reduce((sum, r) => sum + r.adsSaved, 0);
     const totalPagesScraped = results.reduce((sum, r) => sum + r.pagesScraped, 0);
-    const avgFailureRate = results.reduce((sum, r) => sum + r.failurePercentage, 0) / results.length;
-    const avgRetries = results.reduce((sum, r) => sum + r.averageRetriesPerRequest, 0) / results.length;
+    const avgFailureRate =
+      results.reduce((sum, r) => sum + r.failurePercentage, 0) / results.length;
+    const avgRetries =
+      results.reduce((sum, r) => sum + r.averageRetriesPerRequest, 0) / results.length;
 
     logger.info('##################################################################');
     logger.info('## SCRAPING TASK COMPLETED');

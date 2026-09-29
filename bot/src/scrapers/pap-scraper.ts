@@ -59,7 +59,9 @@ export class PAPCrawleeScraper {
       previousAdCount = currentAdCount;
 
       // Scroll in browser context - this is Playwright's page.evaluate API, not eval()
-      await page.evaluate('window.scrollBy({ top: window.innerHeight * 0.8, left: 0, behavior: "smooth" })');
+      await page.evaluate(
+        'window.scrollBy({ top: window.innerHeight * 0.8, left: 0, behavior: "smooth" })'
+      );
 
       await sleep(2 + Math.random() * 2);
       await page.mouse.move(500 + Math.random() * 500, 300 + Math.random() * 300);
@@ -72,9 +74,7 @@ export class PAPCrawleeScraper {
   /**
    * Extract listings from page using DOM selectors
    */
-  private async extractListings(
-    page: any
-  ): Promise<
+  private async extractListings(page: any): Promise<
     Array<{
       url: string;
       location: string;

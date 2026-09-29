@@ -13,11 +13,13 @@
 ### Task 1: Install Crawlee Dependencies
 
 **Files:**
+
 - Modify: `bot/package.json`
 
 **Step 1: Install crawlee packages**
 
 Run from repo root:
+
 ```bash
 pnpm --filter @himo/bot add crawlee @crawlee/playwright
 ```
@@ -25,9 +27,11 @@ pnpm --filter @himo/bot add crawlee @crawlee/playwright
 **Step 2: Verify installation**
 
 Run:
+
 ```bash
 pnpm --filter @himo/bot exec tsc --noEmit 2>&1 | head -5
 ```
+
 Expected: Should compile (possibly with existing warnings, but no new crawlee-related errors).
 
 **Step 3: Commit**
@@ -42,6 +46,7 @@ git commit -m "feat(bot): add crawlee dependencies for memory-optimized scraping
 ### Task 2: Rewrite LeBonCoin Scraper with Crawlee
 
 **Files:**
+
 - Rewrite: `bot/src/scrapers/leboncoin-scraper-stealth.ts`
 
 **Context:** The current scraper (846 lines) manages its own browser lifecycle, cookie persistence, anti-detection scripts, and human behavior simulation. Crawlee's PlaywrightCrawler handles browser pool management, session/cookie persistence, and page lifecycle automatically. We keep all the parsing logic (regex JSON extraction, price parsing, attribute mapping) and anti-detection scripts unchanged.
@@ -97,13 +102,26 @@ export class LeBonCoinCrawleeScraper {
           : originalQuery(parameters);
 
       // 3. Add chrome object
-      (window as any).chrome = { runtime: {}, loadTimes: function () {}, csi: function () {}, app: {} };
+      (window as any).chrome = {
+        runtime: {},
+        loadTimes: function () {},
+        csi: function () {},
+        app: {},
+      };
 
       // 4. Override plugins
       Object.defineProperty(navigator, 'plugins', {
         get: () => [
-          { name: 'Chrome PDF Plugin', description: 'Portable Document Format', filename: 'internal-pdf-viewer' },
-          { name: 'Chrome PDF Viewer', description: '', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' },
+          {
+            name: 'Chrome PDF Plugin',
+            description: 'Portable Document Format',
+            filename: 'internal-pdf-viewer',
+          },
+          {
+            name: 'Chrome PDF Viewer',
+            description: '',
+            filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai',
+          },
           { name: 'Native Client', description: '', filename: 'internal-nacl-plugin' },
         ],
       });
@@ -137,9 +155,12 @@ export class LeBonCoinCrawleeScraper {
 
     // Scroll like a human
     for (let i = 0; i < 3; i++) {
-      await page.evaluate((scroll: number) => {
-        window.scrollBy({ top: scroll, left: 0, behavior: 'smooth' });
-      }, Math.floor(Math.random() * 300 + 100));
+      await page.evaluate(
+        (scroll: number) => {
+          window.scrollBy({ top: scroll, left: 0, behavior: 'smooth' });
+        },
+        Math.floor(Math.random() * 300 + 100)
+      );
       await sleep(Math.random() * 1 + 0.5);
     }
   }
@@ -244,7 +265,8 @@ export class LeBonCoinCrawleeScraper {
   private parsePrice(price?: unknown): number {
     if (!price) return 0;
     if (Array.isArray(price) && price.length > 0) return this.parsePrice(price[0]);
-    if (typeof price === 'object' && (price as any).value !== undefined) return this.parsePrice((price as any).value);
+    if (typeof price === 'object' && (price as any).value !== undefined)
+      return this.parsePrice((price as any).value);
     if (typeof price === 'string') return parseInt(price.replace(/\D/g, '')) || 0;
     if (typeof price === 'number') return price;
     return 0;
@@ -256,7 +278,10 @@ export class LeBonCoinCrawleeScraper {
     return [lng, lat] as [number, number];
   }
 
-  private parseAdAttributes(ad: Partial<BotAdData>, attributes?: Array<{ key: string; value: string; value_label?: string }>): void {
+  private parseAdAttributes(
+    ad: Partial<BotAdData>,
+    attributes?: Array<{ key: string; value: string; value_label?: string }>
+  ): void {
     if (!attributes) return;
     for (const attr of attributes) {
       switch (attr.key) {
@@ -278,17 +303,26 @@ export class LeBonCoinCrawleeScraper {
 
   private mapRealEstateType(label?: string): string | undefined {
     const typeMap: Record<string, string> = {
-      appartement: 'appartement', apartment: 'appartement',
-      maison: 'maison', house: 'maison',
-      terrain: 'terrain', land: 'terrain',
+      appartement: 'appartement',
+      apartment: 'appartement',
+      maison: 'maison',
+      house: 'maison',
+      terrain: 'terrain',
+      land: 'terrain',
       parking: 'parking',
-      'local commercial': 'local_commercial', commercial: 'local_commercial',
+      'local commercial': 'local_commercial',
+      commercial: 'local_commercial',
     };
     return typeMap[label?.toLowerCase() || ''] || undefined;
   }
 
   private mapImmoSellType(label?: string): string | undefined {
-    const sellTypeMap: Record<string, string> = { old: 'ancien', new: 'neuf', ancien: 'ancien', neuf: 'neuf' };
+    const sellTypeMap: Record<string, string> = {
+      old: 'ancien',
+      new: 'neuf',
+      ancien: 'ancien',
+      neuf: 'neuf',
+    };
     return sellTypeMap[label?.toLowerCase() || ''] || undefined;
   }
 
@@ -369,11 +403,12 @@ export class LeBonCoinCrawleeScraper {
           await page.setViewportSize(viewport);
           await page.addInitScript(self.getAntiDetectionScript());
           await page.setExtraHTTPHeaders({
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            Accept:
+              'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
             'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
             'Accept-Encoding': 'gzip, deflate, br',
-            'DNT': '1',
-            'Connection': 'keep-alive',
+            DNT: '1',
+            Connection: 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Sec-Fetch-Dest': 'document',
             'Sec-Fetch-Mode': 'navigate',
@@ -448,7 +483,9 @@ export class LeBonCoinCrawleeScraper {
         // Process ads and check for up-to-date
         const newAds: Partial<BotAdData>[] = [];
         for (const rawAd of rawAds) {
-          const releaseDate = new Date(rawAd.first_publication_date || rawAd.index_date || Date.now());
+          const releaseDate = new Date(
+            rawAd.first_publication_date || rawAd.index_date || Date.now()
+          );
           if (
             releaseDate < latestDate ||
             (releaseDate.getTime() === latestDate.getTime() && rawAd.subject === latestTitle)
@@ -483,7 +520,9 @@ export class LeBonCoinCrawleeScraper {
     await crawler.run();
 
     const stats = calculateStatistics(retryArray);
-    this.logger.info(`LeBonCoin scraping completed: ${totalAdsSaved} ads saved, ${pagesScraped} pages`);
+    this.logger.info(
+      `LeBonCoin scraping completed: ${totalAdsSaved} ads saved, ${pagesScraped} pages`
+    );
 
     return {
       adsSaved: totalAdsSaved,
@@ -499,9 +538,11 @@ export const leboncoinScraper = new LeBonCoinCrawleeScraper();
 **Step 2: Verify it compiles**
 
 Run:
+
 ```bash
 pnpm --filter @himo/bot exec tsc --noEmit
 ```
+
 Expected: No new errors related to the LeBonCoin scraper. (Will fail until Task 4 creates `scraper-utils.ts`.)
 
 **Step 3: Commit**
@@ -516,6 +557,7 @@ git commit -m "feat(bot): rewrite LeBonCoin scraper with Crawlee PlaywrightCrawl
 ### Task 3: Rewrite PAP Scraper with Crawlee
 
 **Files:**
+
 - Rewrite: `bot/src/scrapers/pap-scraper.ts`
 
 **Context:** The PAP scraper uses infinite scroll + DOM parsing. We keep all parsing logic and scroll behavior, just wrap it in Crawlee's PlaywrightCrawler.
@@ -597,14 +639,16 @@ export class PAPCrawleeScraper {
   /**
    * Extract listings from page using DOM selectors
    */
-  private async extractListings(page: any): Promise<Array<{
-    url: string;
-    location: string;
-    price: string;
-    description: string;
-    tags: string[];
-    images: string[];
-  }>> {
+  private async extractListings(page: any): Promise<
+    Array<{
+      url: string;
+      location: string;
+      price: string;
+      description: string;
+      tags: string[];
+      images: string[];
+    }>
+  > {
     return page.$$eval('.search-list-item-alt', (elements: any[]) => {
       return elements.map((el: any) => {
         const titleEl = el.querySelector('.item-title');
@@ -694,7 +738,8 @@ export class PAPCrawleeScraper {
           await page.setViewportSize({ width: 1920, height: 1080 });
           await page.setExtraHTTPHeaders({
             'Accept-Language': 'fr-FR,fr;q=0.9',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            Accept:
+              'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
           });
         },
       ],
@@ -801,6 +846,7 @@ git commit -m "feat(bot): rewrite PAP scraper with Crawlee PlaywrightCrawler"
 ### Task 4: Extract Shared Scraper Utilities
 
 **Files:**
+
 - Create: `bot/src/scrapers/scraper-utils.ts`
 - Modify: `bot/src/scrapers/base-scraper.ts` (keep BotAdData interface, remove class)
 
@@ -904,9 +950,11 @@ export interface BotAdData {
 **Step 3: Verify compilation**
 
 Run:
+
 ```bash
 pnpm --filter @himo/bot exec tsc --noEmit
 ```
+
 Expected: PASS - all imports resolve, types match.
 
 **Step 4: Commit**
@@ -921,6 +969,7 @@ git commit -m "refactor(bot): extract shared scraper utilities, simplify base-sc
 ### Task 5: Update Scraping Task to Run Sequentially
 
 **Files:**
+
 - Modify: `bot/src/tasks/scraping-task.ts`
 
 **Context:** Change `Promise.all` (parallel) to sequential execution. This halves peak memory since only one browser runs at a time.
@@ -964,9 +1013,11 @@ for (const { name, scraper } of scrapers) {
 **Step 2: Verify compilation**
 
 Run:
+
 ```bash
 pnpm --filter @himo/bot exec tsc --noEmit
 ```
+
 Expected: PASS
 
 **Step 3: Commit**
@@ -981,6 +1032,7 @@ git commit -m "perf(bot): run scrapers sequentially to halve peak memory usage"
 ### Task 6: Slim Down Docker Configuration
 
 **Files:**
+
 - Rewrite: `bot/Dockerfile.prod`
 - Modify: `docker-compose.prod.yml`
 
@@ -1069,15 +1121,17 @@ git commit -m "perf(bot): slim Docker image (no Xvfb), add memory limits to all 
 ### Task 7: Clean Up Unused Files and Env Vars
 
 **Files:**
+
 - Modify: `docker-compose.yml` (remove HEADLESS, DISPLAY from bot service)
 - Clean up any Xvfb-related references
 
 **Step 1: Remove HEADLESS and DISPLAY env vars from compose files**
 
 In `docker-compose.yml`, remove these lines from the bot service:
+
 ```yaml
-      DISPLAY: :99
-      HEADLESS: "false"
+DISPLAY: :99
+HEADLESS: 'false'
 ```
 
 Also remove `mem_limit: 512m` and `shm_size: 256m` from the dev compose bot service (Crawlee manages its own memory in dev).
@@ -1085,9 +1139,11 @@ Also remove `mem_limit: 512m` and `shm_size: 256m` from the dev compose bot serv
 **Step 2: Verify no remaining Xvfb references**
 
 Run:
+
 ```bash
 grep -r "Xvfb\|DISPLAY.*:99\|HEADLESS" bot/ docker-compose*.yml --include="*.ts" --include="*.yml" --include="*.yaml" --include="Dockerfile*"
 ```
+
 Expected: No matches (or only in comments/docs).
 
 **Step 3: Commit**
@@ -1106,6 +1162,7 @@ git commit -m "chore(bot): remove Xvfb, HEADLESS, and DISPLAY references"
 ```bash
 pnpm type-check
 ```
+
 Expected: PASS
 
 **Step 2: Run build**
@@ -1113,6 +1170,7 @@ Expected: PASS
 ```bash
 pnpm --filter @himo/bot build
 ```
+
 Expected: PASS - produces `bot/dist/` output.
 
 **Step 3: Run lint**
@@ -1120,6 +1178,7 @@ Expected: PASS - produces `bot/dist/` output.
 ```bash
 pnpm lint
 ```
+
 Expected: PASS (or only pre-existing warnings).
 
 **Step 4: Commit any fixes**
@@ -1138,6 +1197,7 @@ git commit -m "fix(bot): resolve type-check and lint issues from Crawlee migrati
 ```bash
 docker build -f bot/Dockerfile.prod -t himo-bot:crawlee-test .
 ```
+
 Expected: Build succeeds without Xvfb-related errors.
 
 **Step 2: Verify image size reduction**
@@ -1145,6 +1205,7 @@ Expected: Build succeeds without Xvfb-related errors.
 ```bash
 docker images himo-bot:crawlee-test --format "{{.Size}}"
 ```
+
 Expected: Significantly smaller than the previous image (no Xvfb/X11 packages).
 
 **Step 3: Quick smoke test**
@@ -1152,6 +1213,7 @@ Expected: Significantly smaller than the previous image (no Xvfb/X11 packages).
 ```bash
 docker run --rm himo-bot:crawlee-test node -e "const { PlaywrightCrawler } = require('crawlee'); console.log('Crawlee loaded OK')"
 ```
+
 Expected: Prints "Crawlee loaded OK".
 
 **Step 4: Final commit**
